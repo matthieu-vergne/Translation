@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,6 +111,58 @@ public class TranslationUtil {
 		}
 
 		return map;
+	}
+
+	// TODO generalize to TranslationMap (which does not know patch version)
+	public static void writeMap(SimpleTranslationMap map, File mapFile)
+			throws IOException {
+		PrintStream writer = new PrintStream(mapFile);
+		String version = map.getRpgMakerTransPatchVersion();
+		if (version != null) {
+			writer.println("# RPGMAKER TRANS PATCH FILE VERSION " + version);
+		} else {
+			// no version to write
+		}
+		boolean unusedSection = false;
+		Iterator<TranslationEntry> iterator = map.iterator();
+		while (iterator.hasNext()) {
+			TranslationEntry entry = iterator.next();
+			if (!unusedSection && entry.isUnused()) {
+				writer.println("# UNUSED TRANSLATABLES");
+				unusedSection = true;
+			} else {
+				// not the start of the unused section
+			}
+			writer.println("# TEXT STRING");
+			if (entry.isMarkedAsUntranslated()) {
+				writer.println("# UNTRANSLATED");
+			} else {
+				// do not write it
+			}
+			writer.println("# CONTEXT : " + entry.getContext());
+			if (entry.getCharLimit(false) != null
+					&& entry.getCharLimit(true) != null) {
+				writer.println("# ADVICE : " + entry.getCharLimit(false)
+						+ " char limit (" + entry.getCharLimit(true)
+						+ " if face)");
+			} else if (entry.getCharLimit(false) != null
+					&& entry.getCharLimit(true) == null) {
+				writer.println("# ADVICE : " + entry.getCharLimit(false)
+						+ " char limit");
+			} else {
+				// no advice
+			}
+			writer.println(entry.getOriginalVersion());
+			writer.println("# TRANSLATION ");
+			writer.println(entry.getTranslatedVersion());
+			writer.println("# END STRING");
+			if (iterator.hasNext()) {
+				writer.println("");
+			} else {
+				// EOF
+			}
+		}
+		writer.close();
 	}
 
 	private static String contentDisplay(String content) {
