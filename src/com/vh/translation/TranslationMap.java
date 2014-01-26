@@ -17,7 +17,8 @@ public interface TranslationMap extends Iterable<TranslationEntry> {
 	 * {@link TranslationMap} file. Moreover, they should be in the
 	 * "right order", meaning that if the {@link TranslationMap} is built from
 	 * an existing {@link File}, this {@link Iterator} should provide the
-	 * corresponding {@link TranslationEntry} in the same order.
+	 * corresponding {@link TranslationEntry} in the same order. Also, if there
+	 * is unused entries, they should be at the end.
 	 */
 	public Iterator<TranslationEntry> iterator();
 
