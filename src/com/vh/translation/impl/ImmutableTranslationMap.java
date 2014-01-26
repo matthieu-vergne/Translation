@@ -26,9 +26,8 @@ public class ImmutableTranslationMap implements TranslationMap {
 	public ImmutableTranslationMap(File mapFile) throws IOException {
 		this.baseFile = mapFile;
 
-		Pattern pattern1 = Pattern
-				.compile("^# ADVICE : ([0-9]+) char limit \\(([0-9]+) if face\\)$");
-		Pattern pattern2 = Pattern.compile("^# ADVICE : ([0-9]+) char limit$");
+		Pattern advicePattern = Pattern
+				.compile("^# ADVICE : ([0-9]+) char limit(?: \\(([0-9]+) if face\\))?$");
 
 		entries = new LinkedList<TranslationEntry>();
 		FileReader fr = new FileReader(mapFile);
@@ -60,20 +59,21 @@ public class ImmutableTranslationMap implements TranslationMap {
 				currentEntry.setContext(context);
 				logger.info("Context: " + context);
 			} else if (line.startsWith("# ADVICE : ")) {
-				Matcher matcher1 = pattern1.matcher(line);
-				Matcher matcher2 = pattern2.matcher(line);
-				if (matcher1.find()) {
-					int limit1 = Integer.parseInt(matcher1.group(1));
-					int limit2 = Integer.parseInt(matcher1.group(2));
-					currentEntry.setCharLimitWithoutFace(limit1);
-					currentEntry.setCharLimitWithFace(limit2);
-					logger.info("Char limits: " + limit2 + " with face, "
-							+ limit1 + " without");
-				} else if (matcher2.find()) {
-					int limit = Integer.parseInt(matcher2.group(1));
-					currentEntry.setCharLimitWithoutFace(limit);
-					currentEntry.setCharLimitWithFace(limit);
-					logger.info("Char limit: " + limit);
+				Matcher matcher = advicePattern.matcher(line);
+				if (matcher.find()) {
+					if (matcher.group(2) == null) {
+						int limit = Integer.parseInt(matcher.group(1));
+						currentEntry.setCharLimitWithoutFace(limit);
+						currentEntry.setCharLimitWithFace(limit);
+						logger.info("Char limit: " + limit);
+					} else {
+						int limit1 = Integer.parseInt(matcher.group(1));
+						int limit2 = Integer.parseInt(matcher.group(2));
+						currentEntry.setCharLimitWithoutFace(limit1);
+						currentEntry.setCharLimitWithFace(limit2);
+						logger.info("Char limits: " + limit2 + " with face, "
+								+ limit1 + " without");
+					}
 				} else {
 					throw new ParsingException(mapFile, lineCounter,
 							"Unexpected format: " + line);
