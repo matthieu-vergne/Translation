@@ -75,14 +75,14 @@ public class TranslationUtil {
 							"Unexpected format: " + line);
 				}
 			} else if (currentEntry != null && !line.startsWith("# ")) {
-				content += line + "\n";
+				content += "\n" + line;
 			} else if (line.equals("# TRANSLATION ")) {
 				logger.info("Original content:" + contentDisplay(content));
-				currentEntry.setOriginalContent(content.trim());
+				currentEntry.setOriginalContent(content.substring(1));
 				content = "";
 			} else if (line.equals("# END STRING")) {
 				logger.info("Translated content:" + contentDisplay(content));
-				currentEntry.setTranslationContent(content.trim());
+				currentEntry.setTranslationContent(content.substring(1));
 				content = "";
 				try {
 					map.getEntries().add(currentEntry);
