@@ -60,18 +60,15 @@ public class TranslationUtil {
 			} else if (line.startsWith("# ADVICE : ")) {
 				Matcher matcher = advicePattern.matcher(line);
 				if (matcher.find()) {
-					if (matcher.group(2) == null) {
-						int limit = Integer.parseInt(matcher.group(1));
-						currentEntry.setCharLimitWithoutFace(limit);
+					int limit = Integer.parseInt(matcher.group(1));
+					currentEntry.setCharLimitWithoutFace(limit);
+					logger.info("Char limit: " + limit);
+					if (matcher.group(2) != null) {
+						limit = Integer.parseInt(matcher.group(2));
 						currentEntry.setCharLimitWithFace(limit);
-						logger.info("Char limit: " + limit);
+						logger.info("Char limit with face: " + limit);
 					} else {
-						int limit1 = Integer.parseInt(matcher.group(1));
-						int limit2 = Integer.parseInt(matcher.group(2));
-						currentEntry.setCharLimitWithoutFace(limit1);
-						currentEntry.setCharLimitWithFace(limit2);
-						logger.info("Char limits: " + limit2 + " with face, "
-								+ limit1 + " without");
+						// no char limit with face
 					}
 				} else {
 					throw new ParsingException(mapFile, lineCounter,
