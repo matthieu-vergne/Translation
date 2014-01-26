@@ -36,6 +36,7 @@ public class TranslationUtil {
 		SimpleTranslationEntry currentEntry = null;
 		boolean inUnusedEntries = false;
 		int lineCounter = 0;
+		int markSize = 100;
 		while ((line = reader.readLine()) != null) {
 			lineCounter++;
 			if (line.startsWith("# RPGMAKER TRANS PATCH FILE VERSION ")) {
@@ -74,16 +75,43 @@ public class TranslationUtil {
 					throw new ParsingException(mapFile, lineCounter,
 							"Unexpected format: " + line);
 				}
-			} else if (currentEntry != null && !line.startsWith("# ")) {
-				content += "\n" + line;
+			} else if (currentEntry != null && !line.startsWith("#")) {
+				logger.info("Retrieving content...");
+				reader.reset();
+				StringBuilder sb = new StringBuilder();
+				boolean endReached = false;
+				boolean afterNewline = false;
+				do {
+					int codePoint = reader.read();
+					char character = (char) codePoint;
+					if (afterNewline && character == '#') {
+						reader.reset();
+						endReached = true;
+						logger.info("X #");
+					} else {
+						sb.appendCodePoint(codePoint);
+						reader.mark(markSize);
+						logger.info("- char: " + explicit(character));
+					}
+					afterNewline = System.lineSeparator().contains(
+							"" + character);
+				} while (!endReached);
+				content = sb.toString();
+				content = content.substring(0, content.length()
+						- System.lineSeparator().length());
+				logger.info("Content retrieved: "
+						+ (content.trim().isEmpty() ? " empty" : System
+								.lineSeparator()
+								+ content
+								+ System.lineSeparator()));
 			} else if (line.equals("# TRANSLATION ")) {
-				logger.info("Original content:" + contentDisplay(content));
-				currentEntry.setOriginalContent(content.substring(1));
+				currentEntry.setOriginalContent(content);
 				content = "";
+				logger.info("Content retrieved used for original");
 			} else if (line.equals("# END STRING")) {
-				logger.info("Translated content:" + contentDisplay(content));
-				currentEntry.setTranslationContent(content.substring(1));
+				currentEntry.setTranslationContent(content);
 				content = "";
+				logger.info("Content retrieved used for translation");
 				try {
 					map.getEntries().add(currentEntry);
 				} catch (NullPointerException e) {
@@ -97,6 +125,7 @@ public class TranslationUtil {
 				throw new ParsingException(mapFile, lineCounter,
 						" Unrecognised line: " + line);
 			}
+			reader.mark(markSize);
 		}
 
 		reader.close();
@@ -108,6 +137,11 @@ public class TranslationUtil {
 		}
 
 		return map;
+	}
+
+	private static Object explicit(char character) {
+		return character == '\n' ? "\\n" : character == '\r' ? "\\r"
+				: character;
 	}
 
 	// TODO generalize to TranslationMap (which does not know patch version)
@@ -160,10 +194,6 @@ public class TranslationUtil {
 			}
 		}
 		writer.close();
-	}
-
-	private static String contentDisplay(String content) {
-		return content.trim().isEmpty() ? " empty" : "\n" + content;
 	}
 
 	@SuppressWarnings("serial")
