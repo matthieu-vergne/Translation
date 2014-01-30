@@ -1,5 +1,6 @@
 package com.vh.gui;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ public class Gui extends JFrame {
 	public Gui() {
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setMinimumSize(new Dimension(500, 500));
 
 		mapContentPanel = new MapContentPanel();
 		mapListPanel = new MapListPanel(mapContentPanel);
