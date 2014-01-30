@@ -1,7 +1,6 @@
 package com.vh.gui;
 
 import java.awt.GridLayout;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -11,10 +10,13 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.io.FileUtils;
 
+import com.vh.translation.TranslationMap;
+
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {
 
 	private final JTextArea mapContent;
+	private TranslationMap map;
 
 	public MapContentPanel() {
 		setLayout(new GridLayout(1, 1));
@@ -23,14 +25,19 @@ public class MapContentPanel extends JPanel {
 		add(new JScrollPane(mapContent));
 	}
 
-	public void setFile(File file) {
+	public void setMap(TranslationMap map) {
 		String content;
 		try {
-			content = FileUtils.readFileToString(file);
+			content = FileUtils.readFileToString(map.getBaseFile());
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 		mapContent.setText(content);
 		mapContent.setCaretPosition(0);
+		this.map = map;
+	}
+
+	public TranslationMap getMap() {
+		return map;
 	}
 }
