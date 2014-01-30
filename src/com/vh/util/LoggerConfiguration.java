@@ -1,4 +1,4 @@
-package com.vh.translation.util;
+package com.vh.util;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;

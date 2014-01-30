@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import com.vh.translation.impl.SimpleTranslationEntry;
 import com.vh.translation.impl.SimpleTranslationMap;
-import com.vh.translation.util.LoggerConfiguration;
+import com.vh.util.LoggerConfiguration;
 
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'
 // TODO replace all "..." (3) by "…" (1)
