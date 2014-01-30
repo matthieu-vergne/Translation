@@ -10,7 +10,7 @@ import com.vh.translation.TranslationUtil;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		TranslationUtil.logger.setLevel(Level.OFF);
+		TranslationUtil.logger.setLevel(Level.ALL);
 		File mapFolder = new File("VH/branches/working/");
 		File[] listFiles = mapFolder.listFiles();
 		for (File file : listFiles) {

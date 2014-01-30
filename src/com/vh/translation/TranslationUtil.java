@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,9 @@ import com.vh.util.LoggerConfiguration;
 public class TranslationUtil {
 
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
+	static {
+		logger.setLevel(Level.OFF);
+	}
 
 	public static TranslationMap readMap(File mapFile) throws IOException {
 		SimpleTranslationMap map = new SimpleTranslationMap();

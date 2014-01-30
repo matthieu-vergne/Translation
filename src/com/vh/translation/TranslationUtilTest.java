@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -15,7 +14,6 @@ public class TranslationUtilTest {
 
 	@Test
 	public void testReadWriteMap() throws IOException {
-		TranslationUtil.logger.setLevel(Level.OFF);
 		File mapFolder = new File("VH/branches/working/");
 		File[] listFiles = mapFolder.listFiles();
 		for (File originalFile : listFiles) {
