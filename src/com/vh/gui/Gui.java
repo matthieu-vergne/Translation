@@ -1,8 +1,6 @@
 package com.vh.gui;
 
 import java.awt.GridLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,24 +35,10 @@ public class Gui extends JFrame {
 		rightSplit.setRightComponent(toolsPanel);
 		rightSplit.setResizeWeight(0.5);
 
-		final JSplitPane rootSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT) {
-			@Override
-			public int getMaximumDividerLocation() {
-				System.out.println(super.getMaximumDividerLocation());
-				return getWidth() - rightSplit.getWidth();
-			}
-		};
-		rootSplit.setResizeWeight(1.0 / 3);
+		final JSplitPane rootSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		rootSplit.setLeftComponent(mapListPanel);
 		rootSplit.setRightComponent(rightSplit);
-		rootSplit.addPropertyChangeListener(
-				JSplitPane.DIVIDER_LOCATION_PROPERTY,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent pce) {
-						System.out.println(rootSplit.getLastDividerLocation());
-					}
-				});
+		rootSplit.setResizeWeight(1.0 / 3);
 
 		setLayout(new GridLayout(1, 1));
 		add(rootSplit);
