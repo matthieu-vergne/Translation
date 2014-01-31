@@ -33,8 +33,6 @@ import javax.swing.JTree;
 import javax.swing.JTree.DynamicUtilTreeNode;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
@@ -293,59 +291,54 @@ public class MapListPanel extends JPanel {
 	}
 
 	private void forceExecutorShutdownIfAppClosed(final ExecutorService executor) {
-		addAncestorListener(new AncestorListener() {
+		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
-			public void ancestorRemoved(AncestorEvent arg0) {
-				// do nothing
-			}
-
-			@Override
-			public void ancestorMoved(AncestorEvent arg0) {
-				// do nothing
-			}
-
-			@Override
-			public void ancestorAdded(AncestorEvent arg0) {
+			public void run() {
 				JFrame frame = (JFrame) SwingUtilities
 						.getWindowAncestor(MapListPanel.this);
-				frame.addWindowListener(new WindowListener() {
+				if (frame == null) {
+					SwingUtilities.invokeLater(this);
+				} else {
+					frame.addWindowListener(new WindowListener() {
 
-					@Override
-					public void windowOpened(WindowEvent arg0) {
-						// do nothing
-					}
+						@Override
+						public void windowOpened(WindowEvent arg0) {
+							// do nothing
+						}
 
-					@Override
-					public void windowIconified(WindowEvent arg0) {
-						// do nothing
-					}
+						@Override
+						public void windowIconified(WindowEvent arg0) {
+							// do nothing
+						}
 
-					@Override
-					public void windowDeiconified(WindowEvent arg0) {
-						// do nothing
-					}
+						@Override
+						public void windowDeiconified(WindowEvent arg0) {
+							// do nothing
+						}
 
-					@Override
-					public void windowDeactivated(WindowEvent arg0) {
-						// do nothing
-					}
+						@Override
+						public void windowDeactivated(WindowEvent arg0) {
+							// do nothing
+						}
 
-					@Override
-					public void windowClosing(WindowEvent arg0) {
-						executor.shutdownNow();
-					}
+						@Override
+						public void windowClosing(WindowEvent arg0) {
+							executor.shutdownNow();
+						}
 
-					@Override
-					public void windowClosed(WindowEvent arg0) {
-						// do nothing
-					}
+						@Override
+						public void windowClosed(WindowEvent arg0) {
+							// do nothing
+						}
 
-					@Override
-					public void windowActivated(WindowEvent arg0) {
-						// do nothing
-					}
-				});
+						@Override
+						public void windowActivated(WindowEvent arg0) {
+							// do nothing
+						}
+
+					});
+				}
 			}
 		});
 	}
