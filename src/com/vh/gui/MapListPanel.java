@@ -275,11 +275,11 @@ public class MapListPanel extends JPanel {
 							/*
 							 * Brake to avoid an overloading effect for fast
 							 * computers. Files can be loaded on demand anyway,
-							 * so it is not blocking.
+							 * so it is not blocking, only the display of the
+							 * translations advancement is delayed.
 							 */
 							Thread.sleep(10);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
 						}
 						loadFileIfNecessary(file);
 					} catch (IOException e) {
