@@ -81,7 +81,7 @@ public class MapListPanel extends JPanel {
 	private void refreshTree(File folder) {
 		currentFiles = retrieveFiles(folder);
 		tree.setModel(new JTree(currentFiles).getModel());
-		runFilesLoadingInBackground();
+		runFilesLoadingInBackground(currentFiles);
 	}
 
 	private JPanel buildFileChooserPanel() {
@@ -261,7 +261,7 @@ public class MapListPanel extends JPanel {
 		return tree;
 	}
 
-	private void runFilesLoadingInBackground() {
+	private void runFilesLoadingInBackground(File[] currentFiles) {
 		final ExecutorService executor = Executors.newSingleThreadExecutor();
 		for (final File file : currentFiles) {
 			executor.submit(new Runnable() {
