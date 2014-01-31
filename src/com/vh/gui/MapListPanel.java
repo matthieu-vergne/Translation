@@ -1,7 +1,9 @@
 package com.vh.gui;
 
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -18,10 +20,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.JTree.DynamicUtilTreeNode;
 import javax.swing.SwingUtilities;
@@ -46,25 +53,84 @@ public class MapListPanel extends JPanel {
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final MapContentPanel mapContentPanel;
 	private final JTree tree;
-	private final Map<File, TranslationMap> maps = Collections
+	private final Map<File, TranslationMap> loadedMaps = Collections
 			.synchronizedMap(new HashMap<File, TranslationMap>());
-	private final File[] files;
+	private File[] currentFiles;
 
 	public MapListPanel(MapContentPanel mapContentPanel) {
 		this.mapContentPanel = mapContentPanel;
 
-		files = retrieveFiles();
-
-		setLayout(new GridLayout(1, 1));
 		setBorder(new EtchedBorder());
-		tree = buildTreeComponent(files);
-		add(new JScrollPane(tree));
 
+		setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		add(buildFileChooserPanel(), constraints);
+
+		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weighty = 1;
+		tree = buildTreeComponent();
+		add(new JScrollPane(tree), constraints);
+
+		refreshTree(new File("."));
+	}
+
+	private void refreshTree(File folder) {
+		currentFiles = retrieveFiles(folder);
+		tree.setModel(new JTree(currentFiles).getModel());
 		runFilesLoadingInBackground();
 	}
 
-	private File[] retrieveFiles() {
-		File rootFolder = new File("VH/branches/working");
+	private JPanel buildFileChooserPanel() {
+		final JTextField folderPathField = new JTextField();
+
+		JButton openButton = new JButton(new AbstractAction("Browse") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String path = folderPathField.getText();
+				JFileChooser fileChooser = new JFileChooser(new File(path
+						.isEmpty() ? "." : path));
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.setFileHidingEnabled(true);
+				fileChooser.setMultiSelectionEnabled(false);
+				int answer = fileChooser.showDialog(MapListPanel.this, "Open");
+				if (answer == JFileChooser.APPROVE_OPTION) {
+					File folder = fileChooser.getSelectedFile();
+					String fullPath = folder.getPath();
+					try {
+						String localPath = new File(".").getCanonicalPath();
+						fullPath = fullPath.replaceAll(
+								"^" + Pattern.quote(localPath) + "/?", "");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					folderPathField.setText(fullPath);
+					refreshTree(folder);
+				} else {
+
+				}
+			}
+		});
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		panel.add(openButton, constraints);
+		constraints.gridx = 0;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		panel.add(folderPathField, constraints);
+		return panel;
+	}
+
+	private File[] retrieveFiles(File rootFolder) {
 		File[] files = rootFolder.listFiles(new FileFilter() {
 
 			@Override
@@ -73,17 +139,23 @@ public class MapListPanel extends JPanel {
 						&& file.getName().startsWith("Map");
 			}
 		});
-		Arrays.sort(files, new Comparator<File>() {
-			@Override
-			public int compare(File f1, File f2) {
-				return f1.getName().compareToIgnoreCase(f2.getName());
-			}
-		});
+		if (files == null) {
+			files = new File[0];
+		} else if (files.length == 0) {
+			// nothing to sort
+		} else {
+			Arrays.sort(files, new Comparator<File>() {
+				@Override
+				public int compare(File f1, File f2) {
+					return f1.getName().compareToIgnoreCase(f2.getName());
+				}
+			});
+		}
 		return files;
 	}
 
-	private JTree buildTreeComponent(File[] files) {
-		final JTree tree = new JTree(files);
+	private JTree buildTreeComponent() {
+		final JTree tree = new JTree(new Object[0]);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		final TreeCellRenderer defaultRenderer = tree.getCellRenderer();
@@ -106,7 +178,7 @@ public class MapListPanel extends JPanel {
 					File file = (File) value;
 					value = file.getName();
 					TranslationMap map;
-					map = maps.get(file);
+					map = loadedMaps.get(file);
 					int remaining = -1;
 					if (map == null) {
 						value += " (loading)";
@@ -193,12 +265,22 @@ public class MapListPanel extends JPanel {
 
 	private void runFilesLoadingInBackground() {
 		final ExecutorService executor = Executors.newSingleThreadExecutor();
-		for (final File file : files) {
+		for (final File file : currentFiles) {
 			executor.submit(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
+						try {
+							/*
+							 * Brake to avoid an overloading effect for fast
+							 * computers. Files can be loaded on demand anyway,
+							 * so it is not blocking.
+							 */
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 						loadFileIfNecessary(file);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -269,19 +351,19 @@ public class MapListPanel extends JPanel {
 	}
 
 	private void loadFileIfNecessary(final File file) throws IOException {
-		synchronized (maps) {
-			if (maps.containsKey(file)) {
+		synchronized (loadedMaps) {
+			if (loadedMaps.containsKey(file)) {
 				return;
 			} else {
 				logger.info("Loading " + file.getName() + "...");
-				maps.put(file, TranslationUtil.readMap(file));
+				loadedMaps.put(file, TranslationUtil.readMap(file));
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
 						logger.info("Refreshing...");
 						TreeModel model = tree.getModel();
-						int index = Arrays.binarySearch(files, file);
+						int index = Arrays.binarySearch(currentFiles, file);
 						DynamicUtilTreeNode node = (DynamicUtilTreeNode) model
 								.getChild(model.getRoot(), index);
 						model.valueForPathChanged(new TreePath(node.getPath()),
@@ -294,6 +376,6 @@ public class MapListPanel extends JPanel {
 
 	private void displayContentOf(File file) throws IOException {
 		loadFileIfNecessary(file);
-		mapContentPanel.setMap(maps.get(file));
+		mapContentPanel.setMap(loadedMaps.get(file));
 	}
 }
