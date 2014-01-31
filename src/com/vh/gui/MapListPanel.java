@@ -45,6 +45,8 @@ import com.vh.translation.TranslationMap;
 import com.vh.translation.TranslationUtil;
 import com.vh.util.LoggerConfiguration;
 
+// TODO make the current folder persistent in an INI file
+// TODO save modifications (manage CTRL+S shortcut)
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 
