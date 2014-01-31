@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
@@ -13,8 +12,8 @@ public class Gui extends JFrame {
 
 	private final MapListPanel mapListPanel;
 	private final MapContentPanel mapContentPanel;
-	private final JLabel mapEntryPanel;
-	private final JLabel toolsPanel;
+	private final MapEntryPanel mapEntryPanel;
+	private final MapToolsPanel toolsPanel;
 
 	public Gui() {
 		setTitle("VH Translation Tool");
@@ -23,8 +22,8 @@ public class Gui extends JFrame {
 
 		mapContentPanel = new MapContentPanel();
 		mapListPanel = new MapListPanel(mapContentPanel);
-		mapEntryPanel = new JLabel("Entry");
-		toolsPanel = new JLabel("Tools");
+		mapEntryPanel = new MapEntryPanel();
+		toolsPanel = new MapToolsPanel();
 
 		final JSplitPane middleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		middleSplit.setLeftComponent(mapContentPanel);
