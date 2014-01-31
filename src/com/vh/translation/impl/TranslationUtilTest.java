@@ -1,4 +1,4 @@
-package com.vh.translation;
+package com.vh.translation.impl;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import com.vh.translation.impl.SimpleTranslationMap;
+import com.vh.translation.TranslationMap;
 
 public class TranslationUtilTest {
 

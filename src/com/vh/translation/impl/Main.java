@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import com.vh.translation.TranslationMap;
-import com.vh.translation.TranslationUtil;
 
 public class Main {
 

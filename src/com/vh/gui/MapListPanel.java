@@ -42,7 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.vh.translation.TranslationEntry;
 import com.vh.translation.TranslationMap;
-import com.vh.translation.TranslationUtil;
+import com.vh.translation.impl.TranslationUtil;
 import com.vh.util.LoggerConfiguration;
 
 // TODO make the current folder persistent in an INI file

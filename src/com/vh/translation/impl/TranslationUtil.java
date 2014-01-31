@@ -1,4 +1,4 @@
-package com.vh.translation;
+package com.vh.translation.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.vh.translation.impl.SimpleTranslationEntry;
-import com.vh.translation.impl.SimpleTranslationMap;
+import com.vh.translation.TranslationEntry;
+import com.vh.translation.TranslationMap;
 import com.vh.util.LoggerConfiguration;
 
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'
