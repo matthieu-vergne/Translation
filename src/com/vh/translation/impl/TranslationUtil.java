@@ -13,6 +13,7 @@ import com.vh.translation.TranslationEntry;
 import com.vh.translation.TranslationMap;
 import com.vh.util.LoggerConfiguration;
 
+// TODO find original content in translated versions
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'
 // TODO replace all "..." (3) by "…" (1)
 // TODO identify all the "\." in the original version and place them in the translated version
