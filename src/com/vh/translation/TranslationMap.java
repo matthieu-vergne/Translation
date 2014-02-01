@@ -32,4 +32,19 @@ public interface TranslationMap extends Iterable<TranslationEntry> {
 	 * @return the {@link File} on which the {@link TranslationMap} is based on
 	 */
 	public File getBaseFile();
+
+	/**
+	 * 
+	 * @param index
+	 *            the index of the {@link TranslationEntry}
+	 * @return the corresponding {@link TranslationEntry}
+	 */
+	public TranslationEntry getEntry(int index);
+
+	/**
+	 * 
+	 * @return the number of {@link TranslationEntry}s in this
+	 *         {@link TranslationMap}
+	 */
+	public int size();
 }

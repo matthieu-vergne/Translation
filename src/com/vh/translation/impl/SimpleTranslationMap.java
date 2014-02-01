@@ -20,6 +20,16 @@ public class SimpleTranslationMap implements TranslationMap {
 	}
 
 	@Override
+	public TranslationEntry getEntry(int index) {
+		return entries.get(index);
+	}
+
+	@Override
+	public int size() {
+		return entries.size();
+	}
+
+	@Override
 	public Iterator<TranslationEntry> iterator() {
 		return entries.iterator();
 	}

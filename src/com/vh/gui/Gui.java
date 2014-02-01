@@ -20,9 +20,9 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setMinimumSize(new Dimension(500, 500));
 
-		mapContentPanel = new MapContentPanel();
-		mapListPanel = new MapListPanel(mapContentPanel);
 		mapEntryPanel = new MapEntryPanel();
+		mapContentPanel = new MapContentPanel(mapEntryPanel);
+		mapListPanel = new MapListPanel(mapContentPanel);
 		toolsPanel = new MapToolsPanel();
 
 		final JSplitPane middleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
