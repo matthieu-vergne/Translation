@@ -18,7 +18,7 @@ public class Gui extends JFrame {
 	public Gui() {
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setMinimumSize(new Dimension(500, 500));
+		setMinimumSize(new Dimension(800, 500));
 
 		mapEntryPanel = new MapEntryPanel();
 		mapContentPanel = new MapContentPanel(mapEntryPanel);
