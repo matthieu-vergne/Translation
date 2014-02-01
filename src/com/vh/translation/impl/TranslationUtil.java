@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.vh.translation.TranslationEntry;
 import com.vh.translation.TranslationMap;
@@ -31,13 +29,8 @@ public class TranslationUtil {
 		SimpleTranslationMap map = new SimpleTranslationMap();
 		map.setBaseFile(mapFile);
 
-		Pattern advicePattern = Pattern
-				.compile("^# ADVICE : ([0-9]+) char limit(?: \\(([0-9]+) if face\\))?$");
-
 		BufferedReader reader = new BufferedReader(new FileReader(mapFile));
 		String line;
-		String content = "";
-		SimpleTranslationEntry currentEntry = null;
 		boolean inUnusedEntries = false;
 		int lineCounter = 0;
 		int markSize = 100;
@@ -52,78 +45,55 @@ public class TranslationUtil {
 				inUnusedEntries = true;
 				logger.warning("Remaining entries are unused");
 			} else if (line.equals("# TEXT STRING")) {
-				currentEntry = new SimpleTranslationEntry();
-				currentEntry.setUnused(inUnusedEntries);
-				logger.info("Building new entry...");
-			} else if (line.equals("# UNTRANSLATED")) {
-				currentEntry.setMarkedAsUntranslated(true);
-				logger.info("Marked as untranslated entry");
-			} else if (line.startsWith("# CONTEXT : ")) {
-				String context = line.substring("# CONTEXT : ".length());
-				currentEntry.setContext(context);
-				logger.info("Context: " + context);
-			} else if (line.startsWith("# ADVICE : ")) {
-				Matcher matcher = advicePattern.matcher(line);
-				if (matcher.find()) {
-					int limit = Integer.parseInt(matcher.group(1));
-					currentEntry.setCharLimitWithoutFace(limit);
-					logger.info("Char limit: " + limit);
-					if (matcher.group(2) != null) {
-						limit = Integer.parseInt(matcher.group(2));
-						currentEntry.setCharLimitWithFace(limit);
-						logger.info("Char limit with face: " + limit);
-					} else {
-						// no char limit with face
-					}
-				} else {
-					throw new ParsingException(mapFile, lineCounter,
-							"Unexpected format: " + line);
-				}
-			} else if (currentEntry != null && !line.startsWith("#")) {
-				logger.info("Retrieving content...");
+				logger.info("Retrieving entry content...");
 				reader.reset();
 				StringBuilder sb = new StringBuilder();
 				boolean endReached = false;
 				boolean afterNewline = false;
+				boolean isClosing = false;
+				lineCounter--;
+				int subLineCounter = 1;
 				do {
 					int codePoint = reader.read();
 					char character = (char) codePoint;
-					if (afterNewline && character == '#') {
+					if (!isClosing && sb.toString().endsWith("# END STRING")) {
+						isClosing = true;
+						logger.finer("- CLOSING!");
+					} else if (isClosing && afterNewline) {
 						reader.reset();
 						endReached = true;
-						logger.info("X #");
+						logger.finer("- FINISHED!");
 					} else {
-						sb.appendCodePoint(codePoint);
-						reader.mark(markSize);
-						logger.info("- char: " + explicit(character));
+						if (isClosing) {
+							logger.finer("- pass: " + explicit(character));
+						} else {
+							sb.appendCodePoint(codePoint);
+							logger.finer("- write: " + explicit(character));
+						}
 					}
+					reader.mark(markSize);
+					subLineCounter += character == '\n' ? 1 : 0;
 					afterNewline = System.lineSeparator().contains(
 							"" + character);
 				} while (!endReached);
-				content = sb.toString();
-				content = content.substring(0, content.length()
-						- System.lineSeparator().length());
-				logger.info("Content retrieved: "
-						+ (content.trim().isEmpty() ? " empty" : System
-								.lineSeparator()
-								+ content
-								+ System.lineSeparator()));
-			} else if (line.equals("# TRANSLATION ")) {
-				currentEntry.setOriginalContent(content);
-				content = "";
-				logger.info("Content retrieved used for original");
-			} else if (line.equals("# END STRING")) {
-				currentEntry.setTranslationContent(content);
-				content = "";
-				logger.info("Content retrieved used for translation");
+				subLineCounter -= 2;
+				logger.info("Building new entry...");
+				SimpleTranslationEntry currentEntry;
+				try {
+					currentEntry = new SimpleTranslationEntry(sb.toString());
+				} catch (ParsingException e) {
+					throw new ParsingException(mapFile, lineCounter
+							+ e.getLine(), e);
+				}
+				currentEntry.setUnused(inUnusedEntries);
 				try {
 					map.getEntries().add(currentEntry);
 				} catch (NullPointerException e) {
 					throw new ParsingException(mapFile, lineCounter, e);
 				}
-				currentEntry = null;
-				logger.info("Entry built");
-			} else if (currentEntry == null && line.trim().isEmpty()) {
+				lineCounter += subLineCounter;
+				logger.info("Entry built.");
+			} else if (line.trim().isEmpty()) {
 				// empty line between entries, just ignore
 			} else {
 				throw new ParsingException(mapFile, lineCounter,
@@ -143,7 +113,7 @@ public class TranslationUtil {
 		return map;
 	}
 
-	private static Object explicit(char character) {
+	public static Object explicit(char character) {
 		return character == '\n' ? "\\n" : character == '\r' ? "\\r"
 				: character;
 	}
@@ -168,29 +138,7 @@ public class TranslationUtil {
 			} else {
 				// not the start of the unused section
 			}
-			writer.println("# TEXT STRING");
-			if (entry.isMarkedAsUntranslated()) {
-				writer.println("# UNTRANSLATED");
-			} else {
-				// do not write it
-			}
-			writer.println("# CONTEXT : " + entry.getContext());
-			if (entry.getCharLimit(false) != null
-					&& entry.getCharLimit(true) != null) {
-				writer.println("# ADVICE : " + entry.getCharLimit(false)
-						+ " char limit (" + entry.getCharLimit(true)
-						+ " if face)");
-			} else if (entry.getCharLimit(false) != null
-					&& entry.getCharLimit(true) == null) {
-				writer.println("# ADVICE : " + entry.getCharLimit(false)
-						+ " char limit");
-			} else {
-				// no advice
-			}
-			writer.println(entry.getOriginalVersion());
-			writer.println("# TRANSLATION ");
-			writer.println(entry.getTranslatedVersion());
-			writer.println("# END STRING");
+			writer.println(entry.getTextualVersion());
 			if (iterator.hasNext()) {
 				writer.println("");
 			} else {
@@ -202,12 +150,58 @@ public class TranslationUtil {
 
 	@SuppressWarnings("serial")
 	public static class ParsingException extends IllegalStateException {
+
+		private final File file;
+		private final int line;
+		private final String rawMessage;
+		private final Exception originalException;
+
 		public ParsingException(File file, int lineNumber, String message) {
 			super(file.getName() + ", line " + lineNumber + ": " + message);
+			this.file = file;
+			this.line = lineNumber;
+			this.rawMessage = message;
+			this.originalException = null;
 		}
 
 		public ParsingException(File file, int lineNumber, Exception e) {
 			super(file.getName() + ", line " + lineNumber, e);
+			this.file = file;
+			this.line = lineNumber;
+			this.rawMessage = null;
+			this.originalException = e;
+		}
+
+		public ParsingException(int lineNumber, String message) {
+			super("Line " + lineNumber + ": " + message);
+			this.file = null;
+			this.line = lineNumber;
+			this.rawMessage = message;
+			this.originalException = null;
+		}
+
+		public ParsingException(int lineNumber, Exception e) {
+			super("Line " + lineNumber, e);
+			this.file = null;
+			this.line = lineNumber;
+			this.rawMessage = null;
+			this.originalException = e;
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public int getLine() {
+			return line;
+		}
+
+		public String getRawMessage() {
+			return rawMessage;
+		}
+
+		public Exception getOriginalException() {
+			return originalException;
 		}
 	}
 }

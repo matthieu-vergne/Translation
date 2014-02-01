@@ -56,4 +56,11 @@ public interface TranslationEntry {
 	 * @return the English content
 	 */
 	public String getTranslatedVersion();
+
+	/**
+	 * 
+	 * @return the textual version of thie {@link TranslationEntry}, as it
+	 *         should appear in a map file.
+	 */
+	public String getTextualVersion();
 }
