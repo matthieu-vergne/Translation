@@ -1,4 +1,4 @@
-package com.vh.translation.impl;
+package fr.sazaju.vheditor.translation.impl;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import com.vh.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationMap;
 
 public class TranslationUtilTest {
 

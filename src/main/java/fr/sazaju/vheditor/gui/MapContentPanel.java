@@ -1,4 +1,4 @@
-package com.vh.gui;
+package fr.sazaju.vheditor.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,8 +13,8 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.io.FileUtils;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
 
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {

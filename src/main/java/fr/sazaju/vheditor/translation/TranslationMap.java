@@ -1,4 +1,4 @@
-package com.vh.translation;
+package fr.sazaju.vheditor.translation;
 
 import java.io.File;
 import java.util.Iterator;

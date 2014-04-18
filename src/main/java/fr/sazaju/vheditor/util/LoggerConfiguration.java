@@ -1,4 +1,4 @@
-package com.vh.util;
+package fr.sazaju.vheditor.util;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;

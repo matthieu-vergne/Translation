@@ -1,4 +1,4 @@
-package com.vh.translation.impl;
+package fr.sazaju.vheditor.translation.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,9 +9,9 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.translation.TranslationMap;
-import com.vh.util.LoggerConfiguration;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.util.LoggerConfiguration;
 
 // TODO find original content in translated versions
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'

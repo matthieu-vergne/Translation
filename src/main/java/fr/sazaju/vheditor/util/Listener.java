@@ -1,4 +1,4 @@
-package com.vh.util;
+package fr.sazaju.vheditor.util;
 
 /**
  * Generic {@link Listener}.

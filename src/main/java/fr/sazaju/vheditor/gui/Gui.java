@@ -1,4 +1,4 @@
-package com.vh.gui;
+package fr.sazaju.vheditor.gui;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;

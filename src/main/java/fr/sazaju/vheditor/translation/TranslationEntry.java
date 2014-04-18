@@ -1,4 +1,4 @@
-package com.vh.translation;
+package fr.sazaju.vheditor.translation;
 
 /**
  * A {@link TranslationEntry} describes a single entry to translate.

@@ -1,12 +1,12 @@
-package com.vh.translation.impl;
+package fr.sazaju.vheditor.translation.impl;
 
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
 
 // TODO adapt parsing capabilities to mistakes in the files
 public class SimpleTranslationMap implements TranslationMap {

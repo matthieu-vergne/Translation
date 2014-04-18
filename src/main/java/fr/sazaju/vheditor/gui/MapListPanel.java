@@ -1,4 +1,4 @@
-package com.vh.gui;
+package fr.sazaju.vheditor.gui;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -40,10 +40,10 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.translation.TranslationMap;
-import com.vh.translation.impl.TranslationUtil;
-import com.vh.util.LoggerConfiguration;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.util.LoggerConfiguration;
 
 // TODO make the current folder persistent in an INI file
 // TODO save modifications (manage CTRL+S shortcut)

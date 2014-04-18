@@ -1,4 +1,4 @@
-package com.vh.translation.impl;
+package fr.sazaju.vheditor.translation.impl;
 
 import static org.junit.Assert.*;
 

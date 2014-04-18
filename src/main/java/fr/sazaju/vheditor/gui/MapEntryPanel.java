@@ -1,4 +1,4 @@
-package com.vh.gui;
+package fr.sazaju.vheditor.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.util.Listener;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.util.Listener;
 
 @SuppressWarnings("serial")
 public class MapEntryPanel extends JPanel {

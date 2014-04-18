@@ -1,4 +1,4 @@
-package com.vh.translation.impl;
+package fr.sazaju.vheditor.translation.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import com.vh.translation.TranslationEntry;
-import com.vh.translation.impl.TranslationUtil.ParsingException;
-import com.vh.util.LoggerConfiguration;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.impl.TranslationUtil.ParsingException;
+import fr.sazaju.vheditor.util.LoggerConfiguration;
 
 public class SimpleTranslationEntry implements TranslationEntry {
 

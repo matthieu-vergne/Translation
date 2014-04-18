@@ -1,4 +1,4 @@
-package com.vh.gui;
+package fr.sazaju.vheditor.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
