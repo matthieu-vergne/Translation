@@ -31,79 +31,82 @@ public class TranslationUtil {
 		map.setBaseFile(mapFile);
 
 		BufferedReader reader = new BufferedReader(new FileReader(mapFile));
-		String line;
-		boolean inUnusedEntries = false;
-		int lineCounter = 0;
-		int markSize = 100;
-		while ((line = reader.readLine()) != null) {
-			lineCounter++;
-			if (line.startsWith("# RPGMAKER TRANS PATCH FILE VERSION ")) {
-				String[] split = line.split(" ");
-				map.setRpgMakerTransPatchVersion(split[split.length - 1]);
-				logger.info("RPG Maker Trans Patch version found: "
-						+ map.getRpgMakerTransPatchVersion());
-			} else if (line.equals("# UNUSED TRANSLATABLES")) {
-				inUnusedEntries = true;
-				logger.warning("Remaining entries are unused");
-			} else if (line.equals("# TEXT STRING")) {
-				logger.info("Retrieving entry content...");
-				reader.reset();
-				StringBuilder sb = new StringBuilder();
-				boolean endReached = false;
-				boolean afterNewline = false;
-				boolean isClosing = false;
-				lineCounter--;
-				int subLineCounter = 1;
-				do {
-					int codePoint = reader.read();
-					char character = (char) codePoint;
-					if (!isClosing && sb.toString().endsWith("# END STRING")) {
-						isClosing = true;
-						logger.finer("- CLOSING!");
-					} else if (isClosing && afterNewline) {
-						reader.reset();
-						endReached = true;
-						logger.finer("- FINISHED!");
-					} else {
-						if (isClosing) {
-							logger.finer("- pass: " + explicit(character));
+		try {
+			String line;
+			boolean inUnusedEntries = false;
+			int lineCounter = 0;
+			int markSize = 100;
+			while ((line = reader.readLine()) != null) {
+				lineCounter++;
+				if (line.startsWith("# RPGMAKER TRANS PATCH FILE VERSION ")) {
+					String[] split = line.split(" ");
+					map.setRpgMakerTransPatchVersion(split[split.length - 1]);
+					logger.info("RPG Maker Trans Patch version found: "
+							+ map.getRpgMakerTransPatchVersion());
+				} else if (line.equals("# UNUSED TRANSLATABLES")) {
+					inUnusedEntries = true;
+					logger.warning("Remaining entries are unused");
+				} else if (line.equals("# TEXT STRING")) {
+					logger.info("Retrieving entry content...");
+					reader.reset();
+					StringBuilder sb = new StringBuilder();
+					boolean endReached = false;
+					boolean afterNewline = false;
+					boolean isClosing = false;
+					lineCounter--;
+					int subLineCounter = 1;
+					do {
+						int codePoint = reader.read();
+						char character = (char) codePoint;
+						if (!isClosing
+								&& sb.toString().endsWith("# END STRING")) {
+							isClosing = true;
+							logger.finer("- CLOSING!");
+						} else if (isClosing && afterNewline) {
+							reader.reset();
+							endReached = true;
+							logger.finer("- FINISHED!");
 						} else {
-							sb.appendCodePoint(codePoint);
-							logger.finer("- write: " + explicit(character));
+							if (isClosing) {
+								logger.finer("- pass: " + explicit(character));
+							} else {
+								sb.appendCodePoint(codePoint);
+								logger.finer("- write: " + explicit(character));
+							}
 						}
+						reader.mark(markSize);
+						subLineCounter += character == '\n' ? 1 : 0;
+						afterNewline = System.lineSeparator().contains(
+								"" + character);
+					} while (!endReached);
+					subLineCounter -= 2;
+					logger.info("Building new entry...");
+					SimpleTranslationEntry currentEntry;
+					try {
+						currentEntry = new SimpleTranslationEntry(sb.toString());
+					} catch (ParsingException e) {
+						throw new ParsingException(mapFile, lineCounter
+								+ e.getLine(), e);
 					}
-					reader.mark(markSize);
-					subLineCounter += character == '\n' ? 1 : 0;
-					afterNewline = System.lineSeparator().contains(
-							"" + character);
-				} while (!endReached);
-				subLineCounter -= 2;
-				logger.info("Building new entry...");
-				SimpleTranslationEntry currentEntry;
-				try {
-					currentEntry = new SimpleTranslationEntry(sb.toString());
-				} catch (ParsingException e) {
-					throw new ParsingException(mapFile, lineCounter
-							+ e.getLine(), e);
+					currentEntry.setUnused(inUnusedEntries);
+					try {
+						map.getEntries().add(currentEntry);
+					} catch (NullPointerException e) {
+						throw new ParsingException(mapFile, lineCounter, e);
+					}
+					lineCounter += subLineCounter;
+					logger.info("Entry built.");
+				} else if (line.trim().isEmpty()) {
+					// empty line between entries, just ignore
+				} else {
+					throw new ParsingException(mapFile, lineCounter,
+							" Unrecognised line: " + line);
 				}
-				currentEntry.setUnused(inUnusedEntries);
-				try {
-					map.getEntries().add(currentEntry);
-				} catch (NullPointerException e) {
-					throw new ParsingException(mapFile, lineCounter, e);
-				}
-				lineCounter += subLineCounter;
-				logger.info("Entry built.");
-			} else if (line.trim().isEmpty()) {
-				// empty line between entries, just ignore
-			} else {
-				throw new ParsingException(mapFile, lineCounter,
-						" Unrecognised line: " + line);
+				reader.mark(markSize);
 			}
-			reader.mark(markSize);
+		} finally {
+			reader.close();
 		}
-
-		reader.close();
 
 		if (map.getRpgMakerTransPatchVersion() == null) {
 			logger.warning("No RPG Maker Trans Patch found. Not blocking but it could be a problem.");
