@@ -155,6 +155,75 @@ public class TranslationUtil {
 		writer.close();
 	}
 
+	public static String map2html(SimpleTranslationMap map) {
+		StringBuilder builder = new StringBuilder();
+		String version = map.getRpgMakerTransPatchVersion();
+		if (version != null) {
+			builder.append("# RPGMAKER TRANS PATCH FILE VERSION " + version);
+			builder.append("<br/>");
+		} else {
+			// no version to write
+		}
+		boolean unusedSection = false;
+		Iterator<TranslationEntry> iterator = map.iterator();
+		int entryId = 0;
+		while (iterator.hasNext()) {
+			TranslationEntry entry = iterator.next();
+			if (!unusedSection && entry.isUnused()) {
+				builder.append("# UNUSED TRANSLATABLES");
+				builder.append("<br/>");
+				unusedSection = true;
+			} else {
+				// not the start of the unused section
+			}
+			{
+				builder.append("<a name='" + entryId + "'/>");
+				builder.append("# TEXT STRING");
+				builder.append("<br/>");
+				if (entry.isMarkedAsUntranslated()) {
+					builder.append("# UNTRANSLATED");
+					builder.append("<br/>");
+				} else {
+					// do not write it
+				}
+				builder.append("# CONTEXT : " + entry.getContext());
+				builder.append("<br/>");
+				if (entry.getCharLimit(false) != null
+						&& entry.getCharLimit(true) != null) {
+					builder.append("# ADVICE : " + entry.getCharLimit(false)
+							+ " char limit (" + entry.getCharLimit(true)
+							+ " if face)");
+					builder.append("<br/>");
+				} else if (entry.getCharLimit(false) != null
+						&& entry.getCharLimit(true) == null) {
+					builder.append("# ADVICE : " + entry.getCharLimit(false)
+							+ " char limit");
+					builder.append("<br/>");
+				} else {
+					// no advice
+				}
+				builder.append("<pre>");
+				builder.append(entry.getOriginalVersion());
+				builder.append("</pre>");
+				builder.append("# TRANSLATION ");
+				builder.append("<br/>");
+				builder.append("<textarea rows='4' style='resize:none'>");
+				builder.append(entry.getTranslatedVersion());
+				builder.append("</textarea>");
+				builder.append("<br/>");
+				builder.append("# END STRING");
+			}
+			builder.append("<br/>");
+			if (iterator.hasNext()) {
+				builder.append("<br/>");
+			} else {
+				// EOF
+			}
+			entryId++;
+		}
+		return builder.toString();
+	}
+
 	@SuppressWarnings("serial")
 	public static class ParsingException extends IllegalStateException {
 

@@ -2,32 +2,28 @@ package fr.sazaju.vheditor.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.File;
-import java.io.IOException;
 
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
-
-import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationMap;
+import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {
 
-	private final JTextArea mapContentArea;
+	private final JEditorPane mapContentArea;
 	private TranslationMap map;
 	private final JLabel mapTitleField;
-	private final MapEntryPanel entryPanel;
 	private int entryIndex = 0;
 
-	public MapContentPanel(final MapEntryPanel entryPanel) {
-		this.entryPanel = entryPanel;
-		configureListeners(entryPanel);
+	public MapContentPanel(final MapToolsPanel toolsPanel) {
+		configureListeners(toolsPanel);
 
 		setBorder(new EtchedBorder());
 
@@ -44,53 +40,55 @@ public class MapContentPanel extends JPanel {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
-		mapContentArea = new JTextArea();
+		mapContentArea = new JEditorPane();
+		mapContentArea.setContentType("text/html");
+		mapContentArea.setEditable(false);
 		add(new JScrollPane(mapContentArea), constraints);
 	}
 
-	private void configureListeners(final MapEntryPanel entryPanel) {
-		// TODO position the caret so we can see the entry
-		entryPanel.addListener(new MapEntryPanel.NextEntryListener() {
+	private void configureListeners(final MapToolsPanel toolsPanel) {
+		// TODO retrieve current index from current view
+		toolsPanel.addListener(new MapToolsPanel.NextEntryListener() {
 
 			@Override
 			public void eventGenerated() {
 				if (entryIndex < map.size() - 1) {
 					entryIndex++;
-					entryPanel.setEntry(map.getEntry(entryIndex));
+					mapContentArea.scrollToReference("" + entryIndex);
 				} else {
 					// no more
 				}
 			}
 		});
-		entryPanel.addListener(new MapEntryPanel.PreviousEntryListener() {
+		toolsPanel.addListener(new MapToolsPanel.PreviousEntryListener() {
 
 			@Override
 			public void eventGenerated() {
 				if (entryIndex > 0) {
 					entryIndex--;
-					entryPanel.setEntry(map.getEntry(entryIndex));
+					mapContentArea.scrollToReference("" + entryIndex);
 				} else {
 					// no more
 				}
 			}
 		});
-		entryPanel.addListener(new MapEntryPanel.FirstEntryListener() {
+		toolsPanel.addListener(new MapToolsPanel.FirstEntryListener() {
 
 			@Override
 			public void eventGenerated() {
 				entryIndex = 0;
-				entryPanel.setEntry(map.getEntry(entryIndex));
+				mapContentArea.scrollToReference("" + entryIndex);
 			}
 		});
-		entryPanel.addListener(new MapEntryPanel.LastEntryListener() {
+		toolsPanel.addListener(new MapToolsPanel.LastEntryListener() {
 
 			@Override
 			public void eventGenerated() {
 				entryIndex = map.size() - 1;
-				entryPanel.setEntry(map.getEntry(entryIndex));
+				mapContentArea.scrollToReference("" + entryIndex);
 			}
 		});
-		entryPanel.addListener(new MapEntryPanel.UntranslatedEntryListener() {
+		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
 
 			@Override
 			public void eventGenerated() {
@@ -102,7 +100,7 @@ public class MapContentPanel extends JPanel {
 						continue;
 					} else {
 						entryIndex = actualIndex;
-						entryPanel.setEntry(entry);
+						mapContentArea.scrollToReference("" + entryIndex);
 						break;
 					}
 				}
@@ -111,18 +109,11 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public void setMap(TranslationMap map) {
-		String content;
-		File mapFile = map.getBaseFile();
-		try {
-			content = FileUtils.readFileToString(mapFile);
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-		mapTitleField.setText(mapFile.getName());
-		mapContentArea.setText(content);
+		mapTitleField.setText(map.getBaseFile().getName());
+		mapContentArea.setText(TranslationUtil
+				.map2html((SimpleTranslationMap) map));
 		mapContentArea.setCaretPosition(0);
 		this.map = map;
-		entryPanel.setEntry(map.iterator().next());
 	}
 
 	public TranslationMap getMap() {

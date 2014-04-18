@@ -1,9 +1,12 @@
 package fr.sazaju.vheditor.gui;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
@@ -12,7 +15,6 @@ public class Gui extends JFrame {
 
 	private final MapListPanel mapListPanel;
 	private final MapContentPanel mapContentPanel;
-	private final MapEntryPanel mapEntryPanel;
 	private final MapToolsPanel toolsPanel;
 
 	public Gui() {
@@ -20,25 +22,25 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setMinimumSize(new Dimension(800, 500));
 
-		mapEntryPanel = new MapEntryPanel();
-		mapContentPanel = new MapContentPanel(mapEntryPanel);
-		mapListPanel = new MapListPanel(mapContentPanel);
 		toolsPanel = new MapToolsPanel();
+		mapContentPanel = new MapContentPanel(toolsPanel);
+		mapListPanel = new MapListPanel(mapContentPanel);
 
-		final JSplitPane middleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		middleSplit.setLeftComponent(mapContentPanel);
-		middleSplit.setRightComponent(mapEntryPanel);
-		middleSplit.setResizeWeight(0.5);
-
-		final JSplitPane rightSplit = new JSplitPane(
-				JSplitPane.HORIZONTAL_SPLIT);
-		rightSplit.setLeftComponent(middleSplit);
-		rightSplit.setRightComponent(toolsPanel);
-		rightSplit.setResizeWeight(0.5);
+		JPanel translationPanel = new JPanel();
+		translationPanel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		translationPanel.add(toolsPanel, constraints);
+		constraints.gridx = 0;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		translationPanel.add(mapContentPanel, constraints);
 
 		final JSplitPane rootSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		rootSplit.setLeftComponent(mapListPanel);
-		rootSplit.setRightComponent(rightSplit);
+		rootSplit.setRightComponent(translationPanel);
 		rootSplit.setResizeWeight(1.0 / 3);
 
 		setLayout(new GridLayout(1, 1));
