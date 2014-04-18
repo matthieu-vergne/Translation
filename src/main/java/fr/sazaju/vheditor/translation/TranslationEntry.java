@@ -57,6 +57,7 @@ public interface TranslationEntry {
 	 */
 	public String getTranslatedVersion();
 
+	// FIXME not generalizable, remove
 	/**
 	 * 
 	 * @return the textual version of thie {@link TranslationEntry}, as it
