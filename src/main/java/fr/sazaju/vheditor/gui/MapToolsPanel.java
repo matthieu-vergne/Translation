@@ -31,8 +31,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		previous.setToolTipText("Go to previous entry");
-		
+		previous.setToolTipText("Go to previous entry.");
+
 		JButton next = new JButton(new AbstractAction(">") {
 
 			@Override
@@ -46,8 +46,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		next.setToolTipText("Go to next entry");
-		
+		next.setToolTipText("Go to next entry.");
+
 		JButton first = new JButton(new AbstractAction("|<") {
 
 			@Override
@@ -61,8 +61,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		first.setToolTipText("Go to first entry");
-		
+		first.setToolTipText("Go to first entry.");
+
 		JButton last = new JButton(new AbstractAction(">|") {
 
 			@Override
@@ -76,8 +76,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		last.setToolTipText("Go to last entry");
-		
+		last.setToolTipText("Go to last entry.");
+
 		JButton untranslated = new JButton(new AbstractAction("Jap only") {
 
 			@Override
@@ -91,8 +91,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		untranslated.setToolTipText("Go to next untranslated entry");
-		
+		untranslated.setToolTipText("Go to next untranslated entry.");
+
 		setBorder(new EtchedBorder());
 		setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
