@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
+// TODO manage persistent config file (VH folder, ...)
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
 
