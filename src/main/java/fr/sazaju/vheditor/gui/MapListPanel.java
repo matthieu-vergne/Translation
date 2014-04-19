@@ -50,8 +50,10 @@ import fr.sazaju.vheditor.util.LoggerConfiguration;
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 
+	private static final String MAP_DIR = "mapDir";
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final MapContentPanel mapContentPanel;
+	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
 	private final Map<File, TranslationMap> loadedMaps = Collections
 			.synchronizedMap(new HashMap<File, TranslationMap>());
@@ -77,17 +79,18 @@ public class MapListPanel extends JPanel {
 		tree = buildTreeComponent();
 		add(new JScrollPane(tree), constraints);
 
-		refreshTree(new File("."));
+		refreshTree(new File(Gui.config.getProperty(MAP_DIR, ".")));
 	}
 
 	private void refreshTree(File folder) {
+		Gui.config.setProperty(MAP_DIR, folder.toString());
+		folderPathField.setText(folder.toString());
 		currentFiles = retrieveFiles(folder);
 		tree.setModel(new JTree(currentFiles).getModel());
 		runFilesLoadingInBackground(currentFiles);
 	}
 
 	private JPanel buildFileChooserPanel() {
-		final JTextField folderPathField = new JTextField();
 
 		JButton openButton = new JButton(new AbstractAction("Browse") {
 
@@ -110,8 +113,7 @@ public class MapListPanel extends JPanel {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					folderPathField.setText(fullPath);
-					refreshTree(folder);
+					refreshTree(new File(fullPath));
 				} else {
 
 				}
