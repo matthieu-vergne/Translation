@@ -2,9 +2,13 @@ package fr.sazaju.vheditor.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
@@ -13,6 +17,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.SimpleTranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.util.LoggerConfiguration;
 
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {
@@ -21,6 +26,7 @@ public class MapContentPanel extends JPanel {
 	private TranslationMap map;
 	private final JLabel mapTitleField;
 	private int entryIndex = 0;
+	public Logger logger = LoggerConfiguration.getSimpleLogger();
 
 	public MapContentPanel(final MapToolsPanel toolsPanel) {
 		configureListeners(toolsPanel);
@@ -104,6 +110,33 @@ public class MapContentPanel extends JPanel {
 						break;
 					}
 				}
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.SaveMapListener() {
+
+			@Override
+			public void eventGenerated() {
+				File targetFile = map.getBaseFile();
+				logger.info("Saving map to " + targetFile + "...");
+				try {
+					TranslationUtil.writeMap((SimpleTranslationMap) map,
+							targetFile);
+					logger.info("Map saved.");
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(MapContentPanel.this,
+							"The modifications could not be saved to "
+									+ targetFile
+									+ ". Look at the log for more details.");
+				}
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
+
+			@Override
+			public void eventGenerated() {
+				// FIXME implement
+				throw new UnsupportedOperationException("Not implmented yet.");
 			}
 		});
 	}
