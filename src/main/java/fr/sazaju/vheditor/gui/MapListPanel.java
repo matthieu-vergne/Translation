@@ -79,7 +79,7 @@ public class MapListPanel extends JPanel {
 		tree = buildTreeComponent();
 		add(new JScrollPane(tree), constraints);
 
-		refreshTree(new File(Gui.config.getProperty(MAP_DIR, ".")));
+		refreshTree(new File(Gui.config.getProperty(MAP_DIR, "")));
 	}
 
 	private void refreshTree(File folder) {
