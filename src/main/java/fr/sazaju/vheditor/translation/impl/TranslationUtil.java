@@ -1,5 +1,8 @@
 package fr.sazaju.vheditor.translation.impl;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +12,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import fr.sazaju.vheditor.gui.TranslationArea;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.util.LoggerConfiguration;
@@ -222,6 +230,88 @@ public class TranslationUtil {
 			entryId++;
 		}
 		return builder.toString();
+	}
+
+	public static void fillPanel(SimpleTranslationMap map, JPanel panel) {
+		panel.removeAll();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.insets = new Insets(0, 0, 0, 0);
+
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.weightx = 1;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+
+		String version = map.getRpgMakerTransPatchVersion();
+		if (version != null) {
+			panel.add(new JLabel("# RPGMAKER TRANS PATCH FILE VERSION "
+					+ version), constraints);
+			constraints.gridy++;
+		} else {
+			// no version to write
+		}
+		boolean unusedSection = false;
+		Iterator<TranslationEntry> iterator = map.iterator();
+		while (iterator.hasNext()) {
+			final SimpleTranslationEntry entry = (SimpleTranslationEntry) iterator
+					.next();
+			if (!unusedSection && entry.isUnused()) {
+				panel.add(new JLabel("# UNUSED TRANSLATABLES"), constraints);
+				constraints.gridy++;
+				unusedSection = true;
+			} else {
+				// not the start of the unused section
+			}
+			{
+				panel.add(new JLabel("# TEXT STRING"), constraints);
+				constraints.gridy++;
+				if (entry.isMarkedAsUntranslated()) {
+					panel.add(new JLabel("# UNTRANSLATED"), constraints);
+					constraints.gridy++;
+				} else {
+					// do not write it
+				}
+				panel.add(new JLabel("# CONTEXT : " + entry.getContext()),
+						constraints);
+				constraints.gridy++;
+				if (entry.getCharLimit(false) != null
+						&& entry.getCharLimit(true) != null) {
+					panel.add(
+							new JLabel("# ADVICE : "
+									+ entry.getCharLimit(false)
+									+ " char limit ("
+									+ entry.getCharLimit(true) + " if face)"),
+							constraints);
+					constraints.gridy++;
+				} else if (entry.getCharLimit(false) != null
+						&& entry.getCharLimit(true) == null) {
+					panel.add(
+							new JLabel("# ADVICE : "
+									+ entry.getCharLimit(false) + " char limit"),
+							constraints);
+					constraints.gridy++;
+				} else {
+					// no advice
+				}
+				JTextArea original = new JTextArea(entry.getOriginalVersion());
+				original.setEditable(false);
+				panel.add(original, constraints);
+				constraints.gridy++;
+				panel.add(new JLabel("# TRANSLATION "), constraints);
+				constraints.gridy++;
+				panel.add(new TranslationArea(entry), constraints);
+				constraints.gridy++;
+				panel.add(new JLabel("# END STRING"), constraints);
+			}
+			constraints.gridy++;
+			if (iterator.hasNext()) {
+				panel.add(new JLabel(" "), constraints);
+				constraints.gridy++;
+			} else {
+				// EOF
+			}
+		}
 	}
 
 	@SuppressWarnings("serial")
