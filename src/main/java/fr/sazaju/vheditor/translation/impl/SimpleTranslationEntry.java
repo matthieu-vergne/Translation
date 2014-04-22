@@ -14,7 +14,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil.ParsingException;
-import fr.sazaju.vheditor.util.LoggerConfiguration;
+import fr.vergne.logging.LoggerConfiguration;
 
 public class SimpleTranslationEntry implements TranslationEntry {
 

@@ -19,7 +19,7 @@ import javax.swing.JTextArea;
 import fr.sazaju.vheditor.gui.TranslationArea;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.util.LoggerConfiguration;
+import fr.vergne.logging.LoggerConfiguration;
 
 // TODO find original content in translated versions
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'

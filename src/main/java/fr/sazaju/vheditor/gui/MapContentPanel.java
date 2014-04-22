@@ -22,7 +22,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.SimpleTranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
-import fr.sazaju.vheditor.util.LoggerConfiguration;
+import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {

@@ -43,7 +43,7 @@ import javax.swing.tree.TreeSelectionModel;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
-import fr.sazaju.vheditor.util.LoggerConfiguration;
+import fr.vergne.logging.LoggerConfiguration;
 
 // TODO make the current folder persistent in an INI file
 // TODO save modifications (manage CTRL+S shortcut)
