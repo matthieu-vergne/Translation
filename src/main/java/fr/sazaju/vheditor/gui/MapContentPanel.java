@@ -412,7 +412,7 @@ public class MapContentPanel extends JPanel {
 		return map;
 	}
 
-	public static interface LoadingManager {
+	private static interface LoadingManager {
 		public void start();
 
 		public void stop();
