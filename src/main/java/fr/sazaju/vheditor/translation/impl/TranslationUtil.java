@@ -52,6 +52,8 @@ public class TranslationUtil {
 		fillEntries(panel, constraints, iterator, panel.getBackground());
 		iterator = map.iteratorUnused();
 		if (iterator.hasNext()) {
+			panel.add(new JLabel(" "), constraints);
+			constraints.gridy++;
 			panel.add(new JLabel("# UNUSED TRANSLATABLES"), constraints);
 			constraints.gridy++;
 			fillEntries(panel, constraints, iterator, Color.MAGENTA);
