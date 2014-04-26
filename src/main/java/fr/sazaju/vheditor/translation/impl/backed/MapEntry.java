@@ -21,7 +21,8 @@ public class MapEntry extends Suite implements TranslationEntry {
 
 	@Override
 	public boolean isActuallyTranslated() {
-		return !getTranslatedVersion().isEmpty();
+		return !getTranslatedVersion().isEmpty()
+				|| getOriginalVersion().isEmpty();
 	}
 
 	@Override
