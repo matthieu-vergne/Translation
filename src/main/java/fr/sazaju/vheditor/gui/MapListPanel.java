@@ -136,8 +136,7 @@ public class MapListPanel extends JPanel {
 
 			@Override
 			public boolean accept(File file) {
-				return !file.isHidden() && file.isFile()
-						&& file.getName().startsWith("Map");
+				return !file.isHidden() && file.isFile();
 			}
 		});
 		if (files == null) {
