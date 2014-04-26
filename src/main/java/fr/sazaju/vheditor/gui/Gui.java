@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +22,8 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
 
+	private static final String WIDTH = "width";
+	private static final String HEIGHT = "height";
 	private final MapListPanel mapListPanel;
 	private final MapContentPanel mapContentPanel;
 	private final MapToolsPanel toolsPanel;
@@ -50,7 +54,32 @@ public class Gui extends JFrame {
 		}
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setMinimumSize(new Dimension(1000, 700));
+		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
+				WIDTH, "700")), Integer.parseInt(config.getProperty(HEIGHT,
+				"500"))));
+		addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				config.setProperty(WIDTH, "" + getWidth());
+				config.setProperty(HEIGHT, "" + getHeight());
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// nothing to do
+			}
+		});
 
 		toolsPanel = new MapToolsPanel();
 		mapContentPanel = new MapContentPanel(toolsPanel);
