@@ -16,6 +16,7 @@ import fr.vergne.parsing.layer.impl.base.Option;
 
 public class BackedTranslationMap extends Suite implements TranslationMap {
 
+	private static final String ENCODING = "UTF-8";
 	private File file;
 
 	public BackedTranslationMap(File file) throws IOException {
@@ -67,7 +68,7 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		if (file.equals(this.file)) {
 			// do not reparse it
 		} else {
-			String content = FileUtils.readFileToString(file);
+			String content = FileUtils.readFileToString(file, ENCODING);
 			if (content.trim().isEmpty()) {
 				throw new EmptyMapException(file);
 			} else {
@@ -130,7 +131,7 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 	@Override
 	public void save() {
 		try {
-			FileUtils.write(getBaseFile(), getContent());
+			FileUtils.write(getBaseFile(), getContent(), ENCODING);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
