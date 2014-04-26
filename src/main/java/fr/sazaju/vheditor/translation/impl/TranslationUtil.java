@@ -1,5 +1,6 @@
 package fr.sazaju.vheditor.translation.impl;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -48,12 +49,12 @@ public class TranslationUtil {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 
 		Iterator<? extends TranslationEntry> iterator = map.iteratorUsed();
-		fillEntries(panel, constraints, iterator);
+		fillEntries(panel, constraints, iterator, panel.getBackground());
 		iterator = map.iteratorUnused();
 		if (iterator.hasNext()) {
 			panel.add(new JLabel("# UNUSED TRANSLATABLES"), constraints);
 			constraints.gridy++;
-			fillEntries(panel, constraints, iterator);
+			fillEntries(panel, constraints, iterator, Color.MAGENTA);
 		} else {
 			// no unused entries
 		}
@@ -61,36 +62,44 @@ public class TranslationUtil {
 
 	private static void fillEntries(JPanel panel,
 			GridBagConstraints constraints,
-			Iterator<? extends TranslationEntry> iterator) {
+			Iterator<? extends TranslationEntry> iterator, Color background) {
 		while (iterator.hasNext()) {
 			final TranslationEntry entry = iterator.next();
 			{
-				panel.add(new JLabel("# TEXT STRING"), constraints);
+				JLabel label = new JLabel("# TEXT STRING");
+				label.setOpaque(true);
+				label.setBackground(background);
+				panel.add(label, constraints);
 				constraints.gridy++;
 				if (entry.isMarkedAsUntranslated()) {
-					panel.add(new JLabel("# UNTRANSLATED"), constraints);
+					label = new JLabel("# UNTRANSLATED");
+					label.setBackground(background);
+					panel.add(label, constraints);
 					constraints.gridy++;
 				} else {
 					// do not write it
 				}
-				panel.add(new JLabel("# CONTEXT : " + entry.getContext()),
-						constraints);
+				label = new JLabel("# CONTEXT : " + entry.getContext());
+				label.setBackground(background);
+				label.setOpaque(true);
+				panel.add(label, constraints);
 				constraints.gridy++;
 				if (entry.getCharLimit(false) != null
 						&& entry.getCharLimit(true) != null) {
-					panel.add(
-							new JLabel("# ADVICE : "
-									+ entry.getCharLimit(false)
-									+ " char limit ("
-									+ entry.getCharLimit(true) + " if face)"),
-							constraints);
+					label = new JLabel("# ADVICE : "
+							+ entry.getCharLimit(false) + " char limit ("
+							+ entry.getCharLimit(true) + " if face)");
+					label.setOpaque(true);
+					label.setBackground(background);
+					panel.add(label, constraints);
 					constraints.gridy++;
 				} else if (entry.getCharLimit(false) != null
 						&& entry.getCharLimit(true) == null) {
-					panel.add(
-							new JLabel("# ADVICE : "
-									+ entry.getCharLimit(false) + " char limit"),
-							constraints);
+					label = new JLabel("# ADVICE : "
+							+ entry.getCharLimit(false) + " char limit");
+					label.setOpaque(true);
+					label.setBackground(background);
+					panel.add(label, constraints);
 					constraints.gridy++;
 				} else {
 					// no advice
@@ -99,15 +108,24 @@ public class TranslationUtil {
 				original.setEditable(false);
 				panel.add(original, constraints);
 				constraints.gridy++;
-				panel.add(new JLabel("# TRANSLATION "), constraints);
+				label = new JLabel("# TRANSLATION ");
+				label.setOpaque(true);
+				label.setBackground(background);
+				panel.add(label, constraints);
 				constraints.gridy++;
 				panel.add(new TranslationArea(entry), constraints);
 				constraints.gridy++;
-				panel.add(new JLabel("# END STRING"), constraints);
+				label = new JLabel("# END STRING");
+				label.setOpaque(true);
+				label.setBackground(background);
+				panel.add(label, constraints);
 			}
 			constraints.gridy++;
 			if (iterator.hasNext()) {
-				panel.add(new JLabel(" "), constraints);
+				JLabel label = new JLabel(" ");
+				label.setOpaque(true);
+				label.setBackground(background);
+				panel.add(label, constraints);
 				constraints.gridy++;
 			} else {
 				// EOF
