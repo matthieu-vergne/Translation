@@ -184,10 +184,10 @@ public class MapListPanel extends JPanel {
 					} else if (descriptor.remaining == 0) {
 						description = "cleared";
 					} else {
-						int percent = 100 * descriptor.remaining
+						int percent = 100 - 100 * descriptor.remaining
 								/ descriptor.total;
-						description = descriptor.remaining + " = " + percent
-								+ "%";
+						description = percent + "%, " + descriptor.remaining
+								+ " remaining";
 					}
 					value += " (" + description + ")";
 					DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) defaultRenderer
