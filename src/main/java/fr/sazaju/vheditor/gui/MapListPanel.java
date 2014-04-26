@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -103,18 +102,9 @@ public class MapListPanel extends JPanel {
 				fileChooser.setMultiSelectionEnabled(false);
 				int answer = fileChooser.showDialog(MapListPanel.this, "Open");
 				if (answer == JFileChooser.APPROVE_OPTION) {
-					File folder = fileChooser.getSelectedFile();
-					String fullPath = folder.getPath();
-					try {
-						String localPath = new File(".").getCanonicalPath();
-						fullPath = fullPath.replaceAll(
-								"^" + Pattern.quote(localPath) + "/?", "");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					refreshTree(new File(fullPath));
+					refreshTree(fileChooser.getSelectedFile());
 				} else {
-
+					// do not consider it
 				}
 			}
 		});
