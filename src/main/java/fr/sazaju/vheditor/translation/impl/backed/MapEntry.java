@@ -1,5 +1,7 @@
 package fr.sazaju.vheditor.translation.impl.backed;
 
+import java.util.NoSuchElementException;
+
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.vergne.parsing.layer.impl.Suite;
 import fr.vergne.parsing.layer.impl.base.Option;
@@ -36,9 +38,13 @@ public class MapEntry extends Suite implements TranslationEntry {
 		Option<AdviceLine> option = get(3);
 		if (option.isPresent()) {
 			AdviceLine advice = option.getOption();
-			return isFacePresent ? Integer.parseInt(advice.getFaceLimit()
-					.getContent()) : Integer.parseInt(advice.getGeneralLimit()
-					.getContent());
+			try {
+				return isFacePresent ? Integer.parseInt(advice.getFaceLimit()
+						.getContent()) : Integer.parseInt(advice
+						.getGeneralLimit().getContent());
+			} catch (NoSuchElementException e) {
+				return null;
+			}
 		} else {
 			return null;
 		}
