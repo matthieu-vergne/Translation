@@ -190,7 +190,7 @@ public class MapListPanel extends JPanel {
 						description = percent + "%, " + descriptor.remaining
 								+ " remaining";
 					}
-					value += " (" + description + ")";
+					value = value + " (" + description + ")";
 					DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) defaultRenderer
 							.getTreeCellRendererComponent(tree, value,
 									selected, expanded, leaf, row, hasFocus);

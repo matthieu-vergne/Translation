@@ -163,7 +163,7 @@ public class MapToolsPanel extends JPanel {
 		add(reset, constraints);
 	}
 
-	private final Collection<Listener> listeners = new LinkedList<>();
+	private final Collection<Listener> listeners = new LinkedList<Listener>();
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
