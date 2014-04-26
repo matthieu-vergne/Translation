@@ -88,7 +88,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<finalName>${project.build.finalName}-${project.packaging}-standalone</finalName>
+					<finalName>${project.build.finalName}-standalone</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>
