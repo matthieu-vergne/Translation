@@ -3,21 +3,21 @@ package fr.sazaju.vheditor.gui;
 import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
 public class TranslationArea extends JTextArea {
 
-	private final SimpleTranslationEntry entry;
+	private final TranslationEntry entry;
 
-	public TranslationArea(SimpleTranslationEntry entry) {
+	public TranslationArea(TranslationEntry entry) {
 		super(entry.getTranslatedVersion());
 		this.entry = entry;
 		setBorder(new EtchedBorder());
 	}
 
 	public void save() {
-		entry.setTranslationContent(getText());
+		entry.setTranslatedVersion(getText());
 	}
 
 	public void reset() {

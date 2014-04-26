@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
@@ -20,7 +19,6 @@ import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
 
@@ -83,14 +81,14 @@ public class MapContentPanel extends JPanel {
 
 			@Override
 			public void eventGenerated() {
-				goToEntry(map.size() - 1);
+				goToEntry(map.sizeUsed() - 1);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
 
 			@Override
 			public void eventGenerated() {
-				int total = map.size();
+				int total = map.sizeUsed();
 				int entryIndex = getDisplayedEntryIndex();
 				for (int i = 1; i <= total; i++) {
 					entryIndex++;
@@ -102,7 +100,7 @@ public class MapContentPanel extends JPanel {
 					} else {
 						// just continue the search
 					}
-					TranslationEntry entry = map.getEntry(entryIndex);
+					TranslationEntry entry = map.getUsedEntry(entryIndex);
 					if (entry.isActuallyTranslated()) {
 						continue;
 					} else {
@@ -129,10 +127,9 @@ public class MapContentPanel extends JPanel {
 				File targetFile = map.getBaseFile();
 				logger.info("Saving map to " + targetFile + "...");
 				try {
-					TranslationUtil.writeMap((SimpleTranslationMap) map,
-							targetFile);
+					map.save();
 					logger.info("Map saved.");
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(MapContentPanel.this,
 							"The modifications could not be saved to "
@@ -198,7 +195,7 @@ public class MapContentPanel extends JPanel {
 	}
 
 	protected void goToEntry(final int entryIndex) {
-		final int index = Math.min(Math.max(entryIndex, 0), map.size() - 1);
+		final int index = Math.min(Math.max(entryIndex, 0), map.sizeUsed() - 1);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -238,7 +235,7 @@ public class MapContentPanel extends JPanel {
 	public void setMap(TranslationMap map) {
 		this.map = map;
 		mapTitleField.setText(map.getBaseFile().getName());
-		TranslationUtil.fillPanel((SimpleTranslationMap) map, mapContentArea);
+		TranslationUtil.fillPanel(map, mapContentArea);
 		goToEntry(0);
 	}
 

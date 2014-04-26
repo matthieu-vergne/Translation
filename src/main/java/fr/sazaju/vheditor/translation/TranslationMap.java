@@ -9,18 +9,27 @@ import java.util.Iterator;
  * @author sazaju
  * 
  */
-public interface TranslationMap extends Iterable<TranslationEntry> {
+public interface TranslationMap {
 
 	/**
-	 * This method should return an {@link Iterator} which provides each
-	 * {@link TranslationEntry} that we should find in the
-	 * {@link TranslationMap} file. Moreover, they should be in the
-	 * "right order", meaning that if the {@link TranslationMap} is built from
-	 * an existing {@link File}, this {@link Iterator} should provide the
-	 * corresponding {@link TranslationEntry} in the same order. Also, if there
-	 * is unused entries, they should be at the end.
+	 * This method should return an {@link Iterator} which provides all the
+	 * {@link TranslationEntry}s that should be used. Moreover, they should be
+	 * in the "right order", meaning that if the {@link TranslationMap} is built
+	 * from an existing {@link File}, this {@link Iterator} should provide the
+	 * corresponding {@link TranslationEntry}s in the same order
 	 */
-	public Iterator<TranslationEntry> iterator();
+	public Iterator<? extends TranslationEntry> iteratorUsed();
+
+	/**
+	 * This method should return an {@link Iterator} which provides all the
+	 * {@link TranslationEntry}s that should <b>NOT</b> be used. These are
+	 * entries that should appear after a "# UNUSED TRANSLATABLES" line in a map
+	 * file. Moreover, they should be in the "right order", meaning that if the
+	 * {@link TranslationMap} is built from an existing {@link File}, this
+	 * {@link Iterator} should provide the corresponding
+	 * {@link TranslationEntry}s in the same order
+	 */
+	public Iterator<? extends TranslationEntry> iteratorUnused();
 
 	/**
 	 * An instance of {@link TranslationMap} is generally used to manage a map
@@ -34,17 +43,52 @@ public interface TranslationMap extends Iterable<TranslationEntry> {
 	public File getBaseFile();
 
 	/**
-	 * 
-	 * @param index
-	 *            the index of the {@link TranslationEntry}
-	 * @return the corresponding {@link TranslationEntry}
+	 * Save the current content of the {@link TranslationMap} to the base file (
+	 * {@link #getBaseFile()}).
 	 */
-	public TranslationEntry getEntry(int index);
+	public void save();
 
 	/**
+	 * This method aims at providing the requested {@link TranslationEntry} of
+	 * the current {@link TranslationMap}. Only the used
+	 * {@link TranslationEntry}s (as provided by {@link #iteratorUsed()}) should
+	 * be provided by this method.
 	 * 
-	 * @return the number of {@link TranslationEntry}s in this
+	 * @param index
+	 *            the index of the used {@link TranslationEntry}
+	 * @return the corresponding {@link TranslationEntry}
+	 */
+	public TranslationEntry getUsedEntry(int index);
+
+	/**
+	 * This method aims at providing the requested {@link TranslationEntry} of
+	 * the current {@link TranslationMap}. Only the unused
+	 * {@link TranslationEntry}s (as provided by {@link #iteratorUnused()})
+	 * should be provided by this method.
+	 * 
+	 * @param index
+	 *            the index of the used {@link TranslationEntry}
+	 * @return the corresponding {@link TranslationEntry}
+	 */
+	public TranslationEntry getUnusedEntry(int index);
+
+	/**
+	 * This method should provide the number of {@link TranslationEntry}s which
+	 * are actually used in this {@link TranslationMap}. These are all the
+	 * {@link TranslationEntry}s provided by {@link #iteratorUsed()}.
+	 * 
+	 * @return the number of used {@link TranslationEntry}s in this
 	 *         {@link TranslationMap}
 	 */
-	public int size();
+	public int sizeUsed();
+
+	/**
+	 * This method should provide the number of {@link TranslationEntry}s which
+	 * are <b>NOT</b> used in this {@link TranslationMap}. These are all the
+	 * {@link TranslationEntry}s provided by {@link #iteratorUnused()}.
+	 * 
+	 * @return the number of unused {@link TranslationEntry}s in this
+	 *         {@link TranslationMap}
+	 */
+	public int sizeUnused();
 }

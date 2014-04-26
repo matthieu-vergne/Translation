@@ -10,13 +10,6 @@ public interface TranslationEntry {
 
 	/**
 	 * 
-	 * @return <code>true</code> if the entry appears after a line
-	 *         "# UNUSED TRANSLATABLES", <code>false</code> otherwise
-	 */
-	public boolean isUnused();
-
-	/**
-	 * 
 	 * @return <code>true</code> if the line "# UNTRANSLATED" is present,
 	 *         <code>false</code> otherwise
 	 */
@@ -57,11 +50,10 @@ public interface TranslationEntry {
 	 */
 	public String getTranslatedVersion();
 
-	// FIXME not generalizable, remove
 	/**
 	 * 
-	 * @return the textual version of thie {@link TranslationEntry}, as it
-	 *         should appear in a map file.
+	 * @param translation
+	 *            the new English content
 	 */
-	public String getTextualVersion();
+	public void setTranslatedVersion(String translation);
 }

@@ -42,7 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
 import fr.vergne.logging.LoggerConfiguration;
 
 //TODO manage CTRL+S shortcut
@@ -184,18 +184,13 @@ public class MapListPanel extends JPanel {
 					if (map == null) {
 						value += " (loading)";
 					} else {
-						int total = 0;
+						int total = map.sizeUsed();
 						remaining = 0;
-						Iterator<TranslationEntry> iterator = map.iterator();
+						Iterator<? extends TranslationEntry> iterator = map
+								.iteratorUsed();
 						while (iterator.hasNext()) {
 							TranslationEntry entry = iterator.next();
-							if (entry.isUnused()) {
-								// don't count it
-							} else {
-								total++;
-								remaining += entry.isActuallyTranslated() ? 0
-										: 1;
-							}
+							remaining += entry.isActuallyTranslated() ? 0 : 1;
 						}
 
 						if (remaining == 0) {
@@ -352,7 +347,7 @@ public class MapListPanel extends JPanel {
 				return;
 			} else {
 				logger.info("Loading " + file.getName() + "...");
-				loadedMaps.put(file, TranslationUtil.readMap(file));
+				loadedMaps.put(file, new BackedTranslationMap(file));
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
