@@ -45,8 +45,7 @@ import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
 
-// TODO make the current folder persistent in an INI file
-// TODO save modifications (manage CTRL+S shortcut)
+//TODO manage CTRL+S shortcut
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 
