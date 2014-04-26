@@ -24,6 +24,7 @@ import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
 import fr.vergne.logging.LoggerConfiguration;
 
+// TODO update list panel info when saving
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {
 
