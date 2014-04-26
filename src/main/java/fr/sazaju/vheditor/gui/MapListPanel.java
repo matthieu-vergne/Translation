@@ -40,8 +40,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
-import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
+import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
 //TODO manage CTRL+S shortcut

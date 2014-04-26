@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.impl.backed;
+package fr.sazaju.vheditor.translation.impl;
 
 import java.util.NoSuchElementException;
 

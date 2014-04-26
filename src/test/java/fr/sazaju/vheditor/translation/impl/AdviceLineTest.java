@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.impl.backed;
+package fr.sazaju.vheditor.translation.impl;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +16,7 @@ public class AdviceLineTest {
 			assertEquals("49", advice.getGeneralLimit().getContent());
 			assertTrue(advice.hasFaceLimit());
 			assertEquals("35", advice.getFaceLimit().getContent());
-			
+
 			advice.setContent("# ADVICE : 31 char limit" + newline);
 			assertEquals("31", advice.getGeneralLimit().getContent());
 			assertFalse(advice.hasFaceLimit());

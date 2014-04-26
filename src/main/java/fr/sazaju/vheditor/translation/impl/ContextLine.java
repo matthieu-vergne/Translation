@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.impl.backed;
+package fr.sazaju.vheditor.translation.impl;
 
 import fr.vergne.parsing.layer.impl.Atom;
 import fr.vergne.parsing.layer.impl.Formula;
