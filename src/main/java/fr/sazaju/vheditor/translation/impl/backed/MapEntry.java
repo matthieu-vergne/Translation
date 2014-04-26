@@ -23,8 +23,8 @@ public class MapEntry extends Suite implements TranslationEntry {
 
 	@Override
 	public boolean isActuallyTranslated() {
-		return !getTranslatedVersion().isEmpty()
-				|| getOriginalVersion().isEmpty();
+		return !getTranslatedVersion().trim().isEmpty()
+				|| getOriginalVersion().trim().isEmpty();
 	}
 
 	@Override
