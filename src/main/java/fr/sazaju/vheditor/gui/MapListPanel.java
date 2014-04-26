@@ -117,6 +117,7 @@ public class MapListPanel extends JPanel {
 				}
 			}
 		});
+		openButton.setToolTipText("Select the folder where are the map files.");
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
