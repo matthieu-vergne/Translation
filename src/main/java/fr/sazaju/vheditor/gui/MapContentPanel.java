@@ -55,6 +55,7 @@ public class MapContentPanel extends JPanel {
 		mapContentArea = new JPanel();
 		mapContentArea.setLayout(new GridLayout(1, 1));
 		mapContentScroll = new JScrollPane(mapContentArea);
+		mapContentScroll.getVerticalScrollBar().setUnitIncrement(15);
 		add(mapContentScroll, constraints);
 	}
 
