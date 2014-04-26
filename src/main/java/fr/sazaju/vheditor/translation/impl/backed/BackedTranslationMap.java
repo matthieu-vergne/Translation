@@ -16,14 +16,6 @@ import fr.vergne.parsing.layer.impl.base.Option;
 
 public class BackedTranslationMap extends Suite implements TranslationMap {
 
-	public static void main(String[] args) throws IOException {
-		new BackedTranslationMap(new File("VH/branches/working/Map0001.txt"));
-		// new ChunkedTranslationMap(new
-		// File("VH/branches/working/Map0007.txt"));
-		// new ChunkedTranslationMap(new
-		// File("VH/branches/working/Map0601.txt"));
-	}
-
 	private File file;
 
 	public BackedTranslationMap(File file) throws IOException {
