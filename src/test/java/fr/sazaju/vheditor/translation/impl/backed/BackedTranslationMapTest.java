@@ -9,14 +9,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap.EmptyMapException;
-import fr.vergne.parsing.layer.impl.base.Newline;
 
 public class BackedTranslationMapTest {
 
 	@Test
 	public void testReadWriteMap() throws IOException {
-		System.out.println(new BackedTranslationMap().getRegex().replaceAll("\\(\\?:", "(").replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n"));
-		System.out.println(new Newline().getRegex().replaceAll("\\(\\?:", "(").replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n"));
 		File mapFolder = new File("VH/branches/working/");
 		File[] listFiles = mapFolder.listFiles();
 		int mapCounter = 0;
