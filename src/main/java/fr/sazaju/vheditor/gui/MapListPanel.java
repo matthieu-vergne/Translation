@@ -53,7 +53,7 @@ public class MapListPanel extends JPanel {
 	private final MapContentPanel mapContentPanel;
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
-	private final Map<File, MapDescriptor> knwonMaps = Collections
+	private final Map<File, MapDescriptor> knownMaps = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private File[] currentFiles;
 
@@ -177,7 +177,7 @@ public class MapListPanel extends JPanel {
 				if (value instanceof File) {
 					File file = (File) value;
 					value = file.getName();
-					MapDescriptor descriptor = knwonMaps.get(file);
+					MapDescriptor descriptor = knownMaps.get(file);
 					String description;
 					if (descriptor == null) {
 						description = "loading";
@@ -332,8 +332,8 @@ public class MapListPanel extends JPanel {
 	}
 
 	private void loadFileIfNecessary(final File file) throws IOException {
-		synchronized (knwonMaps) {
-			if (knwonMaps.containsKey(file)) {
+		synchronized (knownMaps) {
+			if (knownMaps.containsKey(file)) {
 				return;
 			} else {
 				logger.info("Loading " + file.getName() + "...");
@@ -348,7 +348,7 @@ public class MapListPanel extends JPanel {
 					descriptor.remaining += entry.isActuallyTranslated() ? 0
 							: 1;
 				}
-				knwonMaps.put(file, descriptor);
+				knownMaps.put(file, descriptor);
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
