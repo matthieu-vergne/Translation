@@ -41,7 +41,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
 import fr.vergne.logging.LoggerConfiguration;
 
@@ -54,8 +53,8 @@ public class MapListPanel extends JPanel {
 	private final MapContentPanel mapContentPanel;
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
-	private final Map<File, TranslationMap> loadedMaps = Collections
-			.synchronizedMap(new HashMap<File, TranslationMap>());
+	private final Map<File, MapDescriptor> knwonMaps = Collections
+			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private File[] currentFiles;
 
 	public MapListPanel(MapContentPanel mapContentPanel) {
@@ -178,32 +177,23 @@ public class MapListPanel extends JPanel {
 				if (value instanceof File) {
 					File file = (File) value;
 					value = file.getName();
-					TranslationMap map;
-					map = loadedMaps.get(file);
-					int remaining = -1;
-					if (map == null) {
-						value += " (loading)";
+					MapDescriptor descriptor = knwonMaps.get(file);
+					String description;
+					if (descriptor == null) {
+						description = "loading";
+					} else if (descriptor.remaining == 0) {
+						description = "cleared";
 					} else {
-						int total = map.sizeUsed();
-						remaining = 0;
-						Iterator<? extends TranslationEntry> iterator = map
-								.iteratorUsed();
-						while (iterator.hasNext()) {
-							TranslationEntry entry = iterator.next();
-							remaining += entry.isActuallyTranslated() ? 0 : 1;
-						}
-
-						if (remaining == 0) {
-							value += "  (cleared)";
-						} else {
-							int percent = 100 * remaining / total;
-							value += " (" + remaining + " = " + percent + "%)";
-						}
+						int percent = 100 * descriptor.remaining
+								/ descriptor.total;
+						description = descriptor.remaining + " = " + percent
+								+ "%";
 					}
+					value += " (" + description + ")";
 					DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) defaultRenderer
 							.getTreeCellRendererComponent(tree, value,
 									selected, expanded, leaf, row, hasFocus);
-					if (remaining == 0) {
+					if (descriptor != null && descriptor.remaining == 0) {
 						renderer.setEnabled(false);
 						// renderer.setForeground(SystemColor.inactiveCaption);
 					} else {
@@ -342,12 +332,23 @@ public class MapListPanel extends JPanel {
 	}
 
 	private void loadFileIfNecessary(final File file) throws IOException {
-		synchronized (loadedMaps) {
-			if (loadedMaps.containsKey(file)) {
+		synchronized (knwonMaps) {
+			if (knwonMaps.containsKey(file)) {
 				return;
 			} else {
 				logger.info("Loading " + file.getName() + "...");
-				loadedMaps.put(file, new BackedTranslationMap(file));
+				BackedTranslationMap map = new BackedTranslationMap(file);
+				MapDescriptor descriptor = new MapDescriptor();
+				descriptor.total = map.sizeUsed();
+				descriptor.remaining = 0;
+				Iterator<? extends TranslationEntry> iterator = map
+						.iteratorUsed();
+				while (iterator.hasNext()) {
+					TranslationEntry entry = iterator.next();
+					descriptor.remaining += entry.isActuallyTranslated() ? 0
+							: 1;
+				}
+				knwonMaps.put(file, descriptor);
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
@@ -367,6 +368,11 @@ public class MapListPanel extends JPanel {
 
 	private void displayContentOf(File file) throws IOException {
 		loadFileIfNecessary(file);
-		mapContentPanel.setMap(loadedMaps.get(file));
+		mapContentPanel.setMap(file);
+	}
+
+	private class MapDescriptor {
+		int total;
+		int remaining;
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
@@ -20,6 +21,7 @@ import javax.swing.border.EtchedBorder;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
@@ -28,7 +30,7 @@ public class MapContentPanel extends JPanel {
 	private final JPanel mapContentArea;
 	private final JScrollPane mapContentScroll;
 	private final JLabel mapTitleField;
-	private TranslationMap map;
+	private final BackedTranslationMap map = new BackedTranslationMap();
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
 
 	public MapContentPanel(final MapToolsPanel toolsPanel) {
@@ -232,9 +234,9 @@ public class MapContentPanel extends JPanel {
 		});
 	}
 
-	public void setMap(TranslationMap map) {
-		this.map = map;
-		mapTitleField.setText(map.getBaseFile().getName());
+	public void setMap(File mapFile) throws IOException {
+		this.map.setBaseFile(mapFile);
+		mapTitleField.setText(mapFile.getName());
 		TranslationUtil.fillPanel(map, mapContentArea);
 		goToEntry(0);
 	}
