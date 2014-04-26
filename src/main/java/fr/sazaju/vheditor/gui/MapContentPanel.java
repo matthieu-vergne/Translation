@@ -1,5 +1,6 @@
 package fr.sazaju.vheditor.gui;
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,6 +23,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
+import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
 // TODO if there is modifications, ask for confirmation/save before to load a new one or close the app
@@ -30,9 +32,12 @@ import fr.vergne.logging.LoggerConfiguration;
 public class MapContentPanel extends JPanel {
 
 	private final JPanel mapContentArea;
+	private final JPanel mapLoadingArea;
 	private final JScrollPane mapContentScroll;
 	private final JLabel mapTitleField;
 	private final BackedTranslationMap map = new BackedTranslationMap();
+	private final LoadingManager loading;
+	private final JLabel loadingLabel;
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
 
 	public MapContentPanel(final MapToolsPanel toolsPanel) {
@@ -40,14 +45,30 @@ public class MapContentPanel extends JPanel {
 
 		setBorder(new EtchedBorder());
 
-		setLayout(new GridBagLayout());
+		final CardLayout contentSwitcher = new CardLayout();
+		setLayout(contentSwitcher);
+		loading = new LoadingManager() {
+
+			@Override
+			public void start() {
+				contentSwitcher.last(MapContentPanel.this);
+			}
+
+			@Override
+			public void stop() {
+				contentSwitcher.first(MapContentPanel.this);
+			}
+		};
+
+		JPanel contentWrapper = new JPanel();
+		contentWrapper.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.anchor = GridBagConstraints.CENTER;
 		mapTitleField = new JLabel(" ");
-		add(mapTitleField, constraints);
+		contentWrapper.add(mapTitleField, constraints);
 
 		constraints.gridy = 1;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -57,7 +78,16 @@ public class MapContentPanel extends JPanel {
 		mapContentArea.setLayout(new GridLayout(1, 1));
 		mapContentScroll = new JScrollPane(mapContentArea);
 		mapContentScroll.getVerticalScrollBar().setUnitIncrement(15);
-		add(mapContentScroll, constraints);
+		contentWrapper.add(mapContentScroll, constraints);
+		add(contentWrapper);
+
+		mapLoadingArea = new JPanel();
+		mapLoadingArea.setLayout(new GridBagLayout());
+		constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.CENTER;
+		loadingLabel = new JLabel("Loading...");
+		mapLoadingArea.add(loadingLabel, constraints);
+		add(mapLoadingArea);
 	}
 
 	private void configureListeners(final MapToolsPanel toolsPanel) {
@@ -237,14 +267,46 @@ public class MapContentPanel extends JPanel {
 		});
 	}
 
-	public void setMap(File mapFile) throws IOException {
-		this.map.setBaseFile(mapFile);
-		mapTitleField.setText(mapFile.getName());
-		TranslationUtil.fillPanel(map, mapContentArea);
-		goToEntry(0);
+	public void setMap(final File mapFile) {
+		loadingLabel.setText("Loading map " + mapFile.getName() + "...");
+		loading.start();
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					synchronized (map) {
+						map.setBaseFile(mapFile);
+						mapTitleField.setText(mapFile.getName());
+						TranslationUtil.fillPanel(map, mapContentArea);
+						goToEntry(0);
+					}
+				} catch (EmptyMapException e) {
+					JOptionPane.showMessageDialog(MapContentPanel.this,
+							"The map " + mapFile + " is empty.", "Empty Map",
+							JOptionPane.WARNING_MESSAGE);
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(MapContentPanel.this,
+							e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						loading.stop();
+					}
+				});
+			}
+		});
 	}
 
 	public TranslationMap getMap() {
 		return map;
+	}
+
+	public static interface LoadingManager {
+		public void start();
+
+		public void stop();
 	}
 }
