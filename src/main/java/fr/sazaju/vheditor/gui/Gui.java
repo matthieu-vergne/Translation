@@ -13,8 +13,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
@@ -24,9 +26,6 @@ public class Gui extends JFrame {
 
 	private static final String WIDTH = "width";
 	private static final String HEIGHT = "height";
-	private final MapListPanel mapListPanel;
-	private final MapContentPanel mapContentPanel;
-	private final MapToolsPanel toolsPanel;
 	public static final File configFile = new File("vh-editor.ini");
 	public static final Properties config = new Properties() {
 		public synchronized Object setProperty(String key, String value) {
@@ -52,6 +51,7 @@ public class Gui extends JFrame {
 			throw new RuntimeException("Impossible to load the config file "
 					+ configFile, e);
 		}
+
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
@@ -81,9 +81,10 @@ public class Gui extends JFrame {
 			}
 		});
 
-		toolsPanel = new MapToolsPanel();
-		mapContentPanel = new MapContentPanel(toolsPanel);
-		mapListPanel = new MapListPanel(mapContentPanel);
+		MapListPanel mapListPanel = new MapListPanel();
+		MapContentPanel mapContentPanel = new MapContentPanel();
+		MapToolsPanel toolsPanel = new MapToolsPanel();
+		configureListeners(mapListPanel, mapContentPanel, toolsPanel);
 
 		JPanel translationPanel = new JPanel();
 		translationPanel.setLayout(new GridBagLayout());
@@ -107,6 +108,89 @@ public class Gui extends JFrame {
 
 		pack();
 		rootSplit.setDividerLocation(rootSplit.getResizeWeight());
+	}
+
+	private void configureListeners(final MapListPanel mapListPanel,
+			final MapContentPanel mapContentPanel,
+			final MapToolsPanel toolsPanel) {
+		mapListPanel.addListener(new MapListPanel.FileSelectedListener() {
+
+			@Override
+			public void fileSelected(File file) {
+				mapListPanel.retrieveMapDescriptor(file, false);
+				mapContentPanel.setMap(file);
+			}
+		});
+
+		toolsPanel.addListener(new MapToolsPanel.NextEntryListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel.goToEntry(mapContentPanel
+						.getDisplayedEntryIndex() + 1);
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.PreviousEntryListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel.goToEntry(mapContentPanel
+						.getDisplayedEntryIndex() - 1);
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.FirstEntryListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel.goToEntry(0);
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.LastEntryListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel
+						.goToEntry(mapContentPanel.getMap().sizeUsed() - 1);
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
+
+			@Override
+			public void buttonPushed() {
+				TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
+						mapContentPanel.getUntranslatedEntryIndexes());
+				if (untranslatedEntries.isEmpty()) {
+					JOptionPane.showMessageDialog(Gui.this,
+							"All the entries are already translated.");
+				} else {
+					int currentEntry = mapContentPanel.getDisplayedEntryIndex();
+					Integer next = untranslatedEntries
+							.ceiling(currentEntry + 1);
+					if (next == null) {
+						JOptionPane
+								.showMessageDialog(Gui.this,
+										"End of the entries reached. Search from the beginning.");
+						mapContentPanel.goToEntry(untranslatedEntries.first());
+					} else {
+						mapContentPanel.goToEntry(next);
+					}
+				}
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.SaveMapListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel.applyModifications();
+			}
+		});
+		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
+
+			@Override
+			public void buttonPushed() {
+				mapContentPanel.cancelModifications();
+			}
+		});
 	}
 
 	public static void main(String[] args) {

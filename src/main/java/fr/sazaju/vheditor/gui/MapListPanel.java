@@ -12,9 +12,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -50,16 +53,13 @@ public class MapListPanel extends JPanel {
 
 	private static final String MAP_DIR = "mapDir";
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
-	private final MapContentPanel mapContentPanel;
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
-	private final Map<File, MapDescriptor> knownMaps = Collections
+	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private File[] currentFiles;
 
-	public MapListPanel(MapContentPanel mapContentPanel) {
-		this.mapContentPanel = mapContentPanel;
-
+	public MapListPanel() {
 		setBorder(new EtchedBorder());
 
 		setLayout(new GridBagLayout());
@@ -168,7 +168,7 @@ public class MapListPanel extends JPanel {
 				if (value instanceof File) {
 					File file = (File) value;
 					value = file.getName();
-					MapDescriptor descriptor = knownMaps.get(file);
+					MapDescriptor descriptor = mapDescriptors.get(file);
 					String description;
 					if (descriptor == null) {
 						description = "loading";
@@ -226,13 +226,16 @@ public class MapListPanel extends JPanel {
 					DynamicUtilTreeNode node = (DynamicUtilTreeNode) tree
 							.getSelectionPath().getLastPathComponent();
 					File file = (File) node.getUserObject();
-					try {
-						displayContentOf(file);
-					} catch (IOException e) {
-						e.printStackTrace();
+					for (MapListListener listener : listeners) {
+						if (listener instanceof FileSelectedListener) {
+							((FileSelectedListener) listener)
+									.fileSelected(file);
+						} else {
+							// not the right listener
+						}
 					}
 				} else {
-					// nothing to do
+					// nothing to do for single click
 				}
 			}
 
@@ -248,20 +251,16 @@ public class MapListPanel extends JPanel {
 				@Override
 				public void run() {
 					try {
-						try {
-							/*
-							 * Brake to avoid an overloading effect for fast
-							 * computers. Files can be loaded on demand anyway,
-							 * so it is not blocking, only the display of the
-							 * translations advancement is delayed.
-							 */
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-						}
-						loadFileIfNecessary(file);
-					} catch (IOException e) {
-						e.printStackTrace();
+						/*
+						 * Brake to avoid an overloading effect for fast
+						 * computers. Files can be loaded on demand anyway, so
+						 * it is not blocking, only the display of the
+						 * translations advancement is delayed.
+						 */
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
 					}
+					retrieveMapDescriptor(file, false);
 				}
 			});
 		}
@@ -322,10 +321,10 @@ public class MapListPanel extends JPanel {
 		});
 	}
 
-	private void loadFileIfNecessary(final File file) throws IOException {
-		synchronized (knownMaps) {
-			if (knownMaps.containsKey(file)) {
-				return;
+	public void retrieveMapDescriptor(final File file, boolean force) {
+		synchronized (mapDescriptors) {
+			if (!force && mapDescriptors.get(file) != null) {
+				// nothing to load
 			} else {
 				logger.info("Loading " + file.getName() + "...");
 				MapDescriptor descriptor = new MapDescriptor();
@@ -343,8 +342,13 @@ public class MapListPanel extends JPanel {
 				} catch (EmptyMapException e) {
 					descriptor.total = 0;
 					descriptor.remaining = 0;
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(this, e.getMessage(),
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
-				knownMaps.put(file, descriptor);
+				mapDescriptors.put(file, descriptor);
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
@@ -362,13 +366,25 @@ public class MapListPanel extends JPanel {
 		}
 	}
 
-	private void displayContentOf(File file) throws IOException {
-		loadFileIfNecessary(file);
-		mapContentPanel.setMap(file);
-	}
-
 	private class MapDescriptor {
 		int total;
 		int remaining;
+	}
+
+	private final Collection<MapListListener> listeners = new HashSet<MapListListener>();
+
+	public void addListener(MapListListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(MapListListener listener) {
+		listeners.remove(listener);
+	}
+
+	public static interface MapListListener {
+	}
+
+	public static interface FileSelectedListener extends MapListListener {
+		public void fileSelected(File file);
 	}
 }

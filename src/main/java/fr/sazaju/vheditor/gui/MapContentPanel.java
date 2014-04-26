@@ -10,7 +10,9 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
@@ -50,9 +52,7 @@ public class MapContentPanel extends JPanel {
 	private final JLabel loadingLabel;
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
 
-	public MapContentPanel(final MapToolsPanel toolsPanel) {
-		configureListeners(toolsPanel);
-
+	public MapContentPanel() {
 		setBorder(new EtchedBorder());
 
 		final CardLayout contentSwitcher = new CardLayout();
@@ -98,120 +98,6 @@ public class MapContentPanel extends JPanel {
 		loadingLabel = new JLabel("Loading...");
 		mapLoadingArea.add(loadingLabel, constraints);
 		add(mapLoadingArea);
-	}
-
-	private void configureListeners(final MapToolsPanel toolsPanel) {
-		toolsPanel.addListener(new MapToolsPanel.NextEntryListener() {
-
-			@Override
-			public void eventGenerated() {
-				goToEntry(getDisplayedEntryIndex() + 1);
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.PreviousEntryListener() {
-
-			@Override
-			public void eventGenerated() {
-				goToEntry(getDisplayedEntryIndex() - 1);
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.FirstEntryListener() {
-
-			@Override
-			public void eventGenerated() {
-				goToEntry(0);
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.LastEntryListener() {
-
-			@Override
-			public void eventGenerated() {
-				goToEntry(map.sizeUsed() - 1);
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
-
-			@Override
-			public void eventGenerated() {
-				int total = map.sizeUsed();
-				int entryIndex = getDisplayedEntryIndex();
-				for (int i = 1; i <= total; i++) {
-					entryIndex++;
-					if (entryIndex == total) {
-						JOptionPane
-								.showMessageDialog(MapContentPanel.this,
-										"End of the entries reached. Search from the beginning.");
-						entryIndex %= total;
-					} else {
-						// just continue the search
-					}
-					TranslationEntry entry = map.getUsedEntry(entryIndex);
-					if (entry.isActuallyTranslated()) {
-						continue;
-					} else {
-						goToEntry(entryIndex);
-						return;
-					}
-				}
-				JOptionPane.showMessageDialog(MapContentPanel.this,
-						"All the entries are already translated.");
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.SaveMapListener() {
-
-			@Override
-			public void eventGenerated() {
-				for (Component component : mapContentArea.getComponents()) {
-					if (component instanceof TranslationArea) {
-						((TranslationArea) component).save();
-					} else {
-						// irrelevant component
-					}
-				}
-
-				File targetFile = map.getBaseFile();
-				logger.info("Saving map to " + targetFile + "...");
-				try {
-					map.save();
-					logger.info("Map saved.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(MapContentPanel.this,
-							"The modifications could not be saved to "
-									+ targetFile
-									+ ". Look at the log for more details.");
-				}
-			}
-		});
-		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
-
-			@Override
-			public void eventGenerated() {
-				setVisible(false);
-				Rectangle visible = mapContentArea.getVisibleRect();
-				final JComponent reference = (JComponent) mapContentArea
-						.getComponentAt(0, visible.y);
-				final int offset = reference.getVisibleRect().y;
-				for (Component component : mapContentArea.getComponents()) {
-					if (component instanceof TranslationArea) {
-						TranslationArea area = (TranslationArea) component;
-						area.reset();
-					} else {
-						// irrelevant component
-					}
-				}
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						Rectangle visible = mapContentArea.getVisibleRect();
-						visible.y = reference.getBounds().y + offset;
-						mapContentArea.scrollRectToVisible(visible);
-						setVisible(true);
-					}
-				});
-			}
-		});
 	}
 
 	protected int getDisplayedEntryIndex() {
@@ -417,4 +303,61 @@ public class MapContentPanel extends JPanel {
 
 		public void stop();
 	}
+
+	public void applyModifications() {
+		logger.info("Applying modifications...");
+		for (Component component : mapContentArea.getComponents()) {
+			if (component instanceof TranslationArea) {
+				((TranslationArea) component).save();
+			} else {
+				// irrelevant component
+			}
+		}
+		logger.info("Saving map to " + map.getBaseFile() + "...");
+		map.save();
+		logger.info("Map saved.");
+	}
+
+	public void cancelModifications() {
+		setVisible(false);
+		Rectangle visible = mapContentArea.getVisibleRect();
+		final JComponent reference = (JComponent) mapContentArea
+				.getComponentAt(0, visible.y);
+		final int offset = reference.getVisibleRect().y;
+		for (Component component : mapContentArea.getComponents()) {
+			if (component instanceof TranslationArea) {
+				TranslationArea area = (TranslationArea) component;
+				area.reset();
+			} else {
+				// irrelevant component
+			}
+		}
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				Rectangle visible = mapContentArea.getVisibleRect();
+				visible.y = reference.getBounds().y + offset;
+				mapContentArea.scrollRectToVisible(visible);
+				setVisible(true);
+			}
+		});
+	}
+
+	public Collection<Integer> getUntranslatedEntryIndexes() {
+		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
+		Iterator<? extends TranslationEntry> iterator = map.iteratorUsed();
+		int count = 0;
+		while (iterator.hasNext()) {
+			TranslationEntry entry = iterator.next();
+			if (entry.isActuallyTranslated()) {
+				// already translated
+			} else {
+				untranslatedEntries.add(count);
+			}
+			count++;
+		}
+		return untranslatedEntries;
+	}
+
 }

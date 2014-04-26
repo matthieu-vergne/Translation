@@ -12,8 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.util.Listener;
-
 @SuppressWarnings("serial")
 public class MapToolsPanel extends JPanel {
 
@@ -22,9 +20,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof PreviousEntryListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -37,9 +35,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof NextEntryListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -52,9 +50,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof FirstEntryListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -67,9 +65,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof LastEntryListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -82,9 +80,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof UntranslatedEntryListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -97,9 +95,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof SaveMapListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -112,9 +110,9 @@ public class MapToolsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Listener listener : listeners) {
+				for (MapToolsListener listener : listeners) {
 					if (listener instanceof ResetMapListener) {
-						listener.eventGenerated();
+						listener.buttonPushed();
 					} else {
 						continue;
 					}
@@ -163,34 +161,38 @@ public class MapToolsPanel extends JPanel {
 		add(reset, constraints);
 	}
 
-	private final Collection<Listener> listeners = new LinkedList<Listener>();
+	private final Collection<MapToolsListener> listeners = new LinkedList<MapToolsListener>();
 
-	public void addListener(Listener listener) {
+	public void addListener(MapToolsListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListener(Listener listener) {
+	public void removeListener(MapToolsListener listener) {
 		listeners.remove(listener);
 	}
 
-	public static interface NextEntryListener extends Listener {
+	public static interface MapToolsListener {
+		public void buttonPushed();
 	}
 
-	public static interface PreviousEntryListener extends Listener {
+	public static interface NextEntryListener extends MapToolsListener {
 	}
 
-	public static interface FirstEntryListener extends Listener {
+	public static interface PreviousEntryListener extends MapToolsListener {
 	}
 
-	public static interface LastEntryListener extends Listener {
+	public static interface FirstEntryListener extends MapToolsListener {
 	}
 
-	public static interface UntranslatedEntryListener extends Listener {
+	public static interface LastEntryListener extends MapToolsListener {
 	}
 
-	public static interface SaveMapListener extends Listener {
+	public static interface UntranslatedEntryListener extends MapToolsListener {
 	}
 
-	public static interface ResetMapListener extends Listener {
+	public static interface SaveMapListener extends MapToolsListener {
+	}
+
+	public static interface ResetMapListener extends MapToolsListener {
 	}
 }
