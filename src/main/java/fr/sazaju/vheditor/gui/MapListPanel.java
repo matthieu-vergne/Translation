@@ -42,6 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap;
+import fr.sazaju.vheditor.translation.impl.backed.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
 //TODO manage CTRL+S shortcut
@@ -337,16 +338,21 @@ public class MapListPanel extends JPanel {
 				return;
 			} else {
 				logger.info("Loading " + file.getName() + "...");
-				BackedTranslationMap map = new BackedTranslationMap(file);
 				MapDescriptor descriptor = new MapDescriptor();
-				descriptor.total = map.sizeUsed();
-				descriptor.remaining = 0;
-				Iterator<? extends TranslationEntry> iterator = map
-						.iteratorUsed();
-				while (iterator.hasNext()) {
-					TranslationEntry entry = iterator.next();
-					descriptor.remaining += entry.isActuallyTranslated() ? 0
-							: 1;
+				try {
+					BackedTranslationMap map = new BackedTranslationMap(file);
+					descriptor.total = map.sizeUsed();
+					descriptor.remaining = 0;
+					Iterator<? extends TranslationEntry> iterator = map
+							.iteratorUsed();
+					while (iterator.hasNext()) {
+						TranslationEntry entry = iterator.next();
+						descriptor.remaining += entry.isActuallyTranslated() ? 0
+								: 1;
+					}
+				} catch (EmptyMapException e) {
+					descriptor.total = 0;
+					descriptor.remaining = 0;
 				}
 				knownMaps.put(file, descriptor);
 				SwingUtilities.invokeLater(new Runnable() {
