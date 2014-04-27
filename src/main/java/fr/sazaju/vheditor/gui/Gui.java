@@ -35,11 +35,11 @@ import javax.swing.WindowConstants;
 public class Gui extends JFrame {
 
 	private static final String ACTION_SAVE = "save";
-	private static final String Y = "y";
-	private static final String X = "x";
-	private static final String WIDTH = "width";
-	private static final String HEIGHT = "height";
-	private static final String SPLIT = "split";
+	private static final String CONFIG_Y = "y";
+	private static final String CONFIG_X = "x";
+	private static final String CONFIG_WIDTH = "width";
+	private static final String CONFIG_HEIGHT = "height";
+	private static final String CONFIG_SPLIT = "split";
 	public static final File configFile = new File("vh-editor.ini");
 	public static final Properties config = new Properties() {
 		public synchronized Object setProperty(String key, String value) {
@@ -69,10 +69,10 @@ public class Gui extends JFrame {
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
-				WIDTH, "700")), Integer.parseInt(config.getProperty(HEIGHT,
-				"500"))));
-		setLocation(Integer.parseInt(config.getProperty(X, "0")),
-				Integer.parseInt(config.getProperty(Y, "0")));
+				CONFIG_WIDTH, "700")), Integer.parseInt(config.getProperty(
+				CONFIG_HEIGHT, "500"))));
+		setLocation(Integer.parseInt(config.getProperty(CONFIG_X, "0")),
+				Integer.parseInt(config.getProperty(CONFIG_Y, "0")));
 		addComponentListener(new ComponentListener() {
 
 			@Override
@@ -82,14 +82,14 @@ public class Gui extends JFrame {
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				config.setProperty(WIDTH, "" + getWidth());
-				config.setProperty(HEIGHT, "" + getHeight());
+				config.setProperty(CONFIG_WIDTH, "" + getWidth());
+				config.setProperty(CONFIG_HEIGHT, "" + getHeight());
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
-				config.setProperty(X, "" + getX());
-				config.setProperty(Y, "" + getY());
+				config.setProperty(CONFIG_X, "" + getX());
+				config.setProperty(CONFIG_Y, "" + getY());
 			}
 
 			@Override
@@ -128,15 +128,15 @@ public class Gui extends JFrame {
 		min = min == -1 ? 0 : min;
 		int max = rootSplit.getMaximumDividerLocation();
 		max = max == -1 ? rootSplit.getWidth() : max;
-		rootSplit.setDividerLocation(Integer.parseInt(config.getProperty(SPLIT,
-				"" + (min + (max - min) * 4 / 10))));
+		rootSplit.setDividerLocation(Integer.parseInt(config.getProperty(
+				CONFIG_SPLIT, "" + (min + (max - min) * 4 / 10))));
 		rootSplit.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getPropertyName().equals(
 						JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-					config.setProperty(SPLIT, "" + event.getNewValue());
+					config.setProperty(CONFIG_SPLIT, "" + event.getNewValue());
 				} else {
 					// do not care about other properties
 				}
