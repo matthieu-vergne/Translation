@@ -154,12 +154,16 @@ public class MapContentPanel extends JPanel {
 			@Override
 			public void run() {
 				JScrollBar scroll = mapContentScroll.getVerticalScrollBar();
+				Component[] components = mapContentArea.getComponents();
 				if (index == 0) {
 					scroll.setValue(0);
+					int i;
+					for (i = 0; !(components[i] instanceof TranslationArea); i++)
+						;
+					components[i].requestFocusInWindow();
 				} else {
 					int count = 0;
 					Rectangle visible = mapContentArea.getVisibleRect();
-					Component[] components = mapContentArea.getComponents();
 					for (int i = 0; i < components.length; i++) {
 						Component component = components[i];
 						if (component instanceof JLabel) {
