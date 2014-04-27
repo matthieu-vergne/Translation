@@ -323,8 +323,11 @@ public class Gui extends JFrame {
 	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
 		boolean mapSafe = !mapContentPanel.isModified();
 		if (!mapSafe) {
-			int answer = JOptionPane.showConfirmDialog(Gui.this,
-					"The map has been modified. Would you like to save it?");
+			int answer = JOptionPane.showOptionDialog(Gui.this,
+					"The map has been modified. Would you like to save it?",
+					"Save the Current Map?", JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE, null, new String[] { "Yes",
+							"No", "Cancel" }, "Cancel");
 			if (answer == JOptionPane.YES_OPTION) {
 				mapContentPanel.applyModifications();
 				mapSafe = true;
