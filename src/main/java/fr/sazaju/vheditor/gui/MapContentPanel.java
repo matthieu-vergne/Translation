@@ -33,6 +33,7 @@ import fr.vergne.logging.LoggerConfiguration;
 
 // TODO use references at https://www.assembla.com/spaces/VH/wiki/Reference
 // TODO find original content in translated versions
+// TODO find translated content in original versions
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'
 // TODO replace all "..." (3) by "…" (1)
 // TODO identify all the "\." in the original version and place them in the translated version
