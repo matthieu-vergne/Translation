@@ -18,7 +18,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -56,7 +58,14 @@ public class MapListPanel extends JPanel {
 	private final JTree tree;
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
-	private File[] currentFiles;
+	private final TreeSet<File> currentFiles = new TreeSet<File>(
+			new Comparator<File>() {
+
+				@Override
+				public int compare(File f1, File f2) {
+					return f1.getName().compareToIgnoreCase(f2.getName());
+				}
+			});
 
 	public MapListPanel() {
 		setBorder(new EtchedBorder());
@@ -82,8 +91,8 @@ public class MapListPanel extends JPanel {
 	private void refreshTree(File folder) {
 		Gui.config.setProperty(MAP_DIR, folder.toString());
 		folderPathField.setText(folder.toString());
-		currentFiles = retrieveFiles(folder);
-		tree.setModel(new JTree(currentFiles).getModel());
+		currentFiles.addAll(Arrays.asList(retrieveFiles(folder)));
+		tree.setModel(new JTree(currentFiles.toArray()).getModel());
 		runFilesLoadingInBackground(currentFiles);
 	}
 
@@ -242,9 +251,9 @@ public class MapListPanel extends JPanel {
 		return tree;
 	}
 
-	private void runFilesLoadingInBackground(File[] currentFiles) {
+	private void runFilesLoadingInBackground(TreeSet<File> files) {
 		final ExecutorService executor = Executors.newSingleThreadExecutor();
-		for (final File file : currentFiles) {
+		for (final File file : files) {
 			executor.submit(new Runnable() {
 
 				@Override
@@ -354,7 +363,8 @@ public class MapListPanel extends JPanel {
 					public void run() {
 						logger.info("Refreshing...");
 						TreeModel model = tree.getModel();
-						int index = Arrays.binarySearch(currentFiles, file);
+						int index = new LinkedList<File>(currentFiles)
+								.indexOf(file);
 						DynamicUtilTreeNode node = (DynamicUtilTreeNode) model
 								.getChild(model.getRoot(), index);
 						model.valueForPathChanged(new TreePath(node.getPath()),
