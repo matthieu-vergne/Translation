@@ -147,7 +147,7 @@ public class MapContentPanel extends JPanel {
 		throw new IllegalStateException("Impossible to find the current entry.");
 	}
 
-	protected void goToEntry(final int entryIndex) {
+	public void goToEntry(final int entryIndex) {
 		final int index = Math.min(Math.max(entryIndex, 0), map.sizeUsed() - 1);
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -162,27 +162,25 @@ public class MapContentPanel extends JPanel {
 						;
 					components[i].requestFocusInWindow();
 				} else {
-					int count = 0;
-					Rectangle visible = mapContentArea.getVisibleRect();
+					int count = -1;
 					for (int i = 0; i < components.length; i++) {
-						Component component = components[i];
-						if (component instanceof JLabel) {
-							JLabel label = (JLabel) component;
-							String text = label.getText();
-							if (text.equals("# TEXT STRING")) {
-								Rectangle bounds = label.getBounds();
+						if (components[i] instanceof JLabel) {
+							JLabel label = (JLabel) components[i];
+							if (label.getText().equals("# TEXT STRING")) {
+								count++;
 								if (count == index) {
-									visible.y = bounds.y;
+									Rectangle visible = mapContentArea
+											.getVisibleRect();
+									visible.y = label.getBounds().y;
 									mapContentArea.scrollRectToVisible(visible);
-									while (!(components[i] instanceof TranslationArea)) {
-										i++;
-									}
+
+									for (; !(components[i] instanceof TranslationArea); i++)
+										;
 									components[i].requestFocusInWindow();
 									return;
 								} else {
 									// not yet the searched entry
 								}
-								count++;
 							} else {
 								// irrelevant component
 							}
