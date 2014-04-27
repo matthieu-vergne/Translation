@@ -47,7 +47,6 @@ import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
-//TODO manage CTRL+S shortcut
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 

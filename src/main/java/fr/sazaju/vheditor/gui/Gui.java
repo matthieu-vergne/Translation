@@ -4,8 +4,11 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
@@ -19,15 +22,19 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
 
+	private static final String ACTION_SAVE = "save";
 	private static final String Y = "y";
 	private static final String X = "x";
 	private static final String WIDTH = "width";
@@ -139,6 +146,18 @@ public class Gui extends JFrame {
 
 	private void configureMapListeners(final MapListPanel listPanel,
 			final MapContentPanel mapPanel, final MapToolsPanel toolsPanel) {
+		getRootPane().getActionMap().put(ACTION_SAVE, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.applyModifications();
+			}
+		});
+		getRootPane()
+				.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+						InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
+
 		addWindowListener(new WindowListener() {
 
 			@Override
