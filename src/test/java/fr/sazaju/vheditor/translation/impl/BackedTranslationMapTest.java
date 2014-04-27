@@ -56,8 +56,8 @@ public class BackedTranslationMapTest {
 				continue;
 			}
 		}
-		System.out.println("TOTAL OVERFLOW: " + overflowCounter + "/"
-				+ mapCounter);
+		assertEquals("TOTAL OVERFLOW: " + overflowCounter + "/" + mapCounter,
+				0, overflowCounter);
 	}
 
 }
