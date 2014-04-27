@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -342,26 +341,6 @@ public class Gui extends JFrame {
 			// already safe
 		}
 		return mapSafe;
-	}
-
-	private void goToNextUntranslatedEntry(final MapContentPanel mapPanel) {
-		TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
-				mapPanel.getUntranslatedEntryIndexes());
-		if (untranslatedEntries.isEmpty()) {
-			JOptionPane.showMessageDialog(Gui.this,
-					"All the entries are already translated.");
-		} else {
-			int currentEntry = mapPanel.getDisplayedEntryIndex();
-			Integer next = untranslatedEntries.ceiling(currentEntry + 1);
-			if (next == null) {
-				JOptionPane
-						.showMessageDialog(Gui.this,
-								"End of the entries reached. Search from the beginning.");
-				mapPanel.goToEntry(untranslatedEntries.first());
-			} else {
-				mapPanel.goToEntry(next);
-			}
-		}
 	}
 
 	public static void main(String[] args) {

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
@@ -191,6 +192,26 @@ public class MapContentPanel extends JPanel {
 				}
 			}
 		});
+	}
+
+	public void goToNextUntranslatedEntry() {
+		TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
+				getUntranslatedEntryIndexes());
+		if (untranslatedEntries.isEmpty()) {
+			JOptionPane.showMessageDialog(this,
+					"All the entries are already translated.");
+		} else {
+			int currentEntry = getFocusEntryIndex();
+			Integer next = untranslatedEntries.ceiling(currentEntry + 1);
+			if (next == null) {
+				JOptionPane
+						.showMessageDialog(this,
+								"End of the entries reached. Search from the beginning.");
+				goToEntry(untranslatedEntries.first());
+			} else {
+				goToEntry(next);
+			}
+		}
 	}
 
 	public void setMap(final File mapFile) {
