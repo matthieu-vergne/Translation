@@ -78,11 +78,6 @@ public class Gui extends JFrame {
 
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
-				CONFIG_WIDTH, "700")), Integer.parseInt(config.getProperty(
-				CONFIG_HEIGHT, "500"))));
-		setLocation(Integer.parseInt(config.getProperty(CONFIG_X, "0")),
-				Integer.parseInt(config.getProperty(CONFIG_Y, "0")));
 		addComponentListener(new ComponentListener() {
 
 			@Override
@@ -133,6 +128,12 @@ public class Gui extends JFrame {
 		add(rootSplit);
 
 		pack();
+
+		setLocation(Integer.parseInt(config.getProperty(CONFIG_X, "0")),
+				Integer.parseInt(config.getProperty(CONFIG_Y, "0")));
+		setSize(new Dimension(Integer.parseInt(config.getProperty(CONFIG_WIDTH,
+				"700")), Integer.parseInt(config.getProperty(CONFIG_HEIGHT,
+				"500"))));
 		int min = rootSplit.getMinimumDividerLocation();
 		min = min == -1 ? 0 : min;
 		int max = rootSplit.getMaximumDividerLocation();
