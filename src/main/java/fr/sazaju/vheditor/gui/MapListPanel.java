@@ -1,6 +1,8 @@
 package fr.sazaju.vheditor.gui;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +30,7 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -37,10 +41,11 @@ import javax.swing.JTree;
 import javax.swing.JTree.DynamicUtilTreeNode;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -52,12 +57,14 @@ import fr.vergne.logging.LoggerConfiguration;
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 
-	private static final String MAP_DIR = "mapDir";
+	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
+	private static final String CONFIG_MAP_DIR = "mapDir";
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
+	private int displayedDescriptors = 0;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
 
@@ -79,21 +86,104 @@ public class MapListPanel extends JPanel {
 		constraints.weightx = 1;
 		add(buildFileChooserPanel(), constraints);
 
-		constraints.gridy = 1;
+		constraints.gridy++;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weighty = 1;
 		tree = buildTreeComponent();
 		add(new JScrollPane(tree), constraints);
 
-		refreshTree(new File(Gui.config.getProperty(MAP_DIR, "")));
+		constraints.gridy++;
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.weighty = 0;
+		JPanel options = buildQuickOptions();
+		add(options, constraints);
+
+		updateFiles(new File(Gui.config.getProperty(CONFIG_MAP_DIR, "")));
 	}
 
-	private void refreshTree(File folder) {
-		Gui.config.setProperty(MAP_DIR, folder.toString());
-		folderPathField.setText(folder.toString());
-		currentFiles.addAll(Arrays.asList(retrieveFiles(folder)));
-		tree.setModel(new JTree(currentFiles.toArray()).getModel());
-		runFilesLoadingInBackground(currentFiles);
+	private JPanel buildQuickOptions() {
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		final JCheckBox displayCleared = new JCheckBox();
+		displayCleared.setAction(new AbstractAction("Cleared") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				boolean selected = displayCleared.isSelected();
+				Gui.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
+				((ListModel) tree.getModel()).setClearedDisplayed(selected);
+				refreshTree(true);
+			}
+		});
+		displayCleared.setSelected(((ListModel) tree.getModel())
+				.isClearedDisplayed());
+		displayCleared.setToolTipText("Display cleared maps.");
+		buttons.add(displayCleared);
+		return buttons;
+	}
+
+	private void updateFiles(File folder) {
+		synchronized (mapDescriptors) {
+			List<File> newFiles = Arrays.asList(retrieveFiles(folder));
+			if (currentFiles.containsAll(newFiles)
+					&& newFiles.containsAll(currentFiles)) {
+				// same files, don't change
+			} else {
+				Collection<File> removed = new LinkedList<File>(currentFiles);
+				removed.removeAll(newFiles);
+				for (File file : removed) {
+					mapDescriptors.remove(file);
+				}
+				currentFiles.clear();
+				currentFiles.addAll(newFiles);
+				displayedDescriptors = 0;
+
+				Gui.config.setProperty(CONFIG_MAP_DIR, folder.toString());
+				folderPathField.setText(folder.toString());
+				((ListModel) tree.getModel()).setFiles(currentFiles);
+				runFilesLoadingInBackground(currentFiles);
+			}
+		}
+	}
+
+	private void refreshTree(boolean force) {
+		synchronized (mapDescriptors) {
+			if (force || mapDescriptors.size() > displayedDescriptors) {
+				logger.info("Refreshing...");
+				TreePath[] selection = tree.getSelectionPaths();
+				if (selection != null && selection.length > 0) {
+					LinkedList<TreePath> paths = new LinkedList<TreePath>(
+							Arrays.asList(selection));
+					Iterator<TreePath> iterator = paths.iterator();
+					while (iterator.hasNext()) {
+						TreePath path = iterator.next();
+						File file = (File) ((DefaultMutableTreeNode) path
+								.getLastPathComponent()).getUserObject();
+						MapDescriptor descriptor = mapDescriptors.get(file);
+						if (descriptor != null && descriptor.remaining == 0) {
+							iterator.remove();
+						} else {
+							// still present
+						}
+					}
+					selection = paths.toArray(new TreePath[paths.size()]);
+					tree.clearSelection();
+					tree.setSelectionPaths(selection);
+				} else {
+					// no selection to update
+				}
+
+				for (TreeModelListener listener : ((ListModel) tree.getModel())
+						.getTreeModelListeners()) {
+					listener.treeStructureChanged(new TreeModelEvent(tree,
+							new Object[] { tree.getModel().getRoot() }));
+				}
+				tree.setSelectionPaths(selection);
+				displayedDescriptors = mapDescriptors.size();
+			} else {
+				// already refreshed
+			}
+		}
 	}
 
 	private JPanel buildFileChooserPanel() {
@@ -110,7 +200,7 @@ public class MapListPanel extends JPanel {
 				fileChooser.setMultiSelectionEnabled(false);
 				int answer = fileChooser.showDialog(MapListPanel.this, "Open");
 				if (answer == JFileChooser.APPROVE_OPTION) {
-					refreshTree(fileChooser.getSelectedFile());
+					updateFiles(fileChooser.getSelectedFile());
 				} else {
 					// do not consider it
 				}
@@ -154,7 +244,10 @@ public class MapListPanel extends JPanel {
 	}
 
 	private JTree buildTreeComponent() {
-		final JTree tree = new JTree(new Object[0]);
+		final JTree tree = new JTree(new ListModel(mapDescriptors,
+				Boolean.parseBoolean(Gui.config.getProperty(
+						CONFIG_CLEARED_DISPLAYED, "true"))));
+		tree.setRootVisible(false);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		final TreeCellRenderer defaultRenderer = tree.getCellRenderer();
@@ -192,11 +285,12 @@ public class MapListPanel extends JPanel {
 					DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) defaultRenderer
 							.getTreeCellRendererComponent(tree, value,
 									selected, expanded, leaf, row, hasFocus);
+					renderer.setFont(renderer.getFont().deriveFont(
+							descriptor == null ? Font.ITALIC : Font.PLAIN));
 					if (descriptor != null && descriptor.remaining == 0) {
 						renderer.setEnabled(false);
-						// renderer.setForeground(SystemColor.inactiveCaption);
 					} else {
-						// keep it activated
+						// keep it as is
 					}
 					return renderer;
 				} else {
@@ -229,21 +323,24 @@ public class MapListPanel extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent event) {
-				if (event.getButton() == MouseEvent.BUTTON1
-						&& event.getClickCount() == 2) {
-					DynamicUtilTreeNode node = (DynamicUtilTreeNode) tree
-							.getSelectionPath().getLastPathComponent();
-					File file = (File) node.getUserObject();
-					for (MapListListener listener : listeners) {
-						if (listener instanceof FileSelectedListener) {
-							((FileSelectedListener) listener)
-									.fileSelected(file);
-						} else {
-							// not the right listener
+				synchronized (mapDescriptors) {
+					if (event.getButton() == MouseEvent.BUTTON1
+							&& event.getClickCount() == 2) {
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+								.getSelectionPath().getLastPathComponent();
+						File file = (File) node.getUserObject();
+						updateMapDescriptor(file, false);
+						for (MapListListener listener : listeners) {
+							if (listener instanceof FileSelectedListener) {
+								((FileSelectedListener) listener)
+										.fileSelected(file);
+							} else {
+								// not the right listener
+							}
 						}
+					} else {
+						// nothing to do for single click
 					}
-				} else {
-					// nothing to do for single click
 				}
 			}
 
@@ -258,17 +355,22 @@ public class MapListPanel extends JPanel {
 
 				@Override
 				public void run() {
-					try {
-						/*
-						 * Brake to avoid an overloading effect for fast
-						 * computers. Files can be loaded on demand anyway, so
-						 * it is not blocking, only the display of the
-						 * translations advancement is delayed.
-						 */
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
+					if (currentFiles.contains(file)) {
+						try {
+							/*
+							 * Brake to avoid an overloading effect for fast
+							 * computers. Files can be loaded on demand anyway,
+							 * so it is not blocking, only the display of the
+							 * translations advancement is delayed.
+							 */
+							// TODO use priority rather than subjective sleep
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+						}
+						updateMapDescriptor(file, false);
+					} else {
+						// different folder selected meanwhile
 					}
-					updateMapDescriptor(file, false);
 				}
 			});
 		}
@@ -361,21 +463,14 @@ public class MapListPanel extends JPanel {
 
 					@Override
 					public void run() {
-						logger.info("Refreshing...");
-						TreeModel model = tree.getModel();
-						int index = new LinkedList<File>(currentFiles)
-								.indexOf(file);
-						DynamicUtilTreeNode node = (DynamicUtilTreeNode) model
-								.getChild(model.getRoot(), index);
-						model.valueForPathChanged(new TreePath(node.getPath()),
-								node.getUserObject());
+						refreshTree(false);
 					}
 				});
 			}
 		}
 	}
 
-	private class MapDescriptor {
+	public static class MapDescriptor {
 		int total;
 		int remaining;
 	}
@@ -396,4 +491,5 @@ public class MapListPanel extends JPanel {
 	public static interface FileSelectedListener extends MapListListener {
 		public void fileSelected(File file);
 	}
+
 }
