@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,6 +36,11 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
 
+	private static final String ACTION_NEXT_JAP = "nextJap";
+	private static final String ACTION_LAST_ENTRY = "lastEntry";
+	private static final String ACTION_FIRST_ENTRY = "firstEntry";
+	private static final String ACTION_NEXT_ENTRY = "nextEntry";
+	private static final String ACTION_PREVIOUS_ENTRY = "previousEntry";
 	private static final String ACTION_SAVE = "save";
 	private static final String CONFIG_Y = "y";
 	private static final String CONFIG_X = "x";
@@ -146,17 +153,64 @@ public class Gui extends JFrame {
 
 	private void configureMapListeners(final MapListPanel listPanel,
 			final MapContentPanel mapPanel, final MapToolsPanel toolsPanel) {
-		getRootPane().getActionMap().put(ACTION_SAVE, new AbstractAction() {
+		ActionMap actions = getRootPane().getActionMap();
+		actions.put(ACTION_SAVE, new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				mapPanel.applyModifications();
 			}
 		});
-		getRootPane()
-				.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-						InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
+		actions.put(ACTION_PREVIOUS_ENTRY, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() - 1);
+			}
+		});
+		actions.put(ACTION_NEXT_ENTRY, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() + 1);
+			}
+		});
+		actions.put(ACTION_FIRST_ENTRY, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(0);
+			}
+		});
+		actions.put(ACTION_LAST_ENTRY, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(mapPanel.getMap().sizeUsed() - 1);
+			}
+		});
+		actions.put(ACTION_NEXT_JAP, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				goToNextUntranslatedEntry(mapPanel);
+			}
+		});
+
+		InputMap inputs = getRootPane().getInputMap(
+				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
+				InputEvent.ALT_DOWN_MASK), ACTION_PREVIOUS_ENTRY);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
+				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_ENTRY);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME,
+				InputEvent.ALT_DOWN_MASK), ACTION_FIRST_ENTRY);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_END,
+				InputEvent.ALT_DOWN_MASK), ACTION_LAST_ENTRY);
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_JAP);
 
 		addWindowListener(new WindowListener() {
 
@@ -244,25 +298,9 @@ public class Gui extends JFrame {
 
 			@Override
 			public void buttonPushed() {
-				TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
-						mapPanel.getUntranslatedEntryIndexes());
-				if (untranslatedEntries.isEmpty()) {
-					JOptionPane.showMessageDialog(Gui.this,
-							"All the entries are already translated.");
-				} else {
-					int currentEntry = mapPanel.getDisplayedEntryIndex();
-					Integer next = untranslatedEntries
-							.ceiling(currentEntry + 1);
-					if (next == null) {
-						JOptionPane
-								.showMessageDialog(Gui.this,
-										"End of the entries reached. Search from the beginning.");
-						mapPanel.goToEntry(untranslatedEntries.first());
-					} else {
-						mapPanel.goToEntry(next);
-					}
-				}
+				goToNextUntranslatedEntry(mapPanel);
 			}
+
 		});
 		toolsPanel.addListener(new MapToolsPanel.SaveMapListener() {
 
@@ -301,6 +339,26 @@ public class Gui extends JFrame {
 			// already safe
 		}
 		return mapSafe;
+	}
+
+	private void goToNextUntranslatedEntry(final MapContentPanel mapPanel) {
+		TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
+				mapPanel.getUntranslatedEntryIndexes());
+		if (untranslatedEntries.isEmpty()) {
+			JOptionPane.showMessageDialog(Gui.this,
+					"All the entries are already translated.");
+		} else {
+			int currentEntry = mapPanel.getDisplayedEntryIndex();
+			Integer next = untranslatedEntries.ceiling(currentEntry + 1);
+			if (next == null) {
+				JOptionPane
+						.showMessageDialog(Gui.this,
+								"End of the entries reached. Search from the beginning.");
+				mapPanel.goToEntry(untranslatedEntries.first());
+			} else {
+				mapPanel.goToEntry(next);
+			}
+		}
 	}
 
 	public static void main(String[] args) {

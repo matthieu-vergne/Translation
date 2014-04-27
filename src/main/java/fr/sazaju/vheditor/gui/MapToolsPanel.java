@@ -29,7 +29,7 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		previous.setToolTipText("Go to previous entry.");
+		previous.setToolTipText("Go to previous entry (ALT+LEFT).");
 
 		JButton next = new JButton(new AbstractAction(">") {
 
@@ -44,7 +44,7 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		next.setToolTipText("Go to next entry.");
+		next.setToolTipText("Go to next entry (ALT+RIGHT).");
 
 		JButton first = new JButton(new AbstractAction("|<") {
 
@@ -59,7 +59,7 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		first.setToolTipText("Go to first entry.");
+		first.setToolTipText("Go to first entry (ALT+HOME).");
 
 		JButton last = new JButton(new AbstractAction(">|") {
 
@@ -74,7 +74,7 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		last.setToolTipText("Go to last entry.");
+		last.setToolTipText("Go to last entry (ALT+END).");
 
 		JButton untranslated = new JButton(new AbstractAction("Jap only") {
 
@@ -89,7 +89,8 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		untranslated.setToolTipText("Go to next untranslated entry.");
+		untranslated
+				.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
 
 		JButton save = new JButton(new AbstractAction("Save") {
 
@@ -104,7 +105,7 @@ public class MapToolsPanel extends JPanel {
 				}
 			}
 		});
-		save.setToolTipText("Write the modifications to the map file.");
+		save.setToolTipText("Write the modifications to the map file (CTRL+S).");
 
 		JButton reset = new JButton(new AbstractAction("Reset") {
 
