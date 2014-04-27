@@ -23,4 +23,8 @@ public class TranslationArea extends JTextArea {
 	public void reset() {
 		setText(entry.getTranslatedVersion());
 	}
+
+	public boolean isModified() {
+		return !getText().equals(entry.getTranslatedVersion());
+	}
 }

@@ -360,4 +360,19 @@ public class MapContentPanel extends JPanel {
 		return untranslatedEntries;
 	}
 
+	public boolean isModified() {
+		for (Component component : mapContentArea.getComponents()) {
+			if (component instanceof TranslationArea) {
+				if (((TranslationArea) component).isModified()) {
+					return true;
+				} else {
+					// look for another one
+				}
+			} else {
+				// irrelevant component
+			}
+		}
+		return false;
+	}
+
 }

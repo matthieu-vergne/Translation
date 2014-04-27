@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -58,7 +60,7 @@ public class Gui extends JFrame {
 		}
 
 		setTitle("VH Translation Tool");
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
 				WIDTH, "700")), Integer.parseInt(config.getProperty(HEIGHT,
 				"500"))));
@@ -89,10 +91,10 @@ public class Gui extends JFrame {
 			}
 		});
 
-		MapListPanel mapListPanel = new MapListPanel();
-		MapContentPanel mapContentPanel = new MapContentPanel();
+		MapListPanel listPanel = new MapListPanel();
+		MapContentPanel mapPanel = new MapContentPanel();
 		MapToolsPanel toolsPanel = new MapToolsPanel();
-		configureListeners(mapListPanel, mapContentPanel, toolsPanel);
+		configureMapListeners(listPanel, mapPanel, toolsPanel);
 
 		JPanel translationPanel = new JPanel();
 		translationPanel.setLayout(new GridBagLayout());
@@ -104,10 +106,10 @@ public class Gui extends JFrame {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
-		translationPanel.add(mapContentPanel, constraints);
+		translationPanel.add(mapPanel, constraints);
 
 		final JSplitPane rootSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		rootSplit.setLeftComponent(mapListPanel);
+		rootSplit.setLeftComponent(listPanel);
 		rootSplit.setRightComponent(translationPanel);
 		rootSplit.setResizeWeight(1.0 / 3);
 
@@ -135,15 +137,59 @@ public class Gui extends JFrame {
 		});
 	}
 
-	private void configureListeners(final MapListPanel mapListPanel,
-			final MapContentPanel mapContentPanel,
-			final MapToolsPanel toolsPanel) {
-		mapListPanel.addListener(new MapListPanel.FileSelectedListener() {
+	private void configureMapListeners(final MapListPanel listPanel,
+			final MapContentPanel mapPanel, final MapToolsPanel toolsPanel) {
+		addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				if (isMapSafe(mapPanel)) {
+					dispose();
+				} else {
+					// map unsafe
+				}
+			}
+
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// nothing to do
+			}
+		});
+
+		listPanel.addListener(new MapListPanel.FileSelectedListener() {
 
 			@Override
 			public void fileSelected(File file) {
-				mapListPanel.retrieveMapDescriptor(file, false);
-				mapContentPanel.setMap(file);
+				if (isMapSafe(mapPanel)) {
+					mapPanel.setMap(file);
+				} else {
+					// map unsafe
+				}
 			}
 		});
 
@@ -151,31 +197,28 @@ public class Gui extends JFrame {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel.goToEntry(mapContentPanel
-						.getDisplayedEntryIndex() + 1);
+				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() + 1);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.PreviousEntryListener() {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel.goToEntry(mapContentPanel
-						.getDisplayedEntryIndex() - 1);
+				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() - 1);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.FirstEntryListener() {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel.goToEntry(0);
+				mapPanel.goToEntry(0);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.LastEntryListener() {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel
-						.goToEntry(mapContentPanel.getMap().sizeUsed() - 1);
+				mapPanel.goToEntry(mapPanel.getMap().sizeUsed() - 1);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
@@ -183,21 +226,21 @@ public class Gui extends JFrame {
 			@Override
 			public void buttonPushed() {
 				TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
-						mapContentPanel.getUntranslatedEntryIndexes());
+						mapPanel.getUntranslatedEntryIndexes());
 				if (untranslatedEntries.isEmpty()) {
 					JOptionPane.showMessageDialog(Gui.this,
 							"All the entries are already translated.");
 				} else {
-					int currentEntry = mapContentPanel.getDisplayedEntryIndex();
+					int currentEntry = mapPanel.getDisplayedEntryIndex();
 					Integer next = untranslatedEntries
 							.ceiling(currentEntry + 1);
 					if (next == null) {
 						JOptionPane
 								.showMessageDialog(Gui.this,
 										"End of the entries reached. Search from the beginning.");
-						mapContentPanel.goToEntry(untranslatedEntries.first());
+						mapPanel.goToEntry(untranslatedEntries.first());
 					} else {
-						mapContentPanel.goToEntry(next);
+						mapPanel.goToEntry(next);
 					}
 				}
 			}
@@ -206,16 +249,37 @@ public class Gui extends JFrame {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel.applyModifications();
+				mapPanel.applyModifications();
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
 
 			@Override
 			public void buttonPushed() {
-				mapContentPanel.cancelModifications();
+				mapPanel.cancelModifications();
 			}
 		});
+	}
+
+	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
+		boolean mapSafe = !mapContentPanel.isModified();
+		if (!mapSafe) {
+			int answer = JOptionPane.showConfirmDialog(Gui.this,
+					"The map has been modified. Would you like to save it?");
+			if (answer == JOptionPane.YES_OPTION) {
+				mapContentPanel.applyModifications();
+				mapSafe = true;
+			} else if (answer == JOptionPane.NO_OPTION) {
+				mapSafe = true;
+			} else if (answer == JOptionPane.CANCEL_OPTION) {
+				// cancel the request
+			} else {
+				throw new IllegalStateException("Unmanaged answer: " + answer);
+			}
+		} else {
+			// already safe
+		}
+		return mapSafe;
 	}
 
 	public static void main(String[] args) {
