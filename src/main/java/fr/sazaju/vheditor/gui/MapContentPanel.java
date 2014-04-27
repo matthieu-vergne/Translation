@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -99,28 +100,50 @@ public class MapContentPanel extends JPanel {
 		add(mapLoadingArea);
 	}
 
-	protected int getDisplayedEntryIndex() {
-		int count = 0;
-		Rectangle visible = mapContentArea.getVisibleRect();
-		for (Component component : mapContentArea.getComponents()) {
-			if (component instanceof JLabel) {
-				JLabel label = (JLabel) component;
-				String text = label.getText();
-				if (text.equals("# TEXT STRING")) {
-					Rectangle bounds = label.getBounds();
-					if (visible.y <= bounds.y) {
-						return count;
+	protected int getFocusEntryIndex() {
+		JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+		Component focusOwner = frame.getFocusOwner();
+		if (focusOwner instanceof TranslationArea) {
+			int count = -1;
+			for (Component component : mapContentArea.getComponents()) {
+				if (component instanceof JLabel) {
+					JLabel label = (JLabel) component;
+					String text = label.getText();
+					if (text.equals("# TEXT STRING")) {
+						count++;
 					} else {
-						// not yet the searched entry
+						// irrelevant component
 					}
-					count++;
+				} else if (component == focusOwner) {
+					return count;
 				} else {
 					// irrelevant component
 				}
-			} else {
-				// irrelevant component
+			}
+		} else {
+			int count = 0;
+			Rectangle visible = mapContentArea.getVisibleRect();
+			for (Component component : mapContentArea.getComponents()) {
+				if (component instanceof JLabel) {
+					JLabel label = (JLabel) component;
+					String text = label.getText();
+					if (text.equals("# TEXT STRING")) {
+						Rectangle bounds = label.getBounds();
+						if (visible.y <= bounds.y) {
+							return count;
+						} else {
+							// not yet the searched entry
+						}
+						count++;
+					} else {
+						// irrelevant component
+					}
+				} else {
+					// irrelevant component
+				}
 			}
 		}
+
 		throw new IllegalStateException("Impossible to find the current entry.");
 	}
 
