@@ -31,7 +31,6 @@ import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
-// TODO if there is modifications, ask for confirmation/save before to load a new one or close the app
 // TODO update list panel info when saving
 // TODO use references at https://www.assembla.com/spaces/VH/wiki/Reference
 // TODO find original content in translated versions
