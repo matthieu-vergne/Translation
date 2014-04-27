@@ -136,7 +136,9 @@ public class MapContentPanel extends JPanel {
 				} else {
 					int count = 0;
 					Rectangle visible = mapContentArea.getVisibleRect();
-					for (Component component : mapContentArea.getComponents()) {
+					Component[] components = mapContentArea.getComponents();
+					for (int i = 0; i < components.length; i++) {
+						Component component = components[i];
 						if (component instanceof JLabel) {
 							JLabel label = (JLabel) component;
 							String text = label.getText();
@@ -145,6 +147,10 @@ public class MapContentPanel extends JPanel {
 								if (count == index) {
 									visible.y = bounds.y;
 									mapContentArea.scrollRectToVisible(visible);
+									while (!(components[i] instanceof TranslationArea)) {
+										i++;
+									}
+									components[i].requestFocusInWindow();
 									return;
 								} else {
 									// not yet the searched entry
