@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,8 +26,11 @@ import javax.swing.WindowConstants;
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
 
+	private static final String Y = "y";
+	private static final String X = "x";
 	private static final String WIDTH = "width";
 	private static final String HEIGHT = "height";
+	private static final String SPLIT = "split";
 	public static final File configFile = new File("vh-editor.ini");
 	public static final Properties config = new Properties() {
 		public synchronized Object setProperty(String key, String value) {
@@ -57,6 +62,8 @@ public class Gui extends JFrame {
 		setPreferredSize(new Dimension(Integer.parseInt(config.getProperty(
 				WIDTH, "700")), Integer.parseInt(config.getProperty(HEIGHT,
 				"500"))));
+		setLocation(Integer.parseInt(config.getProperty(X, "0")),
+				Integer.parseInt(config.getProperty(Y, "0")));
 		addComponentListener(new ComponentListener() {
 
 			@Override
@@ -72,7 +79,8 @@ public class Gui extends JFrame {
 
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
-				// nothing to do
+				config.setProperty(X, "" + getX());
+				config.setProperty(Y, "" + getY());
 			}
 
 			@Override
@@ -107,7 +115,24 @@ public class Gui extends JFrame {
 		add(rootSplit);
 
 		pack();
-		rootSplit.setDividerLocation(rootSplit.getResizeWeight());
+		int min = rootSplit.getMinimumDividerLocation();
+		min = min == -1 ? 0 : min;
+		int max = rootSplit.getMaximumDividerLocation();
+		max = max == -1 ? rootSplit.getWidth() : max;
+		rootSplit.setDividerLocation(Integer.parseInt(config.getProperty(SPLIT,
+				"" + (min + (max - min) * 4 / 10))));
+		rootSplit.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getPropertyName().equals(
+						JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+					config.setProperty(SPLIT, "" + event.getNewValue());
+				} else {
+					// do not care about other properties
+				}
+			}
+		});
 	}
 
 	private void configureListeners(final MapListPanel mapListPanel,
