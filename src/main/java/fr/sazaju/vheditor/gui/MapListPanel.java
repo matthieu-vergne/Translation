@@ -260,7 +260,7 @@ public class MapListPanel extends JPanel {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
 					}
-					retrieveMapDescriptor(file, false);
+					updateMapDescriptor(file, false);
 				}
 			});
 		}
@@ -321,7 +321,7 @@ public class MapListPanel extends JPanel {
 		});
 	}
 
-	public void retrieveMapDescriptor(final File file, boolean force) {
+	public void updateMapDescriptor(final File file, boolean force) {
 		synchronized (mapDescriptors) {
 			if (!force && mapDescriptors.get(file) != null) {
 				// nothing to load

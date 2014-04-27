@@ -31,7 +31,6 @@ import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
-// TODO update list panel info when saving
 // TODO use references at https://www.assembla.com/spaces/VH/wiki/Reference
 // TODO find original content in translated versions
 // TODO for a content between 「 and 」 or  （ and ） which lacks indentation, indent it with '　'

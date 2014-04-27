@@ -250,6 +250,8 @@ public class Gui extends JFrame {
 			@Override
 			public void buttonPushed() {
 				mapPanel.applyModifications();
+				listPanel.updateMapDescriptor(mapPanel.getMap().getBaseFile(),
+						true);
 			}
 		});
 		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
