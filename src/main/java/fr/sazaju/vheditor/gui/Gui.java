@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -24,6 +25,7 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -31,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
@@ -41,6 +44,7 @@ public class Gui extends JFrame {
 	private static final String ACTION_NEXT_ENTRY = "nextEntry";
 	private static final String ACTION_PREVIOUS_ENTRY = "previousEntry";
 	private static final String ACTION_SAVE = "save";
+	private static final String ACTION_RESET = "reset";
 	private static final String CONFIG_Y = "y";
 	private static final String CONFIG_X = "x";
 	private static final String CONFIG_WIDTH = "width";
@@ -106,15 +110,14 @@ public class Gui extends JFrame {
 
 		MapListPanel listPanel = new MapListPanel();
 		MapContentPanel mapPanel = new MapContentPanel();
-		MapToolsPanel toolsPanel = new MapToolsPanel();
-		configureMapListeners(listPanel, mapPanel, toolsPanel);
+		configureListeners(listPanel, mapPanel);
 
 		JPanel translationPanel = new JPanel();
 		translationPanel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 1;
 		constraints.gridy = 0;
-		translationPanel.add(toolsPanel, constraints);
+		translationPanel.add(configureButtons(mapPanel), constraints);
 		constraints.gridx = 0;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
@@ -150,67 +153,8 @@ public class Gui extends JFrame {
 		});
 	}
 
-	private void configureMapListeners(final MapListPanel listPanel,
-			final MapContentPanel mapPanel, final MapToolsPanel toolsPanel) {
-		ActionMap actions = getRootPane().getActionMap();
-		actions.put(ACTION_SAVE, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.applyModifications();
-			}
-		});
-		actions.put(ACTION_PREVIOUS_ENTRY, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() - 1);
-			}
-		});
-		actions.put(ACTION_NEXT_ENTRY, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() + 1);
-			}
-		});
-		actions.put(ACTION_FIRST_ENTRY, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(0);
-			}
-		});
-		actions.put(ACTION_LAST_ENTRY, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getMap().sizeUsed() - 1);
-			}
-		});
-		actions.put(ACTION_NEXT_JAP, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				goToNextUntranslatedEntry(mapPanel);
-			}
-		});
-
-		InputMap inputs = getRootPane().getInputMap(
-				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
-				InputEvent.ALT_DOWN_MASK), ACTION_PREVIOUS_ENTRY);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
-				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_ENTRY);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME,
-				InputEvent.ALT_DOWN_MASK), ACTION_FIRST_ENTRY);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_END,
-				InputEvent.ALT_DOWN_MASK), ACTION_LAST_ENTRY);
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_JAP);
-
+	private void configureListeners(final MapListPanel listPanel,
+			final MapContentPanel mapPanel) {
 		addWindowListener(new WindowListener() {
 
 			@Override
@@ -264,59 +208,138 @@ public class Gui extends JFrame {
 				}
 			}
 		});
+	}
 
-		toolsPanel.addListener(new MapToolsPanel.NextEntryListener() {
+	private JPanel configureButtons(final MapContentPanel mapPanel) {
+		ActionMap actions = getRootPane().getActionMap();
+		InputMap inputs = getRootPane().getInputMap(
+				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+		actions.put(ACTION_PREVIOUS_ENTRY, new AbstractAction("<") {
 
 			@Override
-			public void buttonPushed() {
-				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() + 1);
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(mapPanel.getFocusEntryIndex() - 1);
 			}
 		});
-		toolsPanel.addListener(new MapToolsPanel.PreviousEntryListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
+				InputEvent.ALT_DOWN_MASK), ACTION_PREVIOUS_ENTRY);
+		JButton previous = new JButton(actions.get(ACTION_PREVIOUS_ENTRY));
+		previous.setToolTipText("Go to previous entry (ALT+LEFT).");
+
+		actions.put(ACTION_NEXT_ENTRY, new AbstractAction(">") {
 
 			@Override
-			public void buttonPushed() {
-				mapPanel.goToEntry(mapPanel.getDisplayedEntryIndex() - 1);
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToEntry(mapPanel.getFocusEntryIndex() + 1);
 			}
 		});
-		toolsPanel.addListener(new MapToolsPanel.FirstEntryListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
+				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_ENTRY);
+		JButton next = new JButton(actions.get(ACTION_NEXT_ENTRY));
+		next.setToolTipText("Go to next entry (ALT+RIGHT).");
+
+		actions.put(ACTION_FIRST_ENTRY, new AbstractAction("|<") {
 
 			@Override
-			public void buttonPushed() {
+			public void actionPerformed(ActionEvent arg0) {
 				mapPanel.goToEntry(0);
 			}
 		});
-		toolsPanel.addListener(new MapToolsPanel.LastEntryListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME,
+				InputEvent.ALT_DOWN_MASK), ACTION_FIRST_ENTRY);
+		JButton first = new JButton(actions.get(ACTION_FIRST_ENTRY));
+		first.setToolTipText("Go to first entry (ALT+HOME).");
+
+		actions.put(ACTION_LAST_ENTRY, new AbstractAction(">|") {
 
 			@Override
-			public void buttonPushed() {
+			public void actionPerformed(ActionEvent arg0) {
 				mapPanel.goToEntry(mapPanel.getMap().sizeUsed() - 1);
 			}
 		});
-		toolsPanel.addListener(new MapToolsPanel.UntranslatedEntryListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_END,
+				InputEvent.ALT_DOWN_MASK), ACTION_LAST_ENTRY);
+		JButton last = new JButton(actions.get(ACTION_LAST_ENTRY));
+		last.setToolTipText("Go to last entry (ALT+END).");
+
+		actions.put(ACTION_NEXT_JAP, new AbstractAction("Jap only") {
 
 			@Override
-			public void buttonPushed() {
-				goToNextUntranslatedEntry(mapPanel);
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToNextUntranslatedEntry();
 			}
-
 		});
-		toolsPanel.addListener(new MapToolsPanel.SaveMapListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_JAP);
+		JButton untranslated = new JButton(actions.get(ACTION_NEXT_JAP));
+		untranslated
+				.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
+
+		actions.put(ACTION_SAVE, new AbstractAction("Save") {
 
 			@Override
-			public void buttonPushed() {
+			public void actionPerformed(ActionEvent arg0) {
 				mapPanel.applyModifications();
-				listPanel.updateMapDescriptor(mapPanel.getMap().getBaseFile(),
-						true);
 			}
 		});
-		toolsPanel.addListener(new MapToolsPanel.ResetMapListener() {
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
+		JButton save = new JButton(actions.get(ACTION_SAVE));
+		save.setToolTipText("Write the modifications to the map file (CTRL+S).");
+
+		actions.put(ACTION_RESET, new AbstractAction("Reset") {
 
 			@Override
-			public void buttonPushed() {
+			public void actionPerformed(ActionEvent arg0) {
 				mapPanel.cancelModifications();
 			}
 		});
+		// no key binding to avoid wrong manipulation
+		JButton reset = new JButton(actions.get(ACTION_RESET));
+		reset.setToolTipText("Cancel all the modifications.");
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(new EtchedBorder());
+		buttonPanel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		Insets closeInsets = new Insets(5, 5, 5, 5);
+		Insets farInsets = new Insets(20, 5, 5, 5);
+		constraints.insets = closeInsets;
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+
+		buttonPanel.add(previous, constraints);
+		constraints.gridx++;
+		buttonPanel.add(next, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy++;
+		buttonPanel.add(first, constraints);
+		constraints.gridx++;
+		buttonPanel.add(last, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy++;
+		constraints.gridwidth = 2;
+		buttonPanel.add(untranslated, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy++;
+		constraints.gridwidth = 2;
+		constraints.insets = farInsets;
+		buttonPanel.add(save, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy++;
+		constraints.gridwidth = 2;
+		constraints.insets = closeInsets;
+		buttonPanel.add(reset, constraints);
+
+		return buttonPanel;
 	}
 
 	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
