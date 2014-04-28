@@ -134,12 +134,8 @@ public class Gui extends JFrame {
 		setSize(new Dimension(Integer.parseInt(config.getProperty(CONFIG_WIDTH,
 				"700")), Integer.parseInt(config.getProperty(CONFIG_HEIGHT,
 				"500"))));
-		int min = rootSplit.getMinimumDividerLocation();
-		min = min == -1 ? 0 : min;
-		int max = rootSplit.getMaximumDividerLocation();
-		max = max == -1 ? rootSplit.getWidth() : max;
 		rootSplit.setDividerLocation(Integer.parseInt(config.getProperty(
-				CONFIG_SPLIT, "" + (min + (max - min) * 4 / 10))));
+				CONFIG_SPLIT, "" + (getWidth() * 4 / 10))));
 		rootSplit.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
