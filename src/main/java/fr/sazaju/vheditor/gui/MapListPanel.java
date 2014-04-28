@@ -150,8 +150,10 @@ public class MapListPanel extends JPanel {
 		synchronized (mapDescriptors) {
 			if (force || mapDescriptors.size() > displayedDescriptors) {
 				logger.info("Refreshing...");
+				ListModel model = (ListModel) tree.getModel();
 				TreePath[] selection = tree.getSelectionPaths();
-				if (selection != null && selection.length > 0) {
+				if (!model.isClearedDisplayed() && selection != null
+						&& selection.length > 0) {
 					LinkedList<TreePath> paths = new LinkedList<TreePath>(
 							Arrays.asList(selection));
 					Iterator<TreePath> iterator = paths.iterator();
