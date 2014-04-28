@@ -78,30 +78,6 @@ public class Gui extends JFrame {
 
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		addComponentListener(new ComponentListener() {
-
-			@Override
-			public void componentShown(ComponentEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void componentResized(ComponentEvent arg0) {
-				config.setProperty(CONFIG_WIDTH, "" + getWidth());
-				config.setProperty(CONFIG_HEIGHT, "" + getHeight());
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent arg0) {
-				config.setProperty(CONFIG_X, "" + getX());
-				config.setProperty(CONFIG_Y, "" + getY());
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent arg0) {
-				// nothing to do
-			}
-		});
 
 		MapListPanel listPanel = new MapListPanel();
 		MapContentPanel mapPanel = new MapContentPanel();
@@ -146,6 +122,30 @@ public class Gui extends JFrame {
 				} else {
 					// do not care about other properties
 				}
+			}
+		});
+		addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				config.setProperty(CONFIG_WIDTH, "" + getWidth());
+				config.setProperty(CONFIG_HEIGHT, "" + getHeight());
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				config.setProperty(CONFIG_X, "" + getX());
+				config.setProperty(CONFIG_Y, "" + getY());
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// nothing to do
 			}
 		});
 	}
