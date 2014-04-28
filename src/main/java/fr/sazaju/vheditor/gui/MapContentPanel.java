@@ -33,6 +33,7 @@ import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
+// TODO add searching feature (find maps containing a given string and go to the specific entries)
 // TODO make a panel for each entry (MapEntry extends JPanel) rather than each line + refine browsing to exploit it
 // TODO use references at https://www.assembla.com/spaces/VH/wiki/Reference
 // TODO find original content in translated versions
