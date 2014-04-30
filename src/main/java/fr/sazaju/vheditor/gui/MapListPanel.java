@@ -413,12 +413,12 @@ public class MapListPanel extends JPanel {
 
 						@Override
 						public void windowClosing(WindowEvent arg0) {
-							executor.shutdownNow();
+							// do nothing
 						}
 
 						@Override
 						public void windowClosed(WindowEvent arg0) {
-							// do nothing
+							executor.shutdownNow();
 						}
 
 						@Override
