@@ -189,7 +189,9 @@ public class MapListPanel extends JPanel {
 	}
 
 	private JPanel buildFileChooserPanel() {
-
+		folderPathField.setEditable(false);
+		folderPathField.setText("Map folder...");
+		
 		JButton openButton = new JButton(new AbstractAction("Browse") {
 
 			@Override
