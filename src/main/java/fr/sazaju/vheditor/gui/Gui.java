@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -35,6 +36,8 @@ import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
+
+import fr.sazaju.vheditor.gui.tool.ToolProvider;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
@@ -81,9 +84,29 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
-		MapListPanel listPanel = new MapListPanel();
-		MapContentPanel mapPanel = new MapContentPanel();
+		final MapListPanel listPanel = new MapListPanel();
+		final MapContentPanel mapPanel = new MapContentPanel();
 		configureListeners(listPanel, mapPanel);
+		ToolPanel toolPanel = new ToolPanel();
+
+		final ToolProvider provider = new ToolProvider() {
+
+			@Override
+			public Collection<File> getMapFiles() {
+				return listPanel.getFiles();
+			}
+
+			@Override
+			public void loadMap(File mapFile) {
+				mapPanel.setMap(mapFile);
+			}
+
+			@Override
+			public void loadMapEntry(File mapFile, int entryIndex) {
+				mapPanel.setMap(mapFile, entryIndex);
+			}
+		};
+		configureTools(toolPanel, provider);
 
 		JPanel translationPanel = new JPanel();
 		translationPanel.setLayout(new GridBagLayout());
@@ -91,7 +114,14 @@ public class Gui extends JFrame {
 		constraints.gridx = 1;
 		constraints.gridy = 0;
 		translationPanel.add(configureButtons(mapPanel), constraints);
+		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 0;
+		constraints.weighty = 1;
+		translationPanel.add(toolPanel, constraints);
 		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridheight = 2;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
@@ -108,6 +138,10 @@ public class Gui extends JFrame {
 		pack();
 
 		finalizeConfig(rootSplit);
+	}
+
+	private void configureTools(final ToolPanel toolPanel,
+			final ToolProvider provider) {
 	}
 
 	private void finalizeConfig(final JSplitPane rootSplit) {
