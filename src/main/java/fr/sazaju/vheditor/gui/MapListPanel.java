@@ -365,7 +365,6 @@ public class MapListPanel extends JPanel {
 							 * so it is not blocking, only the display of the
 							 * translations advancement is delayed.
 							 */
-							// TODO use priority rather than subjective sleep
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
 						}
