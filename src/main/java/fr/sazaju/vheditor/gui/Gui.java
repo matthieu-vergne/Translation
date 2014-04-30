@@ -37,6 +37,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
+import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
 
 @SuppressWarnings("serial")
@@ -142,6 +143,9 @@ public class Gui extends JFrame {
 
 	private void configureTools(final ToolPanel toolPanel,
 			final ToolProvider provider) {
+		Search tool = new Search();
+		tool.setToolProvider(provider);
+		toolPanel.addTool(tool);
 	}
 
 	private void finalizeConfig(final JSplitPane rootSplit) {
