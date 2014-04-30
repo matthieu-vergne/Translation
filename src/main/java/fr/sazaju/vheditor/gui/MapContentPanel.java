@@ -141,11 +141,12 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public void goToEntry(final int entryIndex) {
-		final int index = Math.min(Math.max(entryIndex, 0), map.sizeUsed() - 1);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
+				int index = Math.min(Math.max(entryIndex, 0),
+						map.sizeUsed() - 1);
 				JScrollBar scroll = mapContentScroll.getVerticalScrollBar();
 				Component[] components = mapContentArea.getComponents();
 				if (index == 0) {
@@ -207,36 +208,45 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public void setMap(final File mapFile) {
-		loadingLabel.setText("Loading map " + mapFile.getName() + "...");
-		loading.start();
-		SwingUtilities.invokeLater(new Runnable() {
+		setMap(mapFile, 0);
+	}
 
-			@Override
-			public void run() {
-				try {
-					synchronized (map) {
-						map.setBaseFile(mapFile);
-						mapTitleField.setText(mapFile.getName());
-						fillPanel(map, mapContentArea);
-						goToEntry(0);
+	public void setMap(final File mapFile, final int entryIndex) {
+		if (mapFile.equals(map.getBaseFile())) {
+			goToEntry(entryIndex);
+		} else {
+			loadingLabel.setText("Loading map " + mapFile.getName() + "...");
+			loading.start();
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						synchronized (map) {
+							map.setBaseFile(mapFile);
+							mapTitleField.setText(mapFile.getName());
+							fillPanel(map, mapContentArea);
+							goToEntry(entryIndex);
+						}
+					} catch (EmptyMapException e) {
+						JOptionPane.showMessageDialog(MapContentPanel.this,
+								"The map " + mapFile + " is empty.",
+								"Empty Map", JOptionPane.WARNING_MESSAGE);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(MapContentPanel.this,
+								e.getMessage(), "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
-				} catch (EmptyMapException e) {
-					JOptionPane.showMessageDialog(MapContentPanel.this,
-							"The map " + mapFile + " is empty.", "Empty Map",
-							JOptionPane.WARNING_MESSAGE);
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(MapContentPanel.this,
-							e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							loading.stop();
+						}
+					});
 				}
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						loading.stop();
-					}
-				});
-			}
-		});
+			});
+		}
 	}
 
 	public static void fillPanel(TranslationMap map, JPanel panel) {
