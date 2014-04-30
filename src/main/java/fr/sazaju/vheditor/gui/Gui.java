@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
@@ -78,6 +79,7 @@ public class Gui extends JFrame {
 
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
 		MapListPanel listPanel = new MapListPanel();
 		MapContentPanel mapPanel = new MapContentPanel();
