@@ -372,6 +372,18 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public void cancelModifications() {
+		if (map.getBaseFile() == null
+				|| !isModified()
+				|| JOptionPane
+						.showConfirmDialog(
+								this,
+								"Are you sure you want to cancel *ALL* the modifications that you have not saved?",
+								"Cancel Modifications",
+								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+			return;
+		} else {
+			// we can go ahead
+		}
 		setVisible(false);
 		Rectangle visible = mapContentArea.getVisibleRect();
 		final JComponent reference = (JComponent) mapContentArea
