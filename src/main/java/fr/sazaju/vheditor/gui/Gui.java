@@ -107,6 +107,10 @@ public class Gui extends JFrame {
 
 		pack();
 
+		finalizeConfig(rootSplit);
+	}
+
+	private void finalizeConfig(final JSplitPane rootSplit) {
 		setLocation(Integer.parseInt(config.getProperty(CONFIG_X, "0")),
 				Integer.parseInt(config.getProperty(CONFIG_Y, "0")));
 		setSize(new Dimension(Integer.parseInt(config.getProperty(CONFIG_WIDTH,
