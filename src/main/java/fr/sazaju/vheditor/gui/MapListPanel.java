@@ -493,4 +493,8 @@ public class MapListPanel extends JPanel {
 		public void fileSelected(File file);
 	}
 
+	public Collection<File> getFiles() {
+		return currentFiles;
+	}
+
 }
