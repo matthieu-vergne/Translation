@@ -357,7 +357,7 @@ public class MapContentPanel extends JPanel {
 		public void stop();
 	}
 
-	public void applyModifications() {
+	public void save() {
 		logger.info("Applying modifications...");
 		for (Component component : mapContentArea.getComponents()) {
 			if (component instanceof TranslationArea) {
@@ -371,7 +371,7 @@ public class MapContentPanel extends JPanel {
 		logger.info("Map saved.");
 	}
 
-	public void cancelModifications() {
+	public void reset() {
 		if (map.getBaseFile() == null
 				|| !isModified()
 				|| JOptionPane

@@ -334,7 +334,7 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.applyModifications();
+				mapPanel.save();
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
@@ -346,7 +346,7 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.cancelModifications();
+				mapPanel.reset();
 			}
 		});
 		// no key binding to avoid wrong manipulation
@@ -408,7 +408,7 @@ public class Gui extends JFrame {
 					JOptionPane.WARNING_MESSAGE, null, new String[] { "Yes",
 							"No", "Cancel" }, "Cancel");
 			if (answer == JOptionPane.YES_OPTION) {
-				mapContentPanel.applyModifications();
+				mapContentPanel.save();
 				mapSafe = true;
 			} else if (answer == JOptionPane.NO_OPTION) {
 				mapSafe = true;
