@@ -187,9 +187,9 @@ public class MapContentPanel extends JPanel {
 		});
 	}
 
-	public void goToNextUntranslatedEntry() {
+	public void goToNextUntranslatedEntry(boolean relyOnTags) {
 		TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
-				getUntranslatedEntryIndexes());
+				getUntranslatedEntryIndexes(relyOnTags));
 		if (untranslatedEntries.isEmpty()) {
 			JOptionPane.showMessageDialog(this,
 					"All the entries are already translated.");
@@ -409,16 +409,16 @@ public class MapContentPanel extends JPanel {
 		});
 	}
 
-	public Collection<Integer> getUntranslatedEntryIndexes() {
+	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
 		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
 		Iterator<? extends TranslationEntry> iterator = map.iteratorUsed();
 		int count = 0;
 		while (iterator.hasNext()) {
 			TranslationEntry entry = iterator.next();
-			if (entry.isActuallyTranslated()) {
-				// already translated
-			} else {
+			if (relyOnTags && entry.isMarkedAsUntranslated() || !relyOnTags && !entry.isActuallyTranslated()) {
 				untranslatedEntries.add(count);
+			} else {
+				// already translated
 			}
 			count++;
 		}

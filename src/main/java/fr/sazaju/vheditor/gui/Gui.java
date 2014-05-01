@@ -44,6 +44,7 @@ import fr.sazaju.vheditor.gui.tool.ToolProvider;
 public class Gui extends JFrame {
 
 	private static final String ACTION_NEXT_JAP = "nextJap";
+	private static final String ACTION_NEXT_UNTRANSLATED = "nextUntranslated";
 	private static final String ACTION_LAST_ENTRY = "lastEntry";
 	private static final String ACTION_FIRST_ENTRY = "firstEntry";
 	private static final String ACTION_NEXT_ENTRY = "nextEntry";
@@ -308,14 +309,26 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToNextUntranslatedEntry();
+				mapPanel.goToNextUntranslatedEntry(false);
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
 				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_JAP);
-		JButton untranslated = new JButton(actions.get(ACTION_NEXT_JAP));
+		JButton japOnly = new JButton(actions.get(ACTION_NEXT_JAP));
+		japOnly.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
+
+		actions.put(ACTION_NEXT_UNTRANSLATED, new AbstractAction("#UNTRANSLATED") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapPanel.goToNextUntranslatedEntry(true);
+			}
+		});
+		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+				InputEvent.ALT_DOWN_MASK & InputEvent.CTRL_DOWN_MASK), ACTION_NEXT_UNTRANSLATED);
+		JButton untranslated = new JButton(actions.get(ACTION_NEXT_UNTRANSLATED));
 		untranslated
-				.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
+				.setToolTipText("Go to next #UNTRANSLATED entry (CTRL+ALT+ENTER).");
 
 		actions.put(ACTION_SAVE, new AbstractAction("Save") {
 
@@ -363,20 +376,23 @@ public class Gui extends JFrame {
 		constraints.gridx++;
 		buttonPanel.add(last, constraints);
 
+		constraints.gridwidth = 2;
+		
 		constraints.gridx = 0;
 		constraints.gridy++;
-		constraints.gridwidth = 2;
+		buttonPanel.add(japOnly, constraints);
+
+		constraints.gridx = 0;
+		constraints.gridy++;
 		buttonPanel.add(untranslated, constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy++;
-		constraints.gridwidth = 2;
 		constraints.insets = farInsets;
 		buttonPanel.add(save, constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy++;
-		constraints.gridwidth = 2;
 		constraints.insets = closeInsets;
 		buttonPanel.add(reset, constraints);
 
