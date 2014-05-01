@@ -17,6 +17,14 @@ public interface TranslationEntry {
 
 	/**
 	 * 
+	 * @param isMarkedAsUntranslated
+	 *            <code>true</code> if the line should be marked as
+	 *            "# UNTRANSLATED", <code>false</code> otherwise
+	 */
+	public void setMarkedAsUntranslated(boolean isMarkedAsUntranslated);
+
+	/**
+	 * 
 	 * @return <code>true</code> if both {@link #getTranslatedVersion()} and
 	 *         {@link #getOriginalVersion()} are empty or if both are not,
 	 *         <code>false</code> otherwise

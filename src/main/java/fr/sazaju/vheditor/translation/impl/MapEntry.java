@@ -15,6 +15,12 @@ public class MapEntry extends Suite implements TranslationEntry {
 				new Option<AdviceLine>(new AdviceLine()), new ContentBlock(),
 				new TranslationLine(), new ContentBlock(), new EndLine());
 	}
+	
+	@Override
+	public void setMarkedAsUntranslated(boolean isMarkedAsUntranslated) {
+		Option<UntranslatedLine> option = get(1);
+		option.setContent(isMarkedAsUntranslated ? "# UNTRANSLATED\n" : "");
+	}
 
 	@Override
 	public boolean isMarkedAsUntranslated() {

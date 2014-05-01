@@ -29,4 +29,19 @@ public class MapEntryTest {
 			assertEquals(entryFile.getName(), original, reBuilt);
 		}
 	}
+
+	@Test
+	public void testUntranslatedTag() throws IOException {
+		MapEntry entry = new MapEntry();
+		for (File entryFile : testFolder.listFiles(entryFilter)) {
+			String original = FileUtils.readFileToString(entryFile);
+			entry.setContent(original);
+			entry.setMarkedAsUntranslated(true);
+			assertTrue(entry.isMarkedAsUntranslated());
+			entry.setMarkedAsUntranslated(false);
+			assertFalse(entry.isMarkedAsUntranslated());
+			entry.setMarkedAsUntranslated(true);
+			assertTrue(entry.isMarkedAsUntranslated());
+		}
+	}
 }

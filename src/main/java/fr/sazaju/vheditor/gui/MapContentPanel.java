@@ -285,14 +285,10 @@ public class MapContentPanel extends JPanel {
 				label.setBackground(background);
 				panel.add(label, constraints);
 				constraints.gridy++;
-				if (entry.isMarkedAsUntranslated()) {
-					label = new JLabel("# UNTRANSLATED");
-					label.setBackground(background);
-					panel.add(label, constraints);
-					constraints.gridy++;
-				} else {
-					// do not write it
-				}
+
+				panel.add(new TranslationTag(entry), constraints);
+				constraints.gridy++;
+
 				label = new JLabel("# CONTEXT : " + entry.getContext());
 				label.setBackground(background);
 				label.setOpaque(true);
@@ -429,6 +425,12 @@ public class MapContentPanel extends JPanel {
 		for (Component component : mapContentArea.getComponents()) {
 			if (component instanceof TranslationArea) {
 				if (((TranslationArea) component).isModified()) {
+					return true;
+				} else {
+					// look for another one
+				}
+			} else if (component instanceof TranslationTag) {
+				if (((TranslationTag) component).isModified()) {
 					return true;
 				} else {
 					// look for another one
