@@ -325,7 +325,7 @@ public class Gui extends JFrame {
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-				InputEvent.ALT_DOWN_MASK & InputEvent.CTRL_DOWN_MASK), ACTION_NEXT_UNTRANSLATED);
+				InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK), ACTION_NEXT_UNTRANSLATED);
 		JButton untranslated = new JButton(actions.get(ACTION_NEXT_UNTRANSLATED));
 		untranslated
 				.setToolTipText("Go to next #UNTRANSLATED entry (CTRL+ALT+ENTER).");
