@@ -411,7 +411,8 @@ public class MapContentPanel extends JPanel {
 		int count = 0;
 		while (iterator.hasNext()) {
 			TranslationEntry entry = iterator.next();
-			if (relyOnTags && entry.isMarkedAsUntranslated() || !relyOnTags && !entry.isActuallyTranslated()) {
+			if (relyOnTags && entry.isMarkedAsUntranslated() || !relyOnTags
+					&& !entry.isActuallyTranslated()) {
 				untranslatedEntries.add(count);
 			} else {
 				// already translated
