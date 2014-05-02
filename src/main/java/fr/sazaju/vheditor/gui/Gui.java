@@ -261,7 +261,7 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getFocusEntryIndex() - 1);
+				mapPanel.goToEntry(mapPanel.getCurrentEntryIndex() - 1);
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
@@ -273,7 +273,7 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getFocusEntryIndex() + 1);
+				mapPanel.goToEntry(mapPanel.getCurrentEntryIndex() + 1);
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,

@@ -1,15 +1,15 @@
 package fr.sazaju.vheditor.gui;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,10 +23,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
@@ -93,47 +95,26 @@ public class MapContentPanel extends JPanel {
 		add(mapLoadingArea);
 	}
 
-	protected int getFocusEntryIndex() {
+	public int getCurrentEntryIndex() {
 		JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
 		Component focusOwner = frame.getFocusOwner();
+		EntryPanel[] entries = getEntryPanels();
 		if (focusOwner instanceof TranslationArea) {
-			int count = -1;
-			for (Component component : mapContentArea.getComponents()) {
-				if (component instanceof JLabel) {
-					JLabel label = (JLabel) component;
-					String text = label.getText();
-					if (text.equals("# TEXT STRING")) {
-						count++;
-					} else {
-						// irrelevant component
-					}
-				} else if (component == focusOwner) {
-					return count;
-				} else {
-					// irrelevant component
-				}
+			while (!(focusOwner instanceof EntryPanel)) {
+				focusOwner = focusOwner.getParent();
 			}
+			return Arrays.asList(entries).indexOf(focusOwner);
 		} else {
 			int count = 0;
 			Rectangle visible = mapContentArea.getVisibleRect();
-			for (Component component : mapContentArea.getComponents()) {
-				if (component instanceof JLabel) {
-					JLabel label = (JLabel) component;
-					String text = label.getText();
-					if (text.equals("# TEXT STRING")) {
-						Rectangle bounds = label.getBounds();
-						if (visible.y <= bounds.y) {
-							return count;
-						} else {
-							// not yet the searched entry
-						}
-						count++;
-					} else {
-						// irrelevant component
-					}
+			for (EntryPanel entry : entries) {
+				Rectangle bounds = entry.getBounds();
+				if (visible.y <= bounds.y) {
+					return count;
 				} else {
-					// irrelevant component
+					// not yet the searched entry
 				}
+				count++;
 			}
 		}
 
@@ -145,46 +126,45 @@ public class MapContentPanel extends JPanel {
 
 			@Override
 			public void run() {
+				EntryPanel[] entries = getEntryPanels();
 				int index = Math.min(Math.max(entryIndex, 0),
-						map.sizeUsed() - 1);
+						entries.length - 1);
 				JScrollBar scroll = mapContentScroll.getVerticalScrollBar();
-				Component[] components = mapContentArea.getComponents();
 				if (index == 0) {
 					scroll.setValue(0);
-					int i;
-					for (i = 0; !(components[i] instanceof TranslationArea); i++)
-						;
-					components[i].requestFocusInWindow();
+					entries[0].getTranslationArea().requestFocusInWindow();
 				} else {
-					int count = -1;
-					for (int i = 0; i < components.length; i++) {
-						if (components[i] instanceof JLabel) {
-							JLabel label = (JLabel) components[i];
-							if (label.getText().equals("# TEXT STRING")) {
-								count++;
-								if (count == index) {
-									Rectangle visible = mapContentArea
-											.getVisibleRect();
-									visible.y = label.getBounds().y;
-									mapContentArea.scrollRectToVisible(visible);
-
-									for (; !(components[i] instanceof TranslationArea); i++)
-										;
-									components[i].requestFocusInWindow();
-									return;
-								} else {
-									// not yet the searched entry
-								}
-							} else {
-								// irrelevant component
-							}
-						} else {
-							// irrelevant component
-						}
+					Rectangle visible = mapContentArea.getVisibleRect();
+					Component target = entries[index];
+					visible.y = 0;
+					while (target != mapContentArea) {
+						visible.y += target.getBounds().y;
+						target = target.getParent();
 					}
+					mapContentArea.scrollRectToVisible(visible);
+					entries[index].getTranslationArea().requestFocusInWindow();
 				}
 			}
 		});
+	}
+
+	/**
+	 * 
+	 * @return all the {@link EntryPanel}s, used as well as unused, in their
+	 *         current order
+	 */
+	private EntryPanel[] getEntryPanels() {
+		Container mapPanel = ((Container) mapContentArea.getComponents()[0]);
+		Component[] entries = ((Container) mapPanel.getComponent(1))
+				.getComponents();
+		if (mapPanel.getComponentCount() >= 3) {
+			Component[] unused = ((Container) mapPanel.getComponent(3))
+					.getComponents();
+			entries = ArrayUtils.addAll(entries, unused);
+		} else {
+			// no unused entries
+		}
+		return Arrays.copyOf(entries, entries.length, EntryPanel[].class);
 	}
 
 	public void goToNextUntranslatedEntry(boolean relyOnTags) {
@@ -194,7 +174,7 @@ public class MapContentPanel extends JPanel {
 			JOptionPane.showMessageDialog(this,
 					"All the entries are already translated.");
 		} else {
-			int currentEntry = getFocusEntryIndex();
+			int currentEntry = getCurrentEntryIndex();
 			Integer next = untranslatedEntries.ceiling(currentEntry + 1);
 			if (next == null) {
 				JOptionPane
@@ -225,7 +205,9 @@ public class MapContentPanel extends JPanel {
 						synchronized (map) {
 							map.setBaseFile(mapFile);
 							mapTitleField.setText(mapFile.getName());
-							fillPanel(map, mapContentArea);
+							mapContentArea.removeAll();
+							mapContentArea.add(GuiBuilder
+									.instantiateMapGui(map));
 							goToEntry(entryIndex);
 						}
 					} catch (EmptyMapException e) {
@@ -246,100 +228,6 @@ public class MapContentPanel extends JPanel {
 					});
 				}
 			});
-		}
-	}
-
-	public static void fillPanel(TranslationMap map, JPanel panel) {
-		panel.removeAll();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.insets = new Insets(0, 0, 0, 0);
-
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.weightx = 1;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-
-		Iterator<? extends TranslationEntry> iterator = map.iteratorUsed();
-		fillEntries(panel, constraints, iterator, panel.getBackground());
-		iterator = map.iteratorUnused();
-		if (iterator.hasNext()) {
-			panel.add(new JLabel(" "), constraints);
-			constraints.gridy++;
-			panel.add(new JLabel("# UNUSED TRANSLATABLES"), constraints);
-			constraints.gridy++;
-			fillEntries(panel, constraints, iterator, Color.MAGENTA);
-		} else {
-			// no unused entries
-		}
-	}
-
-	private static void fillEntries(JPanel panel,
-			GridBagConstraints constraints,
-			Iterator<? extends TranslationEntry> iterator, Color background) {
-		while (iterator.hasNext()) {
-			final TranslationEntry entry = iterator.next();
-			{
-				JLabel label = new JLabel("# TEXT STRING");
-				label.setOpaque(true);
-				label.setBackground(background);
-				panel.add(label, constraints);
-				constraints.gridy++;
-
-				panel.add(new TranslationTag(entry), constraints);
-				constraints.gridy++;
-
-				label = new JLabel("# CONTEXT : " + entry.getContext());
-				label.setBackground(background);
-				label.setOpaque(true);
-				panel.add(label, constraints);
-				constraints.gridy++;
-				if (entry.getCharLimit(false) != null
-						&& entry.getCharLimit(true) != null) {
-					label = new JLabel("# ADVICE : "
-							+ entry.getCharLimit(false) + " char limit ("
-							+ entry.getCharLimit(true) + " if face)");
-					label.setOpaque(true);
-					label.setBackground(background);
-					panel.add(label, constraints);
-					constraints.gridy++;
-				} else if (entry.getCharLimit(false) != null
-						&& entry.getCharLimit(true) == null) {
-					label = new JLabel("# ADVICE : "
-							+ entry.getCharLimit(false) + " char limit");
-					label.setOpaque(true);
-					label.setBackground(background);
-					panel.add(label, constraints);
-					constraints.gridy++;
-				} else {
-					// no advice
-				}
-				JTextArea original = new JTextArea(entry.getOriginalVersion());
-				original.setEditable(false);
-				panel.add(original, constraints);
-				constraints.gridy++;
-				label = new JLabel("# TRANSLATION ");
-				label.setOpaque(true);
-				label.setBackground(background);
-				panel.add(label, constraints);
-				constraints.gridy++;
-				panel.add(new TranslationArea(entry), constraints);
-				constraints.gridy++;
-				label = new JLabel("# END STRING");
-				label.setOpaque(true);
-				label.setBackground(background);
-				panel.add(label, constraints);
-			}
-			constraints.gridy++;
-			if (iterator.hasNext()) {
-				JLabel label = new JLabel(" ");
-				label.setOpaque(true);
-				label.setBackground(background);
-				panel.add(label, constraints);
-				constraints.gridy++;
-			} else {
-				// EOF
-			}
 		}
 	}
 
