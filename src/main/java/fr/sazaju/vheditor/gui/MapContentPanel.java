@@ -29,8 +29,8 @@ import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.translation.impl.BackedTranslationMap;
-import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
+import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")

@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.impl;
+package fr.sazaju.vheditor.translation.parsing;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import fr.sazaju.vheditor.translation.impl.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 
 public class BackedTranslationMapTest {
 

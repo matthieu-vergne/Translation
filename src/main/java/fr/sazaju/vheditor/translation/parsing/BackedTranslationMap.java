@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.impl;
+package fr.sazaju.vheditor.translation.parsing;
 
 import java.io.File;
 import java.io.IOException;
