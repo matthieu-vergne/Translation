@@ -154,17 +154,22 @@ public class MapContentPanel extends JPanel {
 	 *         current order
 	 */
 	private EntryPanel[] getEntryPanels() {
-		Container mapPanel = ((Container) mapContentArea.getComponents()[0]);
-		Component[] entries = ((Container) mapPanel.getComponent(1))
-				.getComponents();
-		if (mapPanel.getComponentCount() >= 3) {
-			Component[] unused = ((Container) mapPanel.getComponent(3))
-					.getComponents();
-			entries = ArrayUtils.addAll(entries, unused);
+		Component[] components = mapContentArea.getComponents();
+		if (components.length == 0) {
+			return new EntryPanel[0];
 		} else {
-			// no unused entries
+			Container mapPanel = ((Container) components[0]);
+			Component[] entries = ((Container) mapPanel.getComponent(1))
+					.getComponents();
+			if (mapPanel.getComponentCount() >= 3) {
+				Component[] unused = ((Container) mapPanel.getComponent(3))
+						.getComponents();
+				entries = ArrayUtils.addAll(entries, unused);
+			} else {
+				// no unused entries
+			}
+			return Arrays.copyOf(entries, entries.length, EntryPanel[].class);
 		}
-		return Arrays.copyOf(entries, entries.length, EntryPanel[].class);
 	}
 
 	public void goToNextUntranslatedEntry(boolean relyOnTags) {
@@ -311,21 +316,23 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public boolean isModified() {
-		for (Component component : mapContentArea.getComponents()) {
-			if (component instanceof TranslationArea) {
-				if (((TranslationArea) component).isModified()) {
-					return true;
+		for (EntryPanel entry : getEntryPanels()) {
+			for (Component component : entry.getComponents()) {
+				if (component instanceof TranslationArea) {
+					if (((TranslationArea) component).isModified()) {
+						return true;
+					} else {
+						// look for another one
+					}
+				} else if (component instanceof TranslationTag) {
+					if (((TranslationTag) component).isModified()) {
+						return true;
+					} else {
+						// look for another one
+					}
 				} else {
-					// look for another one
+					// irrelevant component
 				}
-			} else if (component instanceof TranslationTag) {
-				if (((TranslationTag) component).isModified()) {
-					return true;
-				} else {
-					// look for another one
-				}
-			} else {
-				// irrelevant component
 			}
 		}
 		return false;
