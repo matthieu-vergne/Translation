@@ -109,7 +109,7 @@ public class MapContentPanel extends JPanel {
 			Rectangle visible = mapContentArea.getVisibleRect();
 			for (EntryPanel entry : entries) {
 				Rectangle bounds = entry.getBounds();
-				if (visible.y <= bounds.y) {
+				if (visible.y < bounds.y + bounds.height) {
 					return count;
 				} else {
 					// not yet the searched entry
