@@ -155,5 +155,9 @@ public class GuiBuilder {
 		public TranslationArea getTranslationArea() {
 			return (TranslationArea) getComponent(6);
 		}
+		
+		public TranslationEntry getEntry() {
+			return getTranslationArea().getEntry();
+		}
 	}
 }

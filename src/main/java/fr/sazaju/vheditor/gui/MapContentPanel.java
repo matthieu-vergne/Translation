@@ -248,12 +248,8 @@ public class MapContentPanel extends JPanel {
 
 	public void save() {
 		logger.info("Applying modifications...");
-		for (Component component : mapContentArea.getComponents()) {
-			if (component instanceof TranslationArea) {
-				((TranslationArea) component).save();
-			} else {
-				// irrelevant component
-			}
+		for (EntryPanel panel : getEntryPanels()) {
+			panel.getTranslationArea().save();
 		}
 		logger.info("Saving map to " + map.getBaseFile() + "...");
 		map.save();

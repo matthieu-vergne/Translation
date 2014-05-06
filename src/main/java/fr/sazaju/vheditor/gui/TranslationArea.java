@@ -185,4 +185,8 @@ public class TranslationArea extends JTextArea {
 			isUndone = false;
 		}
 	}
+	
+	public TranslationEntry getEntry() {
+		return entry;
+	}
 }
