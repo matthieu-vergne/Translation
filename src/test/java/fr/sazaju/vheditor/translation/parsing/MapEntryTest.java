@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class MapEntryTest {
 
-	private final File testFolder = new File("test");
+	private final File testFolder = new File(".");
 	private final FileFilter entryFilter = new FileFilter() {
 		@Override
 		public boolean accept(File file) {
