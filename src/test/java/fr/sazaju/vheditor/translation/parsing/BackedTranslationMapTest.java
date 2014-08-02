@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -16,6 +18,12 @@ public class BackedTranslationMapTest {
 	public void testReadWriteMap() throws IOException {
 		File mapFolder = new File("VH/branches/working/");
 		File[] listFiles = mapFolder.listFiles();
+		Arrays.sort(listFiles, new Comparator<File>() {
+			@Override
+			public int compare(File f1, File f2) {
+				return f1.getName().compareToIgnoreCase(f2.getName());
+			}
+		});
 		int mapCounter = 0;
 		int overflowCounter = 0;
 		for (File originalFile : listFiles) {
