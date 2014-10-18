@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -191,7 +193,7 @@ public class MapListPanel extends JPanel {
 	private JPanel buildFileChooserPanel() {
 		folderPathField.setEditable(false);
 		folderPathField.setText("Map folder...");
-		
+
 		JButton openButton = new JButton(new AbstractAction("Browse") {
 
 			@Override
@@ -330,9 +332,7 @@ public class MapListPanel extends JPanel {
 				synchronized (mapDescriptors) {
 					if (event.getButton() == MouseEvent.BUTTON1
 							&& event.getClickCount() == 2) {
-						DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-								.getSelectionPath().getLastPathComponent();
-						File file = (File) node.getUserObject();
+						File file = getSelectedFile(tree);
 						updateMapDescriptor(file, false);
 						for (MapListListener listener : listeners) {
 							if (listener instanceof FileSelectedListener) {
@@ -349,7 +349,36 @@ public class MapListPanel extends JPanel {
 			}
 
 		});
+		tree.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				int keyCode = arg0.getKeyCode();
+				if (keyCode == KeyEvent.VK_F5) {
+					updateMapDescriptor(getSelectedFile(tree), true);
+				} else {
+					// no action for other keys
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				// nothing to do
+			}
+		});
 		return tree;
+	}
+
+	private File getSelectedFile(final JTree tree) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+				.getSelectionPath().getLastPathComponent();
+		File file = (File) node.getUserObject();
+		return file;
 	}
 
 	private void runFilesLoadingInBackground(TreeSet<File> files) {
