@@ -17,7 +17,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry;
 public class TranslationTag extends JPanel {
 
 	private final TranslationEntry entry;
-	private final boolean isMarked;
+	private boolean isMarked;
 
 	public TranslationTag(final TranslationEntry entry) {
 		this.entry = entry;
@@ -71,5 +71,9 @@ public class TranslationTag extends JPanel {
 
 	public boolean isModified() {
 		return entry.isMarkedAsUntranslated() != isMarked;
+	}
+
+	public void save() {
+		isMarked = entry.isMarkedAsUntranslated();
 	}
 }

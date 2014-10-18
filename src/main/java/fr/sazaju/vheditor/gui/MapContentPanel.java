@@ -251,6 +251,7 @@ public class MapContentPanel extends JPanel {
 		logger.info("Applying modifications...");
 		for (EntryPanel panel : getEntryPanels()) {
 			panel.getTranslationArea().save();
+			panel.getTranslationTag().save();
 		}
 		logger.info("Saving map to " + map.getBaseFile() + "...");
 		map.save();
