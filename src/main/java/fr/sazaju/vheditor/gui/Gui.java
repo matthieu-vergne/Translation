@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
@@ -248,6 +249,20 @@ public class Gui extends JFrame {
 				} else {
 					// map unsafe
 				}
+			}
+		});
+		
+		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
+
+			@Override
+			public void mapSaved(final File mapFile) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						listPanel.updateMapDescriptor(mapFile, true);
+					}
+				});
 			}
 		});
 	}

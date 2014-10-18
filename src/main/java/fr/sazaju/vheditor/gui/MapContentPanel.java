@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -254,6 +255,9 @@ public class MapContentPanel extends JPanel {
 		logger.info("Saving map to " + map.getBaseFile() + "...");
 		map.save();
 		logger.info("Map saved.");
+		for (MapSavedListener listener : listeners) {
+			listener.mapSaved(map.getBaseFile());
+		}
 	}
 
 	public void reset() {
@@ -332,6 +336,22 @@ public class MapContentPanel extends JPanel {
 			}
 		}
 		return false;
+	}
+
+	private final Collection<MapSavedListener> listeners = new HashSet<MapSavedListener>();
+
+	public void addListener(MapSavedListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(MapSavedListener listener) {
+		listeners.remove(listener);
+	}
+
+	public interface MapSavedListener {
+
+		void mapSaved(File mapFile);
+
 	}
 
 }
