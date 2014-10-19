@@ -28,6 +28,7 @@ import javax.swing.undo.UndoableEdit;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
+
 @SuppressWarnings("serial")
 public class TranslationArea extends JTextArea {
 
@@ -185,7 +186,7 @@ public class TranslationArea extends JTextArea {
 			isUndone = false;
 		}
 	}
-	
+
 	public TranslationEntry getEntry() {
 		return entry;
 	}

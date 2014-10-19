@@ -251,13 +251,13 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		
+
 		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
 
 			@Override
 			public void mapSaved(final File mapFile) {
 				SwingUtilities.invokeLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						listPanel.updateMapDescriptor(mapFile, true);
@@ -332,7 +332,8 @@ public class Gui extends JFrame {
 		JButton japOnly = new JButton(actions.get(ACTION_NEXT_JAP));
 		japOnly.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
 
-		actions.put(ACTION_NEXT_UNTRANSLATED, new AbstractAction("#UNTRANSLATED") {
+		actions.put(ACTION_NEXT_UNTRANSLATED, new AbstractAction(
+				"#UNTRANSLATED") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -340,8 +341,10 @@ public class Gui extends JFrame {
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-				InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK), ACTION_NEXT_UNTRANSLATED);
-		JButton untranslated = new JButton(actions.get(ACTION_NEXT_UNTRANSLATED));
+				InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK),
+				ACTION_NEXT_UNTRANSLATED);
+		JButton untranslated = new JButton(
+				actions.get(ACTION_NEXT_UNTRANSLATED));
 		untranslated
 				.setToolTipText("Go to next #UNTRANSLATED entry (CTRL+ALT+ENTER).");
 
@@ -392,7 +395,7 @@ public class Gui extends JFrame {
 		buttonPanel.add(last, constraints);
 
 		constraints.gridwidth = 2;
-		
+
 		constraints.gridx = 0;
 		constraints.gridy++;
 		buttonPanel.add(japOnly, constraints);
