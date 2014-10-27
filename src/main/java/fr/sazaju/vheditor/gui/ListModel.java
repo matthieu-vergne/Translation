@@ -42,7 +42,7 @@ public class ListModel extends DefaultTreeModel {
 	}
 
 	public List<File> getFiles() {
-		return files;
+		return new LinkedList<File>(files);
 	}
 
 	public void setClearedDisplayed(boolean isClearedDisplayed) {
