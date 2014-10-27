@@ -30,14 +30,10 @@ public class ListModel extends DefaultTreeModel {
 	}
 
 	public void setFiles(Collection<File> files) {
-		if (this.files == files) {
-			// do not rebuild
-		} else {
-			this.files = new LinkedList<File>(files);
-			root.removeAllChildren();
-			for (File file : this.files) {
-				root.add(new DefaultMutableTreeNode(file));
-			}
+		this.files = new LinkedList<File>(files);
+		root.removeAllChildren();
+		for (File file : files) {
+			root.add(new DefaultMutableTreeNode(file));
 		}
 	}
 
