@@ -10,9 +10,9 @@ import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.vergne.parsing.layer.impl.GreedyMode;
-import fr.vergne.parsing.layer.impl.Suite;
-import fr.vergne.parsing.layer.impl.base.Option;
+import fr.vergne.parsing.layer.standard.GreedyMode;
+import fr.vergne.parsing.layer.standard.Option;
+import fr.vergne.parsing.layer.standard.Suite;
 
 public class BackedTranslationMap extends Suite implements TranslationMap {
 

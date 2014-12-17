@@ -1,9 +1,9 @@
 package fr.sazaju.vheditor.translation.parsing;
 
-import fr.vergne.parsing.layer.impl.Atom;
-import fr.vergne.parsing.layer.impl.Formula;
-import fr.vergne.parsing.layer.impl.Suite;
-import fr.vergne.parsing.layer.impl.base.Newline;
+import fr.vergne.parsing.layer.standard.Atom;
+import fr.vergne.parsing.layer.standard.Formula;
+import fr.vergne.parsing.layer.standard.Suite;
+import fr.vergne.parsing.layer.util.Newline;
 
 public class ContextLine extends Suite {
 

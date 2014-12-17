@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>fr.matthieu-vergne</groupId>
 			<artifactId>parsing-core</artifactId>
-			<version>1.2</version>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

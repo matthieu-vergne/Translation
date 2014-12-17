@@ -1,7 +1,7 @@
 package fr.sazaju.vheditor.translation.parsing;
 
-import fr.vergne.parsing.layer.impl.GreedyMode;
-import fr.vergne.parsing.layer.impl.Loop;
+import fr.vergne.parsing.layer.standard.GreedyMode;
+import fr.vergne.parsing.layer.standard.Loop;
 
 public class EntryLoop extends Loop<MapEntry> {
 

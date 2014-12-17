@@ -24,10 +24,10 @@ import fr.sazaju.vheditor.translation.parsing.TranslationLine;
 import fr.sazaju.vheditor.translation.parsing.UntranslatedLine;
 import fr.sazaju.vheditor.translation.parsing.UnusedTransLine;
 import fr.vergne.parsing.layer.Layer;
-import fr.vergne.parsing.layer.impl.Loop;
-import fr.vergne.parsing.layer.impl.Suite;
-import fr.vergne.parsing.layer.impl.base.Newline;
-import fr.vergne.parsing.layer.impl.base.Option;
+import fr.vergne.parsing.layer.standard.Loop;
+import fr.vergne.parsing.layer.standard.Option;
+import fr.vergne.parsing.layer.standard.Suite;
+import fr.vergne.parsing.layer.util.Newline;
 
 public class GuiBuilder {
 

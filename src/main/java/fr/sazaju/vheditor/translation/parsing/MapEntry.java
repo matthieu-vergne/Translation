@@ -4,8 +4,8 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.vergne.parsing.layer.impl.Suite;
-import fr.vergne.parsing.layer.impl.base.Option;
+import fr.vergne.parsing.layer.standard.Option;
+import fr.vergne.parsing.layer.standard.Suite;
 
 public class MapEntry extends Suite implements TranslationEntry {
 
