@@ -3,9 +3,9 @@ package fr.sazaju.vheditor.gui.parsing;
 import fr.vergne.parsing.layer.standard.Formula;
 import fr.vergne.parsing.layer.standard.Suite;
 
-public class MapTitlePage extends Suite {
+public class MapLabelPage extends Suite {
 
-	public MapTitlePage() {
+	public MapLabelPage() {
 		super(new Formula("[\\s\\S]*?"), new MapTable(), new Formula(
 				"[\\s\\S]*?"));
 	}

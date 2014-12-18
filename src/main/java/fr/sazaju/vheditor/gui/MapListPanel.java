@@ -15,6 +15,11 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +34,8 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -51,19 +58,26 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.commons.io.FileUtils;
+
+import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
+import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
+import fr.vergne.parsing.layer.exception.ParsingException;
 
 @SuppressWarnings("serial")
 public class MapListPanel extends JPanel {
 
 	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
+	private static final String CONFIG_LABELS_DISPLAYED = "labelsDisplayed";
 	private static final String CONFIG_MAP_DIR = "mapDir";
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
+	private Map<String, String> mapLabels = null;
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private int displayedDescriptors = 0;
@@ -106,6 +120,7 @@ public class MapListPanel extends JPanel {
 	private JPanel buildQuickOptions() {
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new FlowLayout());
+
 		final JCheckBox displayCleared = new JCheckBox();
 		displayCleared.setAction(new AbstractAction("Cleared") {
 
@@ -121,6 +136,23 @@ public class MapListPanel extends JPanel {
 				.isClearedDisplayed());
 		displayCleared.setToolTipText("Display cleared maps.");
 		buttons.add(displayCleared);
+
+		final JCheckBox displayLabels = new JCheckBox();
+		displayLabels.setAction(new AbstractAction("Labels") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				boolean selected = displayLabels.isSelected();
+				Gui.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
+				((ListModel) tree.getModel()).setLabelDisplayed(selected);
+				refreshTree(true);
+			}
+		});
+		displayLabels.setSelected(((ListModel) tree.getModel())
+				.isLabelDisplayed());
+		displayLabels.setToolTipText("Display maps' English labels.");
+		buttons.add(displayLabels);
+
 		return buttons;
 	}
 
@@ -250,9 +282,12 @@ public class MapListPanel extends JPanel {
 	}
 
 	private JTree buildTreeComponent() {
-		final JTree tree = new JTree(new ListModel(mapDescriptors,
-				Boolean.parseBoolean(Gui.config.getProperty(
-						CONFIG_CLEARED_DISPLAYED, "true"))));
+		ListModel listModel = new ListModel(mapDescriptors);
+		listModel.setClearedDisplayed(Boolean.parseBoolean(Gui.config
+				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
+		listModel.setLabelDisplayed(Boolean.parseBoolean(Gui.config
+				.getProperty(CONFIG_LABELS_DISPLAYED, "false")));
+		final JTree tree = new JTree(listModel);
 		tree.setRootVisible(false);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -274,7 +309,19 @@ public class MapListPanel extends JPanel {
 
 				if (value instanceof File) {
 					File file = (File) value;
-					value = file.getName();
+
+					if (((ListModel) tree.getModel()).isLabelDisplayed()) {
+						String label = retrieveMapLabel(file);
+						if (label == null
+								|| !label.matches("[^a-zA-Z]*[a-zA-Z]+.*")) {
+							value = "[" + file.getName() + "]";
+						} else {
+							value = label;
+						}
+					} else {
+						value = file.getName();
+					}
+
 					MapDescriptor descriptor = mapDescriptors.get(file);
 					String description;
 					if (descriptor == null) {
@@ -372,6 +419,91 @@ public class MapListPanel extends JPanel {
 			}
 		});
 		return tree;
+	}
+
+	protected String retrieveMapLabel(File mapFile) {
+		String mapName = mapFile.getName();
+		logger.info("Retrieving label for " + mapName + "...");
+		if (mapLabels != null) {
+			// reuse the loaded labels
+		} else {
+			mapLabels = new HashMap<String, String>();
+			MapLabelPage mapLabelPage = new MapLabelPage();
+			// TODO set remote/local more smartly
+			boolean fromRemote = true;
+			String pageContent;
+			Object pageSource;
+			if (fromRemote) {
+				try {
+					pageSource = new URL(
+							"https://www.assembla.com/spaces/VH/wiki/Map_List");
+				} catch (MalformedURLException e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				pageSource = new File("/media/Sazaju/Downloads/Map List.html");
+			}
+
+			logger.info("Loading page from " + pageSource + "...");
+			if (pageSource instanceof URL) {
+				pageContent = loadMapLabelsPageFromWeb((URL) pageSource);
+			} else if (pageSource instanceof File) {
+				try {
+					pageContent = FileUtils.readFileToString((File) pageSource);
+				} catch (IOException e) {
+					throw new RuntimeException("Impossible to read the file", e);
+				}
+			} else {
+				throw new RuntimeException("Unmanaged type of source: "
+						+ pageSource.getClass());
+			}
+
+			logger.info("Searching for labels...");
+			try {
+				mapLabelPage.setContent(pageContent);
+			} catch (ParsingException e) {
+				logger.warning("Impossible to find map labels in " + pageSource);
+				return null;
+			}
+
+			for (MapRow row : mapLabelPage.getTable()) {
+				mapLabels.put("Map" + row.getId() + ".txt",
+						row.getEnglishLabel());
+			}
+			logger.info("Labels loaded: " + mapLabelPage.getTable().size());
+		}
+		String mapLabel = mapLabels.get(mapName);
+		logger.info("Label retrieved: " + mapName + " = " + mapLabel);
+		return mapLabel;
+	}
+
+	private String loadMapLabelsPageFromWeb(URL pageUrl) {
+		String pageContent;
+		try {
+			URLConnection con = pageUrl.openConnection();
+			Pattern p = Pattern.compile("text/html;\\s+charset=([^\\s]+)\\s*");
+			Matcher m = p.matcher(con.getContentType());
+			/*
+			 * If Content-Type doesn't match this pre-conception, choose default
+			 * and hope for the best.
+			 */
+			String charset = m.matches() ? m.group(1) : "ISO-8859-1";
+			Reader r = new InputStreamReader(con.getInputStream(), charset);
+			StringBuilder buf = new StringBuilder();
+			while (true) {
+				int ch = r.read();
+				if (ch < 0)
+					break;
+				buf.append((char) ch);
+			}
+			pageContent = buf.toString();
+			r.close();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return pageContent;
 	}
 
 	private File getSelectedFile(final JTree tree) {

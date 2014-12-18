@@ -210,6 +210,7 @@ public class MapContentPanel extends JPanel {
 					try {
 						synchronized (map) {
 							map.setBaseFile(mapFile);
+							// TODO add map title (English label)
 							mapTitleField.setText(mapFile.getName());
 							mapContentArea.removeAll();
 							mapContentArea.add(GuiBuilder

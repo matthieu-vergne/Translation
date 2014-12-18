@@ -20,13 +20,12 @@ public class ListModel extends DefaultTreeModel {
 	private final Map<File, MapDescriptor> mapDescriptors;
 	private List<File> files;
 	private boolean isClearedDisplayed;
+	private boolean isLabelDisplayed;
 
-	public ListModel(Map<File, MapDescriptor> mapDescriptors,
-			boolean isClearedDisplayed) {
+	public ListModel(Map<File, MapDescriptor> mapDescriptors) {
 		super(new DefaultMutableTreeNode("maps"));
 		root = (DefaultMutableTreeNode) getRoot();
 		this.mapDescriptors = mapDescriptors;
-		setClearedDisplayed(isClearedDisplayed);
 	}
 
 	public void setFiles(Collection<File> files) {
@@ -47,6 +46,14 @@ public class ListModel extends DefaultTreeModel {
 
 	public boolean isClearedDisplayed() {
 		return isClearedDisplayed;
+	}
+
+	public void setLabelDisplayed(boolean isLabelDisplayed) {
+		this.isLabelDisplayed = isLabelDisplayed;
+	}
+
+	public boolean isLabelDisplayed() {
+		return isLabelDisplayed;
 	}
 
 	@Override
