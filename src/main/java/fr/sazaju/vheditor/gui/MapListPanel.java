@@ -62,6 +62,7 @@ import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
+import fr.sazaju.vheditor.gui.parsing.MapTable;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
@@ -423,7 +424,7 @@ public class MapListPanel extends JPanel {
 
 	protected String retrieveMapLabel(File mapFile) {
 		String mapName = mapFile.getName();
-		logger.info("Retrieving label for " + mapName + "...");
+		logger.finest("Retrieving label for " + mapName + "...");
 		if (mapLabels != null) {
 			// reuse the loaded labels
 		} else {
@@ -445,35 +446,45 @@ public class MapListPanel extends JPanel {
 			}
 
 			logger.info("Loading page from " + pageSource + "...");
-			if (pageSource instanceof URL) {
-				pageContent = loadMapLabelsPageFromWeb((URL) pageSource);
-			} else if (pageSource instanceof File) {
-				try {
+			try {
+				if (pageSource instanceof URL) {
+					pageContent = loadMapLabelsPageFromWeb((URL) pageSource);
+				} else if (pageSource instanceof File) {
 					pageContent = FileUtils.readFileToString((File) pageSource);
-				} catch (IOException e) {
-					throw new RuntimeException("Impossible to read the file", e);
+				} else {
+					throw new RuntimeException("Unmanaged type of source: "
+							+ pageSource.getClass());
 				}
-			} else {
-				throw new RuntimeException("Unmanaged type of source: "
-						+ pageSource.getClass());
+			} catch (Exception e) {
+				String message = "Impossible to read the source " + pageSource;
+				JOptionPane.showConfirmDialog(this, message, "Loading Failed",
+						JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null);
+				throw new RuntimeException(message, e);
 			}
 
-			logger.info("Searching for labels...");
+			logger.info("Parsing content...");
 			try {
 				mapLabelPage.setContent(pageContent);
 			} catch (ParsingException e) {
-				logger.warning("Impossible to find map labels in " + pageSource);
+				String message = "Impossible to find map labels in "
+						+ pageSource;
+				logger.warning(message);
+				JOptionPane.showConfirmDialog(this, message, "Loading Failed",
+						JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null);
 				return null;
 			}
 
-			for (MapRow row : mapLabelPage.getTable()) {
+			logger.info("Searching for labels...");
+			MapTable table = mapLabelPage.getTable();
+			int total = table.size();
+			for (MapRow row : table) {
 				mapLabels.put("Map" + row.getId() + ".txt",
 						row.getEnglishLabel());
 			}
-			logger.info("Labels loaded: " + mapLabelPage.getTable().size());
+			logger.info("Labels loaded: " + total);
 		}
 		String mapLabel = mapLabels.get(mapName);
-		logger.info("Label retrieved: " + mapName + " = " + mapLabel);
+		logger.finest("Label retrieved: " + mapName + " = " + mapLabel);
 		return mapLabel;
 	}
 
