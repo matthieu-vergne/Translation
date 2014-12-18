@@ -165,12 +165,12 @@ public class MapListPanel extends JPanel {
 				Object answer = JOptionPane
 						.showInputDialog(
 								MapListPanel.this,
-								"Please provide the location of the page describing the labels:",
+								"Please provide the location of the page describing the labels (URL or local file):",
 								"Label Source", JOptionPane.QUESTION_MESSAGE,
 								null, null, source);
 				if (answer == null || source.equals(answer)) {
 					// no change requested
-				} else if (((String)answer).isEmpty()) {
+				} else if (((String) answer).isEmpty()) {
 					displayError("An empty location is of no use, so the change is cancelled.");
 				} else {
 					logger.info("Label source set: " + answer);
