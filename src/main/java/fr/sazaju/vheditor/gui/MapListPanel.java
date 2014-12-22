@@ -1,11 +1,11 @@
 package fr.sazaju.vheditor.gui;
 
-import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -31,8 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,30 +38,35 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.JTree.DynamicUtilTreeNode;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import fr.sazaju.vheditor.gui.ListModel.Order;
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
+import fr.sazaju.vheditor.gui.tool.MapCellRenderer;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.util.MapInformer;
+import fr.sazaju.vheditor.util.MapInformer.LoadingListener;
+import fr.sazaju.vheditor.util.MapInformer.NoDataException;
+import fr.sazaju.vheditor.util.MapNamer;
 import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.parsing.layer.exception.ParsingException;
 
@@ -75,6 +78,7 @@ public class MapListPanel extends JPanel {
 	private static final String CONFIG_LABEL_LAST_UPDATE = "lastLabelUpdate";
 	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
 	private static final String CONFIG_LABELS_DISPLAYED = "labelsDisplayed";
+	private static final String CONFIG_LIST_ORDER = "listOrder";
 	private static final String CONFIG_MAP_DIR = "mapDir";
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JTextField folderPathField = new JTextField();
@@ -83,6 +87,7 @@ public class MapListPanel extends JPanel {
 			.synchronizedMap(new HashMap<String, String>());
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
+	private final Collection<LoadingListener> loadingListeners = new HashSet<LoadingListener>();
 	private int displayedDescriptors = 0;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
@@ -94,6 +99,74 @@ public class MapListPanel extends JPanel {
 			});
 
 	public MapListPanel() {
+		final MapInformer mapInformer = new MapInformer() {
+
+			@Override
+			public String getLabel(File mapFile) throws NoDataException {
+				String label = retrieveMapLabel(mapFile);
+				if (label == null) {
+					throw new NoDataException();
+				} else {
+					return label;
+				}
+			}
+
+			@Override
+			public int getEntriesCount(File mapFile) throws NoDataException {
+				MapDescriptor mapDescriptor = mapDescriptors.get(mapFile);
+				if (mapDescriptor == null) {
+					throw new NoDataException();
+				} else {
+					return mapDescriptor.total;
+				}
+			}
+
+			@Override
+			public int getEntriesRemaining(File mapFile) throws NoDataException {
+				MapDescriptor mapDescriptor = mapDescriptors.get(mapFile);
+				if (mapDescriptor == null) {
+					throw new NoDataException();
+				} else {
+					return mapDescriptor.remaining;
+				}
+			}
+
+			@Override
+			public void addLoadingListener(LoadingListener listener) {
+				loadingListeners.add(listener);
+			}
+
+			@Override
+			public void removeLoadingListener(LoadingListener listener) {
+				loadingListeners.remove(listener);
+			}
+		};
+
+		final MapNamer labelNamer = new MapNamer() {
+
+			@Override
+			public String getNameFor(File file) {
+				String label;
+				try {
+					label = mapInformer.getLabel(file);
+				} catch (NoDataException e) {
+					label = null;
+				}
+				if (label == null || !label.matches("[^a-zA-Z]*[a-zA-Z]+.*")) {
+					return "[" + file.getName() + "]";
+				} else {
+					return label;
+				}
+			}
+		};
+		final MapNamer fileNamer = new MapNamer() {
+
+			@Override
+			public String getNameFor(File file) {
+				return file.getName();
+			}
+		};
+
 		setBorder(new EtchedBorder());
 
 		setLayout(new GridBagLayout());
@@ -108,21 +181,26 @@ public class MapListPanel extends JPanel {
 		constraints.gridy++;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weighty = 1;
-		tree = buildTreeComponent();
+		tree = buildTreeComponent(mapInformer, fileNamer, labelNamer);
 		add(new JScrollPane(tree), constraints);
 
 		constraints.gridy++;
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.weighty = 0;
-		JPanel options = buildQuickOptions();
+		JPanel options = buildQuickOptions(labelNamer, fileNamer);
 		add(options, constraints);
 
 		updateFiles(new File(Gui.config.getProperty(CONFIG_MAP_DIR, "")));
+		runFilesLoadingInBackground();
 	}
 
-	private JPanel buildQuickOptions() {
-		JPanel buttons = new JPanel();
-		buttons.setLayout(new FlowLayout());
+	private JPanel buildQuickOptions(final MapNamer labelNamer,
+			final MapNamer fileNamer) {
+		JPanel buttons = new JPanel(new GridLayout(0, 1));
+		JPanel row1 = new JPanel(new FlowLayout());
+		JPanel row2 = new JPanel(new FlowLayout());
+		buttons.add(row1);
+		buttons.add(row2);
 
 		final JCheckBox displayCleared = new JCheckBox();
 		displayCleared.setAction(new AbstractAction("Cleared") {
@@ -138,7 +216,7 @@ public class MapListPanel extends JPanel {
 		displayCleared.setSelected(((ListModel) tree.getModel())
 				.isClearedDisplayed());
 		displayCleared.setToolTipText("Display cleared maps.");
-		buttons.add(displayCleared);
+		row1.add(displayCleared);
 
 		final JCheckBox displayLabels = new JCheckBox();
 		displayLabels.setAction(new AbstractAction("Labels") {
@@ -147,14 +225,15 @@ public class MapListPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayLabels.isSelected();
 				Gui.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
-				((ListModel) tree.getModel()).setLabelDisplayed(selected);
+				((MapCellRenderer) tree.getCellRenderer())
+						.setMapNamer(selected ? labelNamer : fileNamer);
 				refreshTree(true);
 			}
 		});
-		displayLabels.setSelected(((ListModel) tree.getModel())
-				.isLabelDisplayed());
+		displayLabels.setSelected(Boolean.parseBoolean(Gui.config.getProperty(
+				CONFIG_LABELS_DISPLAYED, "false")));
 		displayLabels.setToolTipText("Display maps' English labels.");
-		buttons.add(displayLabels);
+		row1.add(displayLabels);
 
 		final JButton labelSource = new JButton();
 		labelSource.setAction(new AbstractAction("Source") {
@@ -182,7 +261,7 @@ public class MapListPanel extends JPanel {
 		});
 		labelSource
 				.setToolTipText("Configure the source where to load the maps' labels from.");
-		buttons.add(labelSource);
+		row2.add(labelSource);
 
 		final JButton updateLabels = new JButton();
 		updateLabels.setAction(new AbstractAction("Update") {
@@ -200,7 +279,23 @@ public class MapListPanel extends JPanel {
 		});
 		updateLabels
 				.setToolTipText("Request the update of the labels from the label source.");
-		buttons.add(updateLabels);
+		row2.add(updateLabels);
+
+		final JComboBox sortingChoice = new JComboBox(ListModel.Order.values());
+		sortingChoice.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Order order = (Order) sortingChoice.getSelectedItem();
+				Gui.config.setProperty(CONFIG_LIST_ORDER, "" + order);
+				((ListModel) tree.getModel()).setOrder(order);
+				refreshTree(true);
+			}
+		});
+		sortingChoice.setSelectedItem(((ListModel) tree.getModel()).getOrder());
+		sortingChoice.setToolTipText("Choose map sorting order.");
+		row1.add(new JLabel("Sort: "));
+		row1.add(sortingChoice);
 
 		return buttons;
 	}
@@ -224,11 +319,11 @@ public class MapListPanel extends JPanel {
 				Gui.config.setProperty(CONFIG_MAP_DIR, folder.toString());
 				folderPathField.setText(folder.toString());
 				((ListModel) tree.getModel()).setFiles(currentFiles);
-				runFilesLoadingInBackground(currentFiles);
 			}
 		}
 	}
 
+	// TODO use events in ListModel instead of manual call here
 	private void refreshTree(boolean force) {
 		synchronized (mapDescriptors) {
 			if (force || mapDescriptors.size() > displayedDescriptors) {
@@ -258,8 +353,8 @@ public class MapListPanel extends JPanel {
 					// no selection to update
 				}
 
-				for (TreeModelListener listener : ((ListModel) tree.getModel())
-						.getTreeModelListeners()) {
+				// TODO rely on ListModel events rather than here
+				for (TreeModelListener listener : model.getTreeModelListeners()) {
 					listener.treeStructureChanged(new TreeModelEvent(tree,
 							new Object[] { tree.getModel().getRoot() }));
 				}
@@ -330,77 +425,25 @@ public class MapListPanel extends JPanel {
 		return files;
 	}
 
-	private JTree buildTreeComponent() {
-		ListModel listModel = new ListModel(mapDescriptors);
+	private JTree buildTreeComponent(MapInformer mapInformer,
+			final MapNamer fileNamer, final MapNamer labelNamer) {
+		ListModel listModel = new ListModel(mapInformer, fileNamer, labelNamer);
 		listModel.setClearedDisplayed(Boolean.parseBoolean(Gui.config
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
-		listModel.setLabelDisplayed(Boolean.parseBoolean(Gui.config
-				.getProperty(CONFIG_LABELS_DISPLAYED, "false")));
+		listModel.setOrder(Order.valueOf(Gui.config.getProperty(
+				CONFIG_LIST_ORDER, Order.File.toString())));
 		final JTree tree = new JTree(listModel);
+
+		MapCellRenderer cellRenderer = new MapCellRenderer(
+				tree.getCellRenderer(), mapInformer);
+		boolean isLabelDisplayed = Boolean.parseBoolean(Gui.config.getProperty(
+				CONFIG_LABELS_DISPLAYED, "false"));
+		cellRenderer.setMapNamer(isLabelDisplayed ? labelNamer : fileNamer);
+		tree.setCellRenderer(cellRenderer);
+
 		tree.setRootVisible(false);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
-		final TreeCellRenderer defaultRenderer = tree.getCellRenderer();
-		tree.setCellRenderer(new TreeCellRenderer() {
-
-			@Override
-			public Component getTreeCellRendererComponent(JTree tree,
-					Object cell, boolean selected, boolean expanded,
-					boolean leaf, int row, boolean hasFocus) {
-				Object value;
-				if (cell instanceof DynamicUtilTreeNode) {
-					value = ((DynamicUtilTreeNode) cell).getUserObject();
-				} else if (cell instanceof DefaultMutableTreeNode) {
-					value = ((DefaultMutableTreeNode) cell).getUserObject();
-				} else {
-					value = cell;
-				}
-
-				if (value instanceof File) {
-					File file = (File) value;
-
-					if (((ListModel) tree.getModel()).isLabelDisplayed()) {
-						String label = retrieveMapLabel(file);
-						if (label == null
-								|| !label.matches("[^a-zA-Z]*[a-zA-Z]+.*")) {
-							value = "[" + file.getName() + "]";
-						} else {
-							value = label;
-						}
-					} else {
-						value = file.getName();
-					}
-
-					MapDescriptor descriptor = mapDescriptors.get(file);
-					String description;
-					if (descriptor == null) {
-						description = "loading";
-					} else if (descriptor.remaining == 0) {
-						description = "cleared";
-					} else {
-						int percent = 100 - 100 * descriptor.remaining
-								/ descriptor.total;
-						description = percent + "%, " + descriptor.remaining
-								+ " remaining";
-					}
-					value = value + " (" + description + ")";
-					DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) defaultRenderer
-							.getTreeCellRendererComponent(tree, value,
-									selected, expanded, leaf, row, hasFocus);
-					renderer.setFont(renderer.getFont().deriveFont(
-							descriptor == null ? Font.ITALIC : Font.PLAIN));
-					if (descriptor != null && descriptor.remaining == 0) {
-						renderer.setEnabled(false);
-					} else {
-						// keep it as is
-					}
-					return renderer;
-				} else {
-					return defaultRenderer.getTreeCellRendererComponent(tree,
-							value, selected, expanded, leaf, row, hasFocus);
-				}
-			}
-		});
 		tree.addMouseListener(new MouseListener() {
 
 			@Override
@@ -580,36 +623,8 @@ public class MapListPanel extends JPanel {
 		return file;
 	}
 
-	private void runFilesLoadingInBackground(TreeSet<File> files) {
-		final ExecutorService executor = Executors.newSingleThreadExecutor();
-		for (final File file : files) {
-			executor.submit(new Runnable() {
-
-				@Override
-				public void run() {
-					if (currentFiles.contains(file)) {
-						try {
-							/*
-							 * Brake to avoid an overloading effect for fast
-							 * computers. Files can be loaded on demand anyway,
-							 * so it is not blocking, only the display of the
-							 * translations advancement is delayed.
-							 */
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-						}
-						updateMapDescriptor(file, false);
-					} else {
-						// different folder selected meanwhile
-					}
-				}
-			});
-		}
-		executor.shutdown();
-		forceExecutorShutdownIfAppClosed(executor);
-	}
-
-	private void forceExecutorShutdownIfAppClosed(final ExecutorService executor) {
+	private void runFilesLoadingInBackground() {
+		final boolean[] isClosed = new boolean[] { false };
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -648,7 +663,7 @@ public class MapListPanel extends JPanel {
 
 						@Override
 						public void windowClosed(WindowEvent arg0) {
-							executor.shutdownNow();
+							isClosed[0] = true;
 						}
 
 						@Override
@@ -658,6 +673,50 @@ public class MapListPanel extends JPanel {
 
 					});
 				}
+			}
+		});
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				File file = getWaitingMap();
+				if (file == null) {
+					// nothing to load
+				} else {
+					updateMapDescriptor(file, false);
+				}
+				if (isClosed[0]) {
+					// do not re-run
+				} else {
+					SwingUtilities.invokeLater(this);
+				}
+			}
+
+			private File getWaitingMap() {
+				ListModel model = (ListModel) tree.getModel();
+				MapInformer mapInformer = model.getMapInformer();
+
+				Iterator<File> iterator = model.getCurrentFiles().iterator();
+				while (iterator.hasNext()) {
+					File file = iterator.next();
+					try {
+						mapInformer.getEntriesCount(file);
+					} catch (NoDataException e) {
+						return file;
+					}
+				}
+
+				Iterator<File> iterator2 = model.getAllFiles().iterator();
+				while (iterator2.hasNext()) {
+					File file = iterator2.next();
+					try {
+						mapInformer.getEntriesCount(file);
+					} catch (NoDataException e) {
+						return file;
+					}
+				}
+
+				return null;
 			}
 		});
 	}
@@ -690,6 +749,11 @@ public class MapListPanel extends JPanel {
 					return;
 				}
 				mapDescriptors.put(file, descriptor);
+
+				for (LoadingListener listener : loadingListeners) {
+					listener.mapLoaded(file);
+				}
+
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
@@ -701,7 +765,7 @@ public class MapListPanel extends JPanel {
 		}
 	}
 
-	public static class MapDescriptor {
+	private static class MapDescriptor {
 		int total;
 		int remaining;
 	}
@@ -726,5 +790,4 @@ public class MapListPanel extends JPanel {
 	public Collection<File> getFiles() {
 		return currentFiles;
 	}
-
 }
