@@ -57,6 +57,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import fr.sazaju.vheditor.gui.ListModel.FilesChangedListener;
 import fr.sazaju.vheditor.gui.ListModel.Order;
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
@@ -90,6 +91,7 @@ public class MapListPanel extends JPanel {
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private final Collection<LoadingListener> loadingListeners = new HashSet<LoadingListener>();
+	private boolean needToSummarize = true;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
 
@@ -389,6 +391,13 @@ public class MapListPanel extends JPanel {
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
 		listModel.setOrder(Order.valueOf(Gui.config.getProperty(
 				CONFIG_LIST_ORDER, Order.File.toString())));
+		listModel.addFilesChangedListener(new FilesChangedListener() {
+
+			@Override
+			public void filesChanged() {
+				needToSummarize = true;
+			}
+		});
 		final JTree tree = new JTree(listModel);
 
 		MapCellRenderer cellRenderer = new MapCellRenderer(
@@ -700,12 +709,17 @@ public class MapListPanel extends JPanel {
 
 			@Override
 			public void run() {
-				File file = getWaitingMap();
-				if (file == null) {
-					// nothing to load
+				if (!needToSummarize) {
+					// don't lose time in searching
 				} else {
-					updateMapDescriptor(file, false);
+					File file = getWaitingMap();
+					if (file == null) {
+						needToSummarize = false;
+					} else {
+						updateMapDescriptor(file, false);
+					}
 				}
+
 				if (isClosed[0]) {
 					// do not re-run
 				} else {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -27,6 +28,7 @@ public class ListModel extends DefaultTreeModel {
 	private final MapInformer informer;
 	private final Map<File, DefaultMutableTreeNode> fileMap;
 	private final FileViewManager listManager = new FileViewManager();
+	private final Collection<FilesChangedListener> listeners = new HashSet<FilesChangedListener>();
 	private final Filter<File> noFilter;
 	private final Filter<File> incompleteFilter;
 	private final Comparator<File> fileComparator;
@@ -137,6 +139,25 @@ public class ListModel extends DefaultTreeModel {
 			fileMap.put(file, node);
 		}
 		fireTreeStructureChanged(root, new Object[] { root }, null, null);
+		fireFilesChanged();
+	}
+
+	public static interface FilesChangedListener {
+		public void filesChanged();
+	}
+
+	public void addFilesChangedListener(FilesChangedListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeFilesChangedListener(FilesChangedListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void fireFilesChanged() {
+		for (FilesChangedListener listener : listeners) {
+			listener.filesChanged();
+		}
 	}
 
 	public Collection<File> getCurrentFiles() {
