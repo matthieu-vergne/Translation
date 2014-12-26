@@ -14,7 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import fr.sazaju.vheditor.util.FileViewManager;
 import fr.sazaju.vheditor.util.MapInformer;
-import fr.sazaju.vheditor.util.MapInformer.LoadingListener;
+import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
 import fr.sazaju.vheditor.util.MapInformer.NoDataException;
 import fr.sazaju.vheditor.util.MapNamer;
 import fr.vergne.collection.filter.Filter;
@@ -82,10 +82,10 @@ public class ListModel extends DefaultTreeModel {
 
 		fileMap = new HashMap<File, DefaultMutableTreeNode>();
 
-		informer.addLoadingListener(new LoadingListener() {
+		informer.addMapSummaryListener(new MapSummaryListener() {
 
 			@Override
-			public void mapLoaded(File map) {
+			public void mapSummarized(File map) {
 				Object node = fileMap.get(map);
 
 				Collection<File> files = listManager.getCollection(

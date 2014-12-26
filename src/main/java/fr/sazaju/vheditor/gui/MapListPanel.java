@@ -67,7 +67,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 import fr.sazaju.vheditor.util.MapInformer;
-import fr.sazaju.vheditor.util.MapInformer.LoadingListener;
+import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
 import fr.sazaju.vheditor.util.MapInformer.NoDataException;
 import fr.sazaju.vheditor.util.MapNamer;
 import fr.vergne.logging.LoggerConfiguration;
@@ -88,9 +88,9 @@ public class MapListPanel extends JPanel {
 	private final JTree tree;
 	private final Map<String, String> mapLabels = Collections
 			.synchronizedMap(new HashMap<String, String>());
-	private final Map<File, MapDescriptor> mapDescriptors = Collections
-			.synchronizedMap(new HashMap<File, MapDescriptor>());
-	private final Collection<LoadingListener> loadingListeners = new HashSet<LoadingListener>();
+	private final Map<File, MapSummary> mapSummaries = Collections
+			.synchronizedMap(new HashMap<File, MapSummary>());
+	private final Collection<MapSummaryListener> mapSummaryListeners = new HashSet<MapSummaryListener>();
 	private boolean needToSummarize = true;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
@@ -116,32 +116,32 @@ public class MapListPanel extends JPanel {
 
 			@Override
 			public int getEntriesCount(File mapFile) throws NoDataException {
-				MapDescriptor mapDescriptor = mapDescriptors.get(mapFile);
-				if (mapDescriptor == null) {
+				MapSummary mapSummary = mapSummaries.get(mapFile);
+				if (mapSummary == null) {
 					throw new NoDataException();
 				} else {
-					return mapDescriptor.total;
+					return mapSummary.total;
 				}
 			}
 
 			@Override
 			public int getEntriesRemaining(File mapFile) throws NoDataException {
-				MapDescriptor mapDescriptor = mapDescriptors.get(mapFile);
-				if (mapDescriptor == null) {
+				MapSummary mapSummary = mapSummaries.get(mapFile);
+				if (mapSummary == null) {
 					throw new NoDataException();
 				} else {
-					return mapDescriptor.remaining;
+					return mapSummary.remaining;
 				}
 			}
 
 			@Override
-			public void addLoadingListener(LoadingListener listener) {
-				loadingListeners.add(listener);
+			public void addMapSummaryListener(MapSummaryListener listener) {
+				mapSummaryListeners.add(listener);
 			}
 
 			@Override
-			public void removeLoadingListener(LoadingListener listener) {
-				loadingListeners.remove(listener);
+			public void removeMapSummaryListener(MapSummaryListener listener) {
+				mapSummaryListeners.remove(listener);
 			}
 		};
 
@@ -303,7 +303,7 @@ public class MapListPanel extends JPanel {
 	}
 
 	private void updateFiles(File folder) {
-		synchronized (mapDescriptors) {
+		synchronized (mapSummaries) {
 			List<File> newFiles = Arrays.asList(retrieveFiles(folder));
 			if (currentFiles.containsAll(newFiles)
 					&& newFiles.containsAll(currentFiles)) {
@@ -312,7 +312,7 @@ public class MapListPanel extends JPanel {
 				Collection<File> removed = new LinkedList<File>(currentFiles);
 				removed.removeAll(newFiles);
 				for (File file : removed) {
-					mapDescriptors.remove(file);
+					mapSummaries.remove(file);
 				}
 				currentFiles.clear();
 				currentFiles.addAll(newFiles);
@@ -498,11 +498,11 @@ public class MapListPanel extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent event) {
-				synchronized (mapDescriptors) {
+				synchronized (mapSummaries) {
 					if (event.getButton() == MouseEvent.BUTTON1
 							&& event.getClickCount() == 2) {
 						File file = getSelectedFile(tree);
-						updateMapDescriptor(file, false);
+						updateMapSummary(file, false);
 						for (MapListListener listener : listeners) {
 							if (listener instanceof FileSelectedListener) {
 								((FileSelectedListener) listener)
@@ -529,7 +529,7 @@ public class MapListPanel extends JPanel {
 			public void keyReleased(KeyEvent arg0) {
 				int keyCode = arg0.getKeyCode();
 				if (keyCode == KeyEvent.VK_F5) {
-					updateMapDescriptor(getSelectedFile(tree), true);
+					updateMapSummary(getSelectedFile(tree), true);
 				} else {
 					// no action for other keys
 				}
@@ -716,7 +716,7 @@ public class MapListPanel extends JPanel {
 					if (file == null) {
 						needToSummarize = false;
 					} else {
-						updateMapDescriptor(file, false);
+						updateMapSummary(file, false);
 					}
 				}
 
@@ -756,43 +756,43 @@ public class MapListPanel extends JPanel {
 		});
 	}
 
-	public void updateMapDescriptor(final File file, boolean force) {
-		synchronized (mapDescriptors) {
-			if (!force && mapDescriptors.get(file) != null) {
+	public void updateMapSummary(final File file, boolean force) {
+		synchronized (mapSummaries) {
+			if (!force && mapSummaries.get(file) != null) {
 				// nothing to load
 			} else {
-				logger.info("Loading " + file.getName() + "...");
-				MapDescriptor descriptor = new MapDescriptor();
+				logger.info("Summarizing " + file.getName() + "...");
+				MapSummary summary = new MapSummary();
 				try {
 					BackedTranslationMap map = new BackedTranslationMap(file);
-					descriptor.total = map.sizeUsed();
-					descriptor.remaining = 0;
+					summary.total = map.sizeUsed();
+					summary.remaining = 0;
 					Iterator<? extends TranslationEntry> iterator = map
 							.iteratorUsed();
 					while (iterator.hasNext()) {
 						TranslationEntry entry = iterator.next();
-						descriptor.remaining += entry.isActuallyTranslated() ? 0
+						summary.remaining += entry.isActuallyTranslated() ? 0
 								: 1;
 					}
 				} catch (EmptyMapException e) {
-					descriptor.total = 0;
-					descriptor.remaining = 0;
+					summary.total = 0;
+					summary.remaining = 0;
 				} catch (IOException e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				mapDescriptors.put(file, descriptor);
+				mapSummaries.put(file, summary);
 
-				for (LoadingListener listener : loadingListeners) {
-					listener.mapLoaded(file);
+				for (MapSummaryListener listener : mapSummaryListeners) {
+					listener.mapSummarized(file);
 				}
 			}
 		}
 	}
 
-	private static class MapDescriptor {
+	private static class MapSummary {
 		int total;
 		int remaining;
 	}

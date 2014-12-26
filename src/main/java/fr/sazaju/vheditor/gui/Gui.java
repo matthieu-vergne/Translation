@@ -260,7 +260,7 @@ public class Gui extends JFrame {
 
 					@Override
 					public void run() {
-						listPanel.updateMapDescriptor(mapFile, true);
+						listPanel.updateMapSummary(mapFile, true);
 					}
 				});
 			}

@@ -9,13 +9,13 @@ public interface MapInformer {
 	public int getEntriesRemaining(File mapFile) throws NoDataException;
 
 	public String getLabel(File mapFile) throws NoDataException;
-	
-	public void addLoadingListener(LoadingListener listener);
-	
-	public void removeLoadingListener(LoadingListener listener);
-	
-	public interface LoadingListener {
-		public void mapLoaded(File map);
+
+	public void addMapSummaryListener(MapSummaryListener listener);
+
+	public void removeMapSummaryListener(MapSummaryListener listener);
+
+	public interface MapSummaryListener {
+		public void mapSummarized(File map);
 	}
 
 	@SuppressWarnings("serial")
