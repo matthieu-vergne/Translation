@@ -142,6 +142,13 @@ public class ListModel extends DefaultTreeModel {
 		fireFilesChanged();
 	}
 
+	public void removeFile(File file) {
+		listManager.removeFile(file);
+		fileMap.remove(file);
+		fireTreeStructureChanged(root, new Object[] { root }, null, null);
+		fireFilesChanged();
+	}
+
 	public static interface FilesChangedListener {
 		public void filesChanged();
 	}

@@ -761,7 +761,7 @@ public class MapListPanel extends JPanel {
 			if (!force && mapSummaries.get(file) != null) {
 				// nothing to load
 			} else {
-				logger.info("Summarizing " + file.getName() + "...");
+				logger.info("Analysing " + file.getName() + "...");
 				MapSummary summary = new MapSummary();
 				try {
 					BackedTranslationMap map = new BackedTranslationMap(file);
@@ -774,6 +774,8 @@ public class MapListPanel extends JPanel {
 						summary.remaining += entry.isActuallyTranslated() ? 0
 								: 1;
 					}
+				} catch (ParsingException e) {
+					summary = null;
 				} catch (EmptyMapException e) {
 					summary.total = 0;
 					summary.remaining = 0;
@@ -783,10 +785,19 @@ public class MapListPanel extends JPanel {
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				mapSummaries.put(file, summary);
 
-				for (MapSummaryListener listener : mapSummaryListeners) {
-					listener.mapSummarized(file);
+				if (summary == null) {
+					mapSummaries.remove(file);
+					ListModel model = (ListModel) tree.getModel();
+					model.removeFile(file);
+					logger.warning("This file is not a map: " + file);
+				} else {
+					mapSummaries.put(file, summary);
+					logger.info("File summarized: " + file);
+
+					for (MapSummaryListener listener : mapSummaryListeners) {
+						listener.mapSummarized(file);
+					}
 				}
 			}
 		}
