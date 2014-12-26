@@ -133,7 +133,7 @@ public class ListModel extends DefaultTreeModel {
 	public void setFiles(Collection<File> files) {
 		listManager.clearFiles();
 		listManager.addAllFiles(files);
-		
+
 		for (File file : files) {
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(file);
 			fileMap.put(file, node);
