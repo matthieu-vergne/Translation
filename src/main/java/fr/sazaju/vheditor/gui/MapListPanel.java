@@ -91,7 +91,6 @@ public class MapListPanel extends JPanel {
 	private final Map<File, MapSummary> mapSummaries = Collections
 			.synchronizedMap(new HashMap<File, MapSummary>());
 	private final Collection<MapSummaryListener> mapSummaryListeners = new HashSet<MapSummaryListener>();
-	private boolean needToSummarize = true;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
 
@@ -193,8 +192,8 @@ public class MapListPanel extends JPanel {
 		JPanel options = buildQuickOptions(labelNamer, fileNamer);
 		add(options, constraints);
 
+		configureBackgroundSummarizing();
 		updateFiles(new File(Gui.config.getProperty(CONFIG_MAP_DIR, "")));
-		runFilesLoadingInBackground();
 	}
 
 	private JPanel buildQuickOptions(final MapNamer labelNamer,
@@ -391,13 +390,6 @@ public class MapListPanel extends JPanel {
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
 		listModel.setOrder(Order.valueOf(Gui.config.getProperty(
 				CONFIG_LIST_ORDER, Order.File.toString())));
-		listModel.addFilesChangedListener(new FilesChangedListener() {
-
-			@Override
-			public void filesChanged() {
-				needToSummarize = true;
-			}
-		});
 		final JTree tree = new JTree(listModel);
 
 		MapCellRenderer cellRenderer = new MapCellRenderer(
@@ -653,8 +645,9 @@ public class MapListPanel extends JPanel {
 		return file;
 	}
 
-	private void runFilesLoadingInBackground() {
-		final boolean[] isClosed = new boolean[] { false };
+	private void configureBackgroundSummarizing() {
+		// sense the app closing
+		final boolean[] isClosed = { false };
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -705,25 +698,25 @@ public class MapListPanel extends JPanel {
 				}
 			}
 		});
-		SwingUtilities.invokeLater(new Runnable() {
+
+		// create the background task
+		final boolean[] isRunning = { false };
+		final Runnable backgroundSummary = new Runnable() {
 
 			@Override
 			public void run() {
-				if (!needToSummarize) {
-					// don't lose time in searching
-				} else {
-					File file = getWaitingMap();
-					if (file == null) {
-						needToSummarize = false;
+				try {
+					isRunning[0] = true;
+					File file;
+					if (isClosed[0] || (file = getWaitingMap()) == null) {
+						isRunning[0] = false;
 					} else {
 						updateMapSummary(file, false);
+						SwingUtilities.invokeLater(this);
 					}
-				}
-
-				if (isClosed[0]) {
-					// do not re-run
-				} else {
-					SwingUtilities.invokeLater(this);
+				} catch (Exception e) {
+					isRunning[0] = false;
+					throw new RuntimeException(e);
 				}
 			}
 
@@ -752,6 +745,20 @@ public class MapListPanel extends JPanel {
 				}
 
 				return null;
+			}
+		};
+
+		// sense the necessity to launch the task
+		ListModel model = (ListModel) tree.getModel();
+		model.addFilesChangedListener(new FilesChangedListener() {
+
+			@Override
+			public void filesChanged() {
+				if (isRunning[0]) {
+					// already running
+				} else {
+					SwingUtilities.invokeLater(backgroundSummary);
+				}
 			}
 		});
 	}
