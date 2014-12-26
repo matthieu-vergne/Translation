@@ -84,8 +84,46 @@ public class ListModel extends DefaultTreeModel {
 
 			@Override
 			public void mapLoaded(File map) {
+				Object node = fileMap.get(map);
+
+				Collection<File> files = listManager.getCollection(
+						getCurrentFilter(), getCurrentComparator());
+				boolean oldContains = files.contains(map);
+				int index = -1;
+				if (oldContains) {
+					index = getIndexOfChild(root, node);
+				} else {
+					// not in the list
+				}
+
 				listManager.recheckFile(map);
-				// TODO use fireTreeNodesXxx()
+
+				boolean newContains = files.contains(map);
+				if (index == -1 && newContains) {
+					index = getIndexOfChild(root, node);
+				} else {
+					// not in the list nor necessary
+				}
+
+				Object[] rootPath = new Object[] { root };
+				if (oldContains && newContains) {
+					int[] childIndices = new int[] { index };
+					Object[] children = new Object[] { node };
+					fireTreeNodesChanged(root, rootPath, childIndices, children);
+				} else if (oldContains && !newContains) {
+					int[] childIndices = new int[] { index };
+					Object[] children = new Object[] { node };
+					fireTreeNodesRemoved(root, rootPath, childIndices, children);
+				} else if (!oldContains && newContains) {
+					int[] childIndices = new int[] { index };
+					Object[] children = new Object[] { node };
+					fireTreeNodesInserted(root, rootPath, childIndices,
+							children);
+				} else if (!oldContains && !newContains) {
+					// no displayed update
+				} else {
+					throw new RuntimeException("This case should not happen.");
+				}
 			}
 		});
 	}
@@ -98,7 +136,7 @@ public class ListModel extends DefaultTreeModel {
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(file);
 			fileMap.put(file, node);
 		}
-		// TODO use fireTreeNodesXxx()
+		fireTreeStructureChanged(root, new Object[] { root }, null, null);
 	}
 
 	public Collection<File> getCurrentFiles() {
@@ -123,7 +161,7 @@ public class ListModel extends DefaultTreeModel {
 	public void setClearedDisplayed(boolean isClearedDisplayed) {
 		if (isClearedDisplayed != this.isClearedDisplayed) {
 			this.isClearedDisplayed = isClearedDisplayed;
-			// TODO use fireTreeNodesXxx()
+			fireTreeStructureChanged(root, new Object[] { root }, null, null);
 		} else {
 			// keep as is
 		}
@@ -205,7 +243,7 @@ public class ListModel extends DefaultTreeModel {
 	public void setOrder(Order order) {
 		if (order != this.order) {
 			this.order = order;
-			// TODO use fireTreeNodesXxx()
+			fireTreeStructureChanged(root, new Object[] { root }, null, null);
 		} else {
 			// keep as is
 		}
@@ -213,5 +251,9 @@ public class ListModel extends DefaultTreeModel {
 
 	public MapInformer getMapInformer() {
 		return informer;
+	}
+
+	public void requestUpdate() {
+		fireTreeStructureChanged(root, new Object[] { root }, null, null);
 	}
 }

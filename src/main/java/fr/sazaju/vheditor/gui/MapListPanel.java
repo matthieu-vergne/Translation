@@ -51,6 +51,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -88,7 +90,6 @@ public class MapListPanel extends JPanel {
 	private final Map<File, MapDescriptor> mapDescriptors = Collections
 			.synchronizedMap(new HashMap<File, MapDescriptor>());
 	private final Collection<LoadingListener> loadingListeners = new HashSet<LoadingListener>();
-	private int displayedDescriptors = 0;
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
 
@@ -210,7 +211,6 @@ public class MapListPanel extends JPanel {
 				boolean selected = displayCleared.isSelected();
 				Gui.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
 				((ListModel) tree.getModel()).setClearedDisplayed(selected);
-				refreshTree(true);
 			}
 		});
 		displayCleared.setSelected(((ListModel) tree.getModel())
@@ -227,7 +227,8 @@ public class MapListPanel extends JPanel {
 				Gui.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
 				((MapCellRenderer) tree.getCellRenderer())
 						.setMapNamer(selected ? labelNamer : fileNamer);
-				refreshTree(true);
+
+				((ListModel) tree.getModel()).requestUpdate();
 			}
 		});
 		displayLabels.setSelected(Boolean.parseBoolean(Gui.config.getProperty(
@@ -271,7 +272,7 @@ public class MapListPanel extends JPanel {
 				try {
 					loadLabels(true);
 					mapLabels.clear();
-					refreshTree(true);
+					((ListModel) tree.getModel()).requestUpdate();
 				} catch (Exception e) {
 					displayError(e.getMessage());
 				}
@@ -289,7 +290,6 @@ public class MapListPanel extends JPanel {
 				Order order = (Order) sortingChoice.getSelectedItem();
 				Gui.config.setProperty(CONFIG_LIST_ORDER, "" + order);
 				((ListModel) tree.getModel()).setOrder(order);
-				refreshTree(true);
 			}
 		});
 		sortingChoice.setSelectedItem(((ListModel) tree.getModel()).getOrder());
@@ -314,54 +314,10 @@ public class MapListPanel extends JPanel {
 				}
 				currentFiles.clear();
 				currentFiles.addAll(newFiles);
-				displayedDescriptors = 0;
 
 				Gui.config.setProperty(CONFIG_MAP_DIR, folder.toString());
 				folderPathField.setText(folder.toString());
 				((ListModel) tree.getModel()).setFiles(currentFiles);
-			}
-		}
-	}
-
-	// TODO use events in ListModel instead of manual call here
-	private void refreshTree(boolean force) {
-		synchronized (mapDescriptors) {
-			if (force || mapDescriptors.size() > displayedDescriptors) {
-				logger.info("Refreshing...");
-				ListModel model = (ListModel) tree.getModel();
-				TreePath[] selection = tree.getSelectionPaths();
-				if (!model.isClearedDisplayed() && selection != null
-						&& selection.length > 0) {
-					LinkedList<TreePath> paths = new LinkedList<TreePath>(
-							Arrays.asList(selection));
-					Iterator<TreePath> iterator = paths.iterator();
-					while (iterator.hasNext()) {
-						TreePath path = iterator.next();
-						File file = (File) ((DefaultMutableTreeNode) path
-								.getLastPathComponent()).getUserObject();
-						MapDescriptor descriptor = mapDescriptors.get(file);
-						if (descriptor != null && descriptor.remaining == 0) {
-							iterator.remove();
-						} else {
-							// still present
-						}
-					}
-					selection = paths.toArray(new TreePath[paths.size()]);
-					tree.clearSelection();
-					tree.setSelectionPaths(selection);
-				} else {
-					// no selection to update
-				}
-
-				// TODO rely on ListModel events rather than here
-				for (TreeModelListener listener : model.getTreeModelListeners()) {
-					listener.treeStructureChanged(new TreeModelEvent(tree,
-							new Object[] { tree.getModel().getRoot() }));
-				}
-				tree.setSelectionPaths(selection);
-				displayedDescriptors = mapDescriptors.size();
-			} else {
-				// already refreshed
 			}
 		}
 	}
@@ -427,7 +383,8 @@ public class MapListPanel extends JPanel {
 
 	private JTree buildTreeComponent(MapInformer mapInformer,
 			final MapNamer fileNamer, final MapNamer labelNamer) {
-		ListModel listModel = new ListModel(mapInformer, fileNamer, labelNamer);
+		final ListModel listModel = new ListModel(mapInformer, fileNamer,
+				labelNamer);
 		listModel.setClearedDisplayed(Boolean.parseBoolean(Gui.config
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
 		listModel.setOrder(Order.valueOf(Gui.config.getProperty(
@@ -444,6 +401,70 @@ public class MapListPanel extends JPanel {
 		tree.setRootVisible(false);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		final TreePath[] selection = new TreePath[1];
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+
+			@Override
+			public void valueChanged(TreeSelectionEvent event) {
+				TreePath[] paths = event.getPaths();
+				for (TreePath path : paths) {
+					if (event.isAddedPath(path)) {
+						selection[0] = path;
+					} else {
+						// do not change
+					}
+				}
+			}
+		});
+		listModel.addTreeModelListener(new TreeModelListener() {
+
+			private void recoverSelection() {
+				/*
+				 * Invoke the recovery later in order to ensure it is done after
+				 * any other action on the tree, otherwise the selection could
+				 * be lost due to another action made done the recovery.
+				 */
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						if (selection[0] != null) {
+							TreePath path = selection[0];
+							File file = (File) ((DefaultMutableTreeNode) path
+									.getLastPathComponent()).getUserObject();
+							Collection<File> files = listModel
+									.getCurrentFiles();
+							if (files.contains(file)) {
+								tree.clearSelection();
+								tree.setSelectionPath(selection[0]);
+							} else {
+								// still present
+							}
+						} else {
+							// no selection to recover
+						}
+					}
+				});
+			}
+
+			@Override
+			public void treeStructureChanged(TreeModelEvent e) {
+				recoverSelection();
+			}
+
+			@Override
+			public void treeNodesRemoved(TreeModelEvent e) {
+				recoverSelection();
+			}
+
+			@Override
+			public void treeNodesInserted(TreeModelEvent e) {
+				recoverSelection();
+			}
+
+			@Override
+			public void treeNodesChanged(TreeModelEvent e) {
+				recoverSelection();
+			}
+		});
 		tree.addMouseListener(new MouseListener() {
 
 			@Override
@@ -753,14 +774,6 @@ public class MapListPanel extends JPanel {
 				for (LoadingListener listener : loadingListeners) {
 					listener.mapLoaded(file);
 				}
-
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						refreshTree(false);
-					}
-				});
 			}
 		}
 	}
