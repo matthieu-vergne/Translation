@@ -283,7 +283,7 @@ public class MapListPanel extends JPanel {
 				.setToolTipText("Request the update of the labels from the label source.");
 		row2.add(updateLabels);
 
-		final JComboBox sortingChoice = new JComboBox(ListModel.Order.values());
+		final JComboBox<Order> sortingChoice = new JComboBox<>(ListModel.Order.values());
 		sortingChoice.addActionListener(new ActionListener() {
 
 			@Override
