@@ -36,13 +36,11 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		}
 	}
 
-	@Override
 	public Iterator<? extends TranslationEntry> iteratorUsed() {
 		EntryLoop usedEntries = get(1);
 		return usedEntries.iterator();
 	}
 
-	@Override
 	public Iterator<? extends TranslationEntry> iteratorUnused() {
 		Option<Suite> option = get(2);
 		if (option.isPresent()) {
@@ -78,7 +76,6 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		}
 	}
 
-	@Override
 	public File getBaseFile() {
 		return file;
 	}
@@ -93,13 +90,11 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		setContent(FileUtils.readFileToString(file));
 	}
 
-	@Override
 	public TranslationEntry getUsedEntry(int index) {
 		EntryLoop usedEntries = get(1);
 		return usedEntries.get(index);
 	}
 
-	@Override
 	public TranslationEntry getUnusedEntry(int index) {
 		Option<Suite> option = get(2);
 		if (option.isPresent()) {
@@ -111,13 +106,11 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		}
 	}
 
-	@Override
 	public int sizeUsed() {
 		EntryLoop usedEntries = get(1);
 		return usedEntries.size();
 	}
 
-	@Override
 	public int sizeUnused() {
 		Option<Suite> option = get(2);
 		if (option.isPresent()) {
@@ -135,5 +128,38 @@ public class BackedTranslationMap extends Suite implements TranslationMap {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public Iterator<TranslationEntry> iterator() {
+		return new Iterator<TranslationEntry>() {
+			private final Iterator<? extends TranslationEntry> iterator = iteratorUsed();
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public TranslationEntry next() {
+				return iterator.next();
+			}
+
+			@Override
+			public void remove() {
+				iterator.remove();
+			}
+
+		};
+	}
+
+	@Override
+	public TranslationEntry getEntry(int index) {
+		return getUsedEntry(index);
+	}
+
+	@Override
+	public int size() {
+		return sizeUsed();
 	}
 }

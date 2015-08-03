@@ -773,10 +773,10 @@ public class MapListPanel extends JPanel {
 				MapSummary summary = new MapSummary();
 				try {
 					BackedTranslationMap map = new BackedTranslationMap(file);
-					summary.total = map.sizeUsed();
+					summary.total = map.size();
 					summary.remaining = 0;
 					Iterator<? extends TranslationEntry> iterator = map
-							.iteratorUsed();
+							.iterator();
 					while (iterator.hasNext()) {
 						TranslationEntry entry = iterator.next();
 						summary.remaining += TranslationUtil

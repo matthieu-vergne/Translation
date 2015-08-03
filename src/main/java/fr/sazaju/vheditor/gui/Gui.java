@@ -312,7 +312,7 @@ public class Gui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToEntry(mapPanel.getMap().sizeUsed() - 1);
+				mapPanel.goToEntry(mapPanel.getMap().size() - 1);
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_END,

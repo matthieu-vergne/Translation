@@ -310,8 +310,7 @@ public class Search extends JPanel implements Tool {
 					.replaceAll(blanks, " ");
 			if (mapContent.contains(searched)) {
 				BackedTranslationMap map = new BackedTranslationMap(file);
-				Iterator<? extends TranslationEntry> iterator = map
-						.iteratorUsed();
+				Iterator<? extends TranslationEntry> iterator = map.iterator();
 				int index = -1;
 				while (searching && iterator.hasNext()) {
 					TranslationEntry entry = iterator.next();

@@ -304,7 +304,7 @@ public class MapContentPanel extends JPanel {
 
 	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
 		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<? extends TranslationEntry> iterator = map.iteratorUsed();
+		Iterator<? extends TranslationEntry> iterator = map.iterator();
 		int count = 0;
 		while (iterator.hasNext()) {
 			TranslationEntry entry = iterator.next();
