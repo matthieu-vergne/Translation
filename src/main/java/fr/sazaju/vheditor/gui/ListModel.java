@@ -12,7 +12,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import fr.sazaju.vheditor.util.FileViewManager;
+import fr.sazaju.vheditor.util.CollectionManager;
 import fr.sazaju.vheditor.util.MapInformer;
 import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
 import fr.sazaju.vheditor.util.MapInformer.NoDataException;
@@ -27,7 +27,7 @@ public class ListModel extends DefaultTreeModel {
 	private final DefaultMutableTreeNode root;
 	private final MapInformer informer;
 	private final Map<File, DefaultMutableTreeNode> fileMap;
-	private final FileViewManager listManager = new FileViewManager();
+	private final CollectionManager<File> listManager = new CollectionManager<File>();
 	private final Collection<FilesChangedListener> listeners = new HashSet<FilesChangedListener>();
 	private final Filter<File> noFilter;
 	private final Filter<File> incompleteFilter;
@@ -98,7 +98,7 @@ public class ListModel extends DefaultTreeModel {
 					// not in the list
 				}
 
-				listManager.recheckFile(map);
+				listManager.recheckElement(map);
 
 				boolean newContains = files.contains(map);
 				if (index == -1 && newContains) {
@@ -131,8 +131,8 @@ public class ListModel extends DefaultTreeModel {
 	}
 
 	public void setFiles(Collection<File> files) {
-		listManager.clearFiles();
-		listManager.addAllFiles(files);
+		listManager.clear();
+		listManager.addAllElements(files);
 
 		for (File file : files) {
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(file);
@@ -143,7 +143,7 @@ public class ListModel extends DefaultTreeModel {
 	}
 
 	public void removeFile(File file) {
-		listManager.removeFile(file);
+		listManager.removeElement(file);
 		fileMap.remove(file);
 		fireTreeStructureChanged(root, new Object[] { root }, null, null);
 		fireFilesChanged();
@@ -181,7 +181,7 @@ public class ListModel extends DefaultTreeModel {
 	}
 
 	public Collection<File> getAllFiles() {
-		return listManager.getAllFiles();
+		return listManager.getAllElements();
 	}
 
 	private boolean isClearedDisplayed;
