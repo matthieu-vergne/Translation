@@ -24,7 +24,7 @@ public class CollectionManager<Element> {
 		if (collections.containsKey(key)) {
 			throw new IllegalArgumentException("Already existing collection.");
 		} else {
-			Collection<Element> collection = new TreeSet<Element>();
+			Collection<Element> collection = new TreeSet<Element>(comparator);
 			collection.addAll(FilterUtil.filter(allElements, filter));
 			collections.put(key, collection);
 		}
