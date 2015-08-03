@@ -7,12 +7,12 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
-import fr.sazaju.vheditor.translation.TranslationComment;
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
-import fr.sazaju.vheditor.translation.TranslationCommentTest;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment.FieldWriter;
+import fr.sazaju.vheditor.translation.TranslationMetadata;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadataTest;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldWriter;
 
-public class SimpleTranslationCommentTest extends TranslationCommentTest {
+public class SimpleTranslationMetadataTest extends TranslationMetadataTest {
 
 	private final Field<Integer> nonEditable0 = new Field<>("Field 0");
 	private final Field<Integer> editable0 = new Field<>("Field 1");
@@ -20,29 +20,29 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 	private final Field<Integer> editable1 = new Field<>("Field 3");
 
 	@Override
-	protected TranslationComment createTranslationComment() {
-		SimpleTranslationComment comment = new SimpleTranslationComment();
+	protected TranslationMetadata createTranslationMetadata() {
+		SimpleTranslationMetadata metadata = new SimpleTranslationMetadata();
 		final Integer[] datastore = { getInitialReference(nonEditable0),
 				getInitialReference(nonEditable1),
 				getInitialReference(editable0), getInitialReference(editable1) };
-		comment.configureField(nonEditable0,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(nonEditable0,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
 						return datastore[0];
 					}
 				});
-		comment.configureField(nonEditable1,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(nonEditable1,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
 						return datastore[2];
 					}
 				});
-		comment.configureField(editable0,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(editable0,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
@@ -55,8 +55,8 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 						datastore[1] = value;
 					}
 				});
-		comment.configureField(editable1,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(editable1,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
@@ -69,7 +69,7 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 						datastore[3] = value;
 					}
 				});
-		return comment;
+		return metadata;
 	}
 
 	@Override
@@ -102,18 +102,18 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 
 	@Test
 	public void testEditableFieldIdentifiedThroughWriter() {
-		SimpleTranslationComment comment = new SimpleTranslationComment();
+		SimpleTranslationMetadata metadata = new SimpleTranslationMetadata();
 		final Integer[] datastore = { 0, 1, 2, 3 };
-		comment.configureField(nonEditable0,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(nonEditable0,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
 						return datastore[0];
 					}
 				});
-		comment.configureField(editable0,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(editable0,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
@@ -126,16 +126,16 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 						datastore[1] = value;
 					}
 				});
-		comment.configureField(nonEditable1,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(nonEditable1,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
 						return datastore[2];
 					}
 				});
-		comment.configureField(editable1,
-				new SimpleTranslationComment.FieldReader<Integer>() {
+		metadata.configureField(editable1,
+				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
 					@Override
 					public Integer read() {
@@ -149,10 +149,10 @@ public class SimpleTranslationCommentTest extends TranslationCommentTest {
 					}
 				});
 
-		assertEquals(false, comment.isEditable(nonEditable0));
-		assertEquals(false, comment.isEditable(nonEditable1));
-		assertEquals(true, comment.isEditable(editable0));
-		assertEquals(true, comment.isEditable(editable1));
+		assertEquals(false, metadata.isEditable(nonEditable0));
+		assertEquals(false, metadata.isEditable(nonEditable1));
+		assertEquals(true, metadata.isEditable(editable0));
+		assertEquals(true, metadata.isEditable(editable1));
 	}
 
 }

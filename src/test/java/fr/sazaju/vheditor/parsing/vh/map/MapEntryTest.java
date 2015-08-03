@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 
 public class MapEntryTest {
 
@@ -38,12 +38,12 @@ public class MapEntryTest {
 		for (File entryFile : testFolder.listFiles(entryFilter)) {
 			String original = FileUtils.readFileToString(entryFile);
 			entry.setContent(original);
-			entry.getComment().set(Field.MARKED_AS_TRANSLATED, true);
-			assertTrue(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
-			entry.getComment().set(Field.MARKED_AS_TRANSLATED, false);
-			assertFalse(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
-			entry.getComment().set(Field.MARKED_AS_TRANSLATED, true);
-			assertTrue(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
+			entry.getMetadata().set(Field.MARKED_AS_TRANSLATED, true);
+			assertTrue(entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
+			entry.getMetadata().set(Field.MARKED_AS_TRANSLATED, false);
+			assertFalse(entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
+			entry.getMetadata().set(Field.MARKED_AS_TRANSLATED, true);
+			assertTrue(entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
 		}
 	}
 }

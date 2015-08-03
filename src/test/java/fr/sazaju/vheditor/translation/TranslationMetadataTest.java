@@ -10,13 +10,13 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
-import fr.sazaju.vheditor.translation.TranslationComment.FieldListener;
-import fr.sazaju.vheditor.translation.TranslationComment.UneditableFieldException;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
+import fr.sazaju.vheditor.translation.TranslationMetadata.UneditableFieldException;
 
-public abstract class TranslationCommentTest {
+public abstract class TranslationMetadataTest {
 
-	protected abstract TranslationComment createTranslationComment();
+	protected abstract TranslationMetadata createTranslationMetadata();
 
 	protected abstract Collection<Field<?>> getNonEditableFields();
 
@@ -29,15 +29,15 @@ public abstract class TranslationCommentTest {
 
 	@Test
 	public void testAbstractMethodsProvideProperValues() {
-		Set<TranslationComment> comments = new HashSet<TranslationComment>();
+		Set<TranslationMetadata> metadatas = new HashSet<TranslationMetadata>();
 		for (int i = 0; i < 10; i++) {
-			comments.add(createTranslationComment());
+			metadatas.add(createTranslationMetadata());
 		}
-		assertFalse("null instances are provided as comments",
-				comments.contains(null));
+		assertFalse("null instances are provided as metadatas",
+				metadatas.contains(null));
 		assertEquals(
-				"the same comments are reused instead of creating new ones",
-				10, comments.size());
+				"the same metadatas are reused instead of creating new ones",
+				10, metadatas.size());
 
 		Collection<Field<?>> nonEditableFields = getNonEditableFields();
 		assertFalse("null fields are provided as as non-editable fields",
@@ -91,34 +91,34 @@ public abstract class TranslationCommentTest {
 
 	@Test
 	public void testGetReferenceProperlyRetrievesReferenceValueBeforeModification() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 
 		for (Field<?> field : getNonEditableFields()) {
 			assertEquals(getInitialReference(field),
-					comment.getReference(field));
+					metadata.getReference(field));
 		}
 		for (Field<?> field : getEditableFields()) {
 			assertEquals(getInitialReference(field),
-					comment.getReference(field));
+					metadata.getReference(field));
 		}
 	}
 
 	@Test
 	public void testGetReferenceProperlyRetrievesReferenceValueAfterModification() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 			assertEquals(getInitialReference(field),
-					comment.getReference(field));
+					metadata.getReference(field));
 		}
 	}
 
 	@Test
 	public void testNonEditableFieldThrowsExceptionOnSet() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getNonEditableFields()) {
 			try {
-				setToReference(comment, field);
+				setToReference(metadata, field);
 				fail("No exception thrown");
 			} catch (UneditableFieldException e) {
 			}
@@ -127,110 +127,110 @@ public abstract class TranslationCommentTest {
 
 	@Test
 	public void testNonEditableFieldProperlyRetrieveReferenceValue() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getNonEditableFields()) {
-			assertEquals(getInitialReference(field), comment.get(field));
+			assertEquals(getInitialReference(field), metadata.get(field));
 		}
 	}
 
 	@Test
 	public void testEditableFieldProperlyRetrieveReferenceValueBeforeModification() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(getInitialReference(field), comment.get(field));
+			assertEquals(getInitialReference(field), metadata.get(field));
 		}
 	}
 
 	@Test
 	public void testEditableFieldProperlyRetrieveUpdatedValueAfterModification() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			Object value = change(comment, field);
-			assertEquals(value, comment.get(field));
+			Object value = change(metadata, field);
+			assertEquals(value, metadata.get(field));
 		}
 	}
 
 	@Test
 	public void testReferenceProperlyUpdatedAfterSave() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			Object value = change(comment, field);
-			comment.save(field);
-			assertEquals(value, comment.getReference(field));
+			Object value = change(metadata, field);
+			metadata.save(field);
+			assertEquals(value, metadata.getReference(field));
 		}
 	}
 
 	@Test
 	public void testEditableFieldProperlyUpdatedAfterReset() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
-			comment.reset(field);
-			assertEquals(getInitialReference(field), comment.get(field));
+			change(metadata, field);
+			metadata.reset(field);
+			assertEquals(getInitialReference(field), metadata.get(field));
 		}
 	}
 
 	@Test
 	public void testAllChangesProperlyMaintainedAfterSaveAll() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		Map<Field<?>, Object> values = new HashMap<Field<?>, Object>();
 		for (Field<?> field : getEditableFields()) {
-			values.put(field, change(comment, field));
+			values.put(field, change(metadata, field));
 		}
-		comment.saveAll();
+		metadata.saveAll();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(values.get(field), comment.get(field));
+			assertEquals(values.get(field), metadata.get(field));
 		}
 	}
 
 	@Test
 	public void testAllReferencesProperlyUpdatedAfterSaveAll() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 		}
-		comment.saveAll();
+		metadata.saveAll();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(comment.get(field), comment.getReference(field));
+			assertEquals(metadata.get(field), metadata.getReference(field));
 		}
 	}
 
 	@Test
 	public void testAllChangesProperlyDiscardedAfterResetAll() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		Map<Field<?>, Object> values = new HashMap<Field<?>, Object>();
 		for (Field<?> field : getEditableFields()) {
-			values.put(field, change(comment, field));
+			values.put(field, change(metadata, field));
 		}
-		comment.resetAll();
+		metadata.resetAll();
 		for (Field<?> field : getEditableFields()) {
 			Object value = values.get(field);
 			if (value != null) {
-				assertFalse(value.equals(comment.get(field)));
+				assertFalse(value.equals(metadata.get(field)));
 			} else {
-				assertFalse(value == comment.get(field));
+				assertFalse(value == metadata.get(field));
 			}
 		}
 	}
 
 	@Test
 	public void testAllReferencesProperlyMaintainedAfterResetAll() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 		}
-		comment.resetAll();
+		metadata.resetAll();
 		for (Field<?> field : getEditableFields()) {
 			assertEquals(getInitialReference(field),
-					comment.getReference(field));
+					metadata.getReference(field));
 		}
 	}
 
 	@Test
 	public void testListenerNotifiedAfterSetWhenRegistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
-		comment.addFieldListener(new FieldListener() {
+		metadata.addFieldListener(new FieldListener() {
 
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
@@ -238,14 +238,14 @@ public abstract class TranslationCommentTest {
 			}
 		});
 		for (Field<?> field : getEditableFields()) {
-			Object value = change(comment, field);
+			Object value = change(metadata, field);
 			assertEquals(value, notified.get(field));
 		}
 	}
 
 	@Test
 	public void testListenerNotNotifiedAfterSetWhenUnregistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
 		FieldListener listener = new FieldListener() {
 
@@ -254,19 +254,19 @@ public abstract class TranslationCommentTest {
 				notified.put(field, newValue);
 			}
 		};
-		comment.addFieldListener(listener);
-		comment.removeFieldListener(listener);
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 			assertTrue(notified.isEmpty());
 		}
 	}
 
 	@Test
 	public void testListenerNotifiedAfterResetWhenRegistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
-		comment.addFieldListener(new FieldListener() {
+		metadata.addFieldListener(new FieldListener() {
 
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
@@ -274,15 +274,15 @@ public abstract class TranslationCommentTest {
 			}
 		});
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
-			comment.reset(field);
+			change(metadata, field);
+			metadata.reset(field);
 			assertEquals(getInitialReference(field), notified.get(field));
 		}
 	}
 
 	@Test
 	public void testListenerNotNotifiedAfterResetWhenUnregistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
 		FieldListener listener = new FieldListener() {
 
@@ -291,20 +291,20 @@ public abstract class TranslationCommentTest {
 				notified.put(field, newValue);
 			}
 		};
-		comment.addFieldListener(listener);
-		comment.removeFieldListener(listener);
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
-			comment.reset(field);
+			change(metadata, field);
+			metadata.reset(field);
 			assertTrue(notified.isEmpty());
 		}
 	}
 
 	@Test
 	public void testListenerNotifiedAfterResetAllWhenRegistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
-		comment.addFieldListener(new FieldListener() {
+		metadata.addFieldListener(new FieldListener() {
 
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
@@ -312,9 +312,9 @@ public abstract class TranslationCommentTest {
 			}
 		});
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 		}
-		comment.resetAll();
+		metadata.resetAll();
 		for (Field<?> field : getEditableFields()) {
 			assertEquals(getInitialReference(field), notified.get(field));
 		}
@@ -322,7 +322,7 @@ public abstract class TranslationCommentTest {
 
 	@Test
 	public void testListenerNotNotifiedAfterResetAllWhenUnregistered() {
-		TranslationComment comment = createTranslationComment();
+		TranslationMetadata metadata = createTranslationMetadata();
 		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
 		FieldListener listener = new FieldListener() {
 
@@ -331,23 +331,23 @@ public abstract class TranslationCommentTest {
 				notified.put(field, newValue);
 			}
 		};
-		comment.addFieldListener(listener);
-		comment.removeFieldListener(listener);
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
 		for (Field<?> field : getEditableFields()) {
-			change(comment, field);
+			change(metadata, field);
 		}
-		comment.resetAll();
+		metadata.resetAll();
 		assertTrue(notified.isEmpty());
 	}
 
-	private <T> T change(TranslationComment comment, Field<T> field) {
-		T value = createNewEditableFieldValue(field, comment.get(field));
-		comment.set(field, value);
+	private <T> T change(TranslationMetadata metadata, Field<T> field) {
+		T value = createNewEditableFieldValue(field, metadata.get(field));
+		metadata.set(field, value);
 		return value;
 	}
 
-	private <T> void setToReference(TranslationComment comment, Field<T> field) {
-		comment.set(field, getInitialReference(field));
+	private <T> void setToReference(TranslationMetadata metadata, Field<T> field) {
+		metadata.set(field, getInitialReference(field));
 	}
 
 }

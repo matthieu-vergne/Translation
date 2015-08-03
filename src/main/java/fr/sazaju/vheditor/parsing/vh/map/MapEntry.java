@@ -2,27 +2,27 @@ package fr.sazaju.vheditor.parsing.vh.map;
 
 import java.util.NoSuchElementException;
 
-import fr.sazaju.vheditor.translation.TranslationComment;
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment.FieldReader;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment.FieldWriter;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldReader;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldWriter;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 
 public class MapEntry extends Suite implements TranslationEntry {
 
 	private static final Field<String> CONTEXT = new Field<String>("Context");
-	private final SimpleTranslationComment comment;
+	private final SimpleTranslationMetadata metadata;
 
 	public MapEntry() {
 		super(new StartLine(), new Option<UntranslatedLine>(
 				new UntranslatedLine()), new ContextLine(),
 				new Option<AdviceLine>(new AdviceLine()), new ContentBlock(),
 				new TranslationLine(), new ContentBlock(), new EndLine());
-		comment = new SimpleTranslationComment();
-		comment.configureField(Field.MARKED_AS_TRANSLATED,
+		metadata = new SimpleTranslationMetadata();
+		metadata.configureField(Field.MARKED_AS_TRANSLATED,
 				new FieldReader<Boolean>() {
 
 					@Override
@@ -39,7 +39,7 @@ public class MapEntry extends Suite implements TranslationEntry {
 								: "");
 					}
 				});
-		comment.configureField(CONTEXT, new FieldReader<String>() {
+		metadata.configureField(CONTEXT, new FieldReader<String>() {
 
 			@Override
 			public String read() {
@@ -47,7 +47,7 @@ public class MapEntry extends Suite implements TranslationEntry {
 				return context.getContext().getContent();
 			}
 		});
-		comment.configureField(Field.CHAR_LIMIT_FACE,
+		metadata.configureField(Field.CHAR_LIMIT_FACE,
 				new FieldReader<Integer>() {
 
 					@Override
@@ -66,7 +66,7 @@ public class MapEntry extends Suite implements TranslationEntry {
 						}
 					}
 				});
-		comment.configureField(Field.CHAR_LIMIT_NO_FACE,
+		metadata.configureField(Field.CHAR_LIMIT_NO_FACE,
 				new FieldReader<Integer>() {
 
 					@Override
@@ -106,7 +106,7 @@ public class MapEntry extends Suite implements TranslationEntry {
 	}
 
 	@Override
-	public TranslationComment getComment() {
-		return comment;
+	public TranslationMetadata getMetadata() {
+		return metadata;
 	}
 }

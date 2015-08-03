@@ -32,7 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
@@ -309,7 +309,7 @@ public class MapContentPanel extends JPanel {
 		while (iterator.hasNext()) {
 			TranslationEntry entry = iterator.next();
 			if (relyOnTags
-					&& !entry.getComment().get(Field.MARKED_AS_TRANSLATED)
+					&& !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED)
 					|| !relyOnTags
 					&& !TranslationUtil.isActuallyTranslated(entry)) {
 				untranslatedEntries.add(count);

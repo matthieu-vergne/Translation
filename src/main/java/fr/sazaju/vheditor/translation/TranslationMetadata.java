@@ -1,13 +1,13 @@
 package fr.sazaju.vheditor.translation;
 
 /**
- * A {@link TranslationComment} aims at interacting with the specific data
+ * A {@link TranslationMetadata} aims at interacting with the specific data
  * contained into the comment of a {@link TranslationEntry}.
  * 
  * @author Sazaju HITOKAGE <sazaju@gmail.com>
  * 
  */
-public interface TranslationComment {
+public interface TranslationMetadata {
 
 	/**
 	 * The reference value of a {@link Field} is the initial value to consider.
@@ -65,9 +65,9 @@ public interface TranslationComment {
 
 	/**
 	 * A {@link FieldListener} allows to be notified when a {@link Field} of a
-	 * {@link TranslationComment} is updated. To be notified, the
+	 * {@link TranslationMetadata} is updated. To be notified, the
 	 * {@link FieldListener} should have been provided to
-	 * {@link TranslationComment#addFieldListener(FieldListener)} .
+	 * {@link TranslationMetadata#addFieldListener(FieldListener)} .
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -80,7 +80,7 @@ public interface TranslationComment {
 	 * 
 	 * @param listener
 	 *            the {@link FieldListener} to register to this
-	 *            {@link TranslationComment}
+	 *            {@link TranslationMetadata}
 	 */
 	public void addFieldListener(FieldListener listener);
 
@@ -88,7 +88,7 @@ public interface TranslationComment {
 	 * 
 	 * @param listener
 	 *            the {@link FieldListener} to unregister from this
-	 *            {@link TranslationComment}
+	 *            {@link TranslationMetadata}
 	 */
 	public void removeFieldListener(FieldListener listener);
 
@@ -97,7 +97,7 @@ public interface TranslationComment {
 	 * value. After the process, {@link #getReference(Field)} should return the
 	 * same result than {@link #get(Field)}. This method should also lead to
 	 * update the storage (usually a file) on which this
-	 * {@link TranslationComment} is based on.
+	 * {@link TranslationMetadata} is based on.
 	 * 
 	 * @param field
 	 *            the {@link Field} to save
@@ -109,7 +109,7 @@ public interface TranslationComment {
 	 * reference value. After the process, {@link #get(Field)} should return the
 	 * same result than {@link #getReference(Field)}. This method should be a
 	 * way to recover the same content than the storage (usually a file) on
-	 * which this {@link TranslationComment} is based on. After the reset, any
+	 * which this {@link TranslationMetadata} is based on. After the reset, any
 	 * {@link FieldListener} registered through
 	 * {@link #addFieldListener(FieldListener)} should be notified of the new
 	 * values of the resetted {@link Field}s.
@@ -135,7 +135,7 @@ public interface TranslationComment {
 
 	/**
 	 * A {@link Field} represents a specific data which can be retrieved from a
-	 * {@link TranslationComment}. Such a data needs to be managed somehow, and
+	 * {@link TranslationMetadata}. Such a data needs to be managed somehow, and
 	 * {@link Field}s recognised by the editor are provided as static members of
 	 * this class, like {@link #MARKED_AS_TRANSLATED}.
 	 * 

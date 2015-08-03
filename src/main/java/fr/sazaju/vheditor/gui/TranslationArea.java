@@ -26,7 +26,7 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
@@ -58,8 +58,8 @@ public class TranslationArea extends JTextArea {
 				}
 			}
 		};
-		limits.add(entry.getComment().get(Field.CHAR_LIMIT_NO_FACE));
-		limits.add(entry.getComment().get(Field.CHAR_LIMIT_FACE));
+		limits.add(entry.getMetadata().get(Field.CHAR_LIMIT_NO_FACE));
+		limits.add(entry.getMetadata().get(Field.CHAR_LIMIT_FACE));
 		setBorder(new EtchedBorder());
 		setFont(new Font("monospaced", Font.PLAIN, getFont().getSize()));
 

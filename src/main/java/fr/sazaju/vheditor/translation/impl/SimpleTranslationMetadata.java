@@ -7,10 +7,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import fr.sazaju.vheditor.translation.TranslationComment;
+import fr.sazaju.vheditor.translation.TranslationMetadata;
 
 /**
- * This implementation of {@link TranslationComment} provides a method to setup
+ * This implementation of {@link TranslationMetadata} provides a method to setup
  * editable and non-editable {@link Field}s, respectively:
  * <ul>
  * <li>{@link #configureField(Field, FieldReader)}</li>
@@ -20,7 +20,7 @@ import fr.sazaju.vheditor.translation.TranslationComment;
  * @author Sazaju HITOKAGE <sazaju@gmail.com>
  * 
  */
-public class SimpleTranslationComment implements TranslationComment {
+public class SimpleTranslationMetadata implements TranslationMetadata {
 
 	private final Map<Field<?>, Object> changedValues = new HashMap<Field<?>, Object>();
 	private final Map<Field<?>, FieldReader<?>> readers = new HashMap<Field<?>, FieldReader<?>>();
@@ -31,7 +31,7 @@ public class SimpleTranslationComment implements TranslationComment {
 	/**
 	 * A {@link FieldReader} aims at retrieving the value of a given
 	 * {@link Field} in order to feed the
-	 * {@link SimpleTranslationComment#get(Field)} method.
+	 * {@link SimpleTranslationMetadata#get(Field)} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -44,7 +44,7 @@ public class SimpleTranslationComment implements TranslationComment {
 	/**
 	 * A {@link FieldWriter} aims at replacing the current value of a
 	 * {@link Field} by a new one, providing a way to execute the
-	 * {@link SimpleTranslationComment#set(Field, Object)} method.
+	 * {@link SimpleTranslationMetadata#set(Field, Object)} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 

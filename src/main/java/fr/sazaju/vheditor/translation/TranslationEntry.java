@@ -29,8 +29,8 @@ public interface TranslationEntry {
 
 	/**
 	 * 
-	 * @return a {@link TranslationComment} providing extra information on this
+	 * @return a {@link TranslationMetadata} providing extra information on this
 	 *         {@link TranslationEntry}
 	 */
-	public TranslationComment getComment();
+	public TranslationMetadata getMetadata();
 }

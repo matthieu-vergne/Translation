@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.translation.TranslationComment.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
@@ -22,12 +22,12 @@ public class TranslationTag extends JPanel {
 
 	public TranslationTag(final TranslationEntry entry) {
 		this.entry = entry;
-		this.isMarked = !entry.getComment().get(Field.MARKED_AS_TRANSLATED);
+		this.isMarked = !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED);
 
 		final JLabel tag = new JLabel() {
 			@Override
 			public String getText() {
-				return !entry.getComment().get(Field.MARKED_AS_TRANSLATED) ? "# UNTRANSLATED"
+				return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) ? "# UNTRANSLATED"
 						: "<html><s># UNTRANSLATED</s></html>";
 			}
 		};
@@ -36,19 +36,19 @@ public class TranslationTag extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				entry.getComment().set(Field.MARKED_AS_TRANSLATED,
-						!entry.getComment().get(Field.MARKED_AS_TRANSLATED));
+				entry.getMetadata().set(Field.MARKED_AS_TRANSLATED,
+						!entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
 				/*
 				 * Set a different text than the current value to force the
 				 * generation of the update event.
 				 */
 				tag.setText(""
-						+ !entry.getComment().get(Field.MARKED_AS_TRANSLATED));
+						+ !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
 			}
 		}) {
 			@Override
 			public String getText() {
-				return !entry.getComment().get(Field.MARKED_AS_TRANSLATED) ? "-"
+				return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) ? "-"
 						: "+";
 			}
 		};
@@ -74,10 +74,10 @@ public class TranslationTag extends JPanel {
 	}
 
 	public boolean isModified() {
-		return !entry.getComment().get(Field.MARKED_AS_TRANSLATED) != isMarked;
+		return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) != isMarked;
 	}
 
 	public void save() {
-		isMarked = !entry.getComment().get(Field.MARKED_AS_TRANSLATED);
+		isMarked = !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED);
 	}
 }
