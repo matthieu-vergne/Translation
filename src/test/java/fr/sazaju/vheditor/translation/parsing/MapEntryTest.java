@@ -9,6 +9,8 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import fr.sazaju.vheditor.translation.TranslationComment.Field;
+
 public class MapEntryTest {
 
 	private final File testFolder = new File("src/test/resources");
@@ -31,17 +33,17 @@ public class MapEntryTest {
 	}
 
 	@Test
-	public void testUntranslatedTag() throws IOException {
+	public void testTranslatedTag() throws IOException {
 		MapEntry entry = new MapEntry();
 		for (File entryFile : testFolder.listFiles(entryFilter)) {
 			String original = FileUtils.readFileToString(entryFile);
 			entry.setContent(original);
-			entry.setMarkedAsUntranslated(true);
-			assertTrue(entry.isMarkedAsUntranslated());
-			entry.setMarkedAsUntranslated(false);
-			assertFalse(entry.isMarkedAsUntranslated());
-			entry.setMarkedAsUntranslated(true);
-			assertTrue(entry.isMarkedAsUntranslated());
+			entry.getComment().set(Field.MARKED_AS_TRANSLATED, true);
+			assertTrue(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
+			entry.getComment().set(Field.MARKED_AS_TRANSLATED, false);
+			assertFalse(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
+			entry.getComment().set(Field.MARKED_AS_TRANSLATED, true);
+			assertTrue(entry.getComment().get(Field.MARKED_AS_TRANSLATED));
 		}
 	}
 }

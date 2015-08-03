@@ -64,6 +64,7 @@ import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
 import fr.sazaju.vheditor.gui.tool.MapCellRenderer;
 import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 import fr.sazaju.vheditor.util.MapInformer;
@@ -778,8 +779,8 @@ public class MapListPanel extends JPanel {
 							.iteratorUsed();
 					while (iterator.hasNext()) {
 						TranslationEntry entry = iterator.next();
-						summary.remaining += entry.isActuallyTranslated() ? 0
-								: 1;
+						summary.remaining += TranslationUtil
+								.isActuallyTranslated(entry) ? 0 : 1;
 					}
 				} catch (ParsingException e) {
 					summary = null;

@@ -1,74 +1,90 @@
 package fr.sazaju.vheditor.translation.parsing;
 
 import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
 
+import fr.sazaju.vheditor.translation.TranslationComment;
+import fr.sazaju.vheditor.translation.TranslationComment.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment.FieldReader;
+import fr.sazaju.vheditor.translation.impl.SimpleTranslationComment.FieldWriter;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 
 public class MapEntry extends Suite implements TranslationEntry {
+
+	private static final Field<String> CONTEXT = new Field<String>("Context");
+	private final SimpleTranslationComment comment;
 
 	public MapEntry() {
 		super(new StartLine(), new Option<UntranslatedLine>(
 				new UntranslatedLine()), new ContextLine(),
 				new Option<AdviceLine>(new AdviceLine()), new ContentBlock(),
 				new TranslationLine(), new ContentBlock(), new EndLine());
-	}
-	
-	@Override
-	public void setMarkedAsUntranslated(boolean isMarkedAsUntranslated) {
-		Option<UntranslatedLine> option = get(1);
-		option.setContent(isMarkedAsUntranslated ? "# UNTRANSLATED\n" : "");
-	}
+		comment = new SimpleTranslationComment();
+		comment.configureField(Field.MARKED_AS_TRANSLATED,
+				new FieldReader<Boolean>() {
 
-	@Override
-	public boolean isMarkedAsUntranslated() {
-		Option<UntranslatedLine> option = get(1);
-		return option.isPresent();
-	}
+					@Override
+					public Boolean read() {
+						Option<UntranslatedLine> option = get(1);
+						return !option.isPresent();
+					}
+				}, new FieldWriter<Boolean>() {
 
-	@Override
-	public boolean isActuallyTranslated() {
-		return !getTranslatedVersion().trim().isEmpty()
-				|| getOriginalVersion().trim().isEmpty()
-				|| isNotJapanese(getOriginalVersion());
-	}
+					@Override
+					public void write(Boolean isMarkedAsTranslated) {
+						Option<UntranslatedLine> option = get(1);
+						option.setContent(!isMarkedAsTranslated ? "# UNTRANSLATED\n"
+								: "");
+					}
+				});
+		comment.configureField(CONTEXT, new FieldReader<String>() {
 
-	private static final String hiragana = "\u3041-\u3096";
-	private static final String katakana = "\u30A1-\u30FB";
-	private static final String katakanaAinu = "\u31F0-\u31FF";
-	private static final String kanjiRare = "\u3400-\u4DB5";
-	private static final String kanji = "\u4E01-\u9FAF";
-	private static final String katakanaHalf = "\uFF65-\uFF9F";
-	private static final Pattern japanese = Pattern.compile("[" + hiragana
-			+ katakana + katakanaAinu + katakanaHalf + kanji + kanjiRare + "]");
-
-	private boolean isNotJapanese(String text) {
-		return !japanese.matcher(text).find();
-	}
-
-	@Override
-	public String getContext() {
-		ContextLine context = get(2);
-		return context.getContext().getContent();
-	}
-
-	@Override
-	public Integer getCharLimit(boolean isFacePresent) {
-		Option<AdviceLine> option = get(3);
-		if (option.isPresent()) {
-			AdviceLine advice = option.getOption();
-			try {
-				return isFacePresent ? Integer.parseInt(advice.getFaceLimit()
-						.getContent()) : Integer.parseInt(advice
-						.getGeneralLimit().getContent());
-			} catch (NoSuchElementException e) {
-				return null;
+			@Override
+			public String read() {
+				ContextLine context = get(2);
+				return context.getContext().getContent();
 			}
-		} else {
-			return null;
-		}
+		});
+		comment.configureField(Field.CHAR_LIMIT_FACE,
+				new FieldReader<Integer>() {
+
+					@Override
+					public Integer read() {
+						Option<AdviceLine> option = get(3);
+						if (option.isPresent()) {
+							AdviceLine advice = option.getOption();
+							try {
+								return Integer.parseInt(advice.getFaceLimit()
+										.getContent());
+							} catch (NoSuchElementException e) {
+								return null;
+							}
+						} else {
+							return null;
+						}
+					}
+				});
+		comment.configureField(Field.CHAR_LIMIT_NO_FACE,
+				new FieldReader<Integer>() {
+
+					@Override
+					public Integer read() {
+						Option<AdviceLine> option = get(3);
+						if (option.isPresent()) {
+							AdviceLine advice = option.getOption();
+							try {
+								return Integer.parseInt(advice
+										.getGeneralLimit().getContent());
+							} catch (NoSuchElementException e) {
+								return null;
+							}
+						} else {
+							return null;
+						}
+					}
+				});
 	}
 
 	@Override
@@ -87,5 +103,10 @@ public class MapEntry extends Suite implements TranslationEntry {
 	public void setTranslatedVersion(String translation) {
 		ContentBlock block = get(6);
 		block.getContentWithoutNewline().setContent(translation);
+	}
+
+	@Override
+	public TranslationComment getComment() {
+		return comment;
 	}
 }
