@@ -69,7 +69,7 @@ public class TranslationTag extends JPanel {
 		// now we can reduce the size of the button
 		int length = tag.getFontMetrics(tag.getFont()).getHeight();
 		toggleButton.setPreferredSize(new Dimension(length, length));
-		
+
 		setOpaque(false);
 	}
 
