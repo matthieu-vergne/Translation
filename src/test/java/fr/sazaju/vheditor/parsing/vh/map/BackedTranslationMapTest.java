@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.parsing;
+package fr.sazaju.vheditor.parsing.vh.map;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,7 @@ import java.util.Comparator;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
 
 public class BackedTranslationMapTest {
 

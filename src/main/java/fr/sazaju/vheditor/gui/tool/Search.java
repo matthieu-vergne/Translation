@@ -31,8 +31,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.commons.io.FileUtils;
 
+import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
 
 @SuppressWarnings("serial")
 public class Search extends JPanel implements Tool {

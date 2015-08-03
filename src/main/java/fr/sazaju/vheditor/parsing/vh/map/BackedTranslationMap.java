@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.parsing;
+package fr.sazaju.vheditor.parsing.vh.map;
 
 import java.io.File;
 import java.io.IOException;

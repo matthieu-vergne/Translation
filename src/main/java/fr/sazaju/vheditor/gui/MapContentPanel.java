@@ -30,12 +30,12 @@ import javax.swing.border.EtchedBorder;
 import org.apache.commons.lang3.ArrayUtils;
 
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
+import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
+import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
 import fr.sazaju.vheditor.translation.TranslationComment.Field;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
-import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap;
-import fr.sazaju.vheditor.translation.parsing.BackedTranslationMap.EmptyMapException;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")

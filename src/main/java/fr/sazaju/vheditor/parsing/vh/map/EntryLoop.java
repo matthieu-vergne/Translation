@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.translation.parsing;
+package fr.sazaju.vheditor.parsing.vh.map;
 
 import fr.vergne.parsing.layer.standard.GreedyMode;
 import fr.vergne.parsing.layer.standard.Loop;
