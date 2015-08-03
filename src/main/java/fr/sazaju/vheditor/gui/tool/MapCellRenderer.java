@@ -6,8 +6,6 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import javax.swing.JTree;
-import javax.swing.JTree.DynamicUtilTreeNode;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
@@ -20,9 +18,12 @@ public class MapCellRenderer implements TreeCellRenderer {
 
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final TreeCellRenderer basicRenderer;
-	private final MapInformer informer;
+	// TODO generalize to any type, not only File
+	private final MapInformer<File> informer;
 
-	public MapCellRenderer(TreeCellRenderer basicRenderer, MapInformer informer) {
+	// TODO generalize to any type, not only File
+	public MapCellRenderer(TreeCellRenderer basicRenderer,
+			MapInformer<File> informer) {
 		this.basicRenderer = basicRenderer;
 		this.informer = informer;
 	}
@@ -31,18 +32,9 @@ public class MapCellRenderer implements TreeCellRenderer {
 	public Component getTreeCellRendererComponent(JTree tree, Object cell,
 			boolean selected, boolean expanded, boolean leaf, int row,
 			boolean hasFocus) {
-		Object value;
-		if (cell instanceof DynamicUtilTreeNode) {
-			value = ((DynamicUtilTreeNode) cell).getUserObject();
-		} else if (cell instanceof DefaultMutableTreeNode) {
-			value = ((DefaultMutableTreeNode) cell).getUserObject();
-		} else {
-			value = cell;
-		}
-
-		if (value instanceof File) {
-			File file = (File) value;
-			value = mapNamer.getNameFor(file);
+		if (cell instanceof MapTreeNode) {
+			@SuppressWarnings("unchecked")
+			File file = ((MapTreeNode<File>) cell).getMapID();
 
 			String description;
 			try {
@@ -57,8 +49,8 @@ public class MapCellRenderer implements TreeCellRenderer {
 			} catch (NoDataException e) {
 				description = "loading";
 			}
-			value = value + " (" + description + ")";
 
+			String value = mapNamer.getNameFor(file) + " (" + description + ")";
 			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) basicRenderer
 					.getTreeCellRendererComponent(tree, value, selected,
 							expanded, leaf, row, hasFocus);
@@ -76,12 +68,13 @@ public class MapCellRenderer implements TreeCellRenderer {
 
 			return renderer;
 		} else {
-			return basicRenderer.getTreeCellRendererComponent(tree, value,
+			return basicRenderer.getTreeCellRendererComponent(tree, cell,
 					selected, expanded, leaf, row, hasFocus);
 		}
 	}
 
-	private MapNamer mapNamer = new MapNamer() {
+	// TODO generalize to any type, not only File
+	private MapNamer<File> mapNamer = new MapNamer<File>() {
 
 		@Override
 		public String getNameFor(File file) {
@@ -89,11 +82,13 @@ public class MapCellRenderer implements TreeCellRenderer {
 		}
 	};
 
-	public void setMapNamer(MapNamer mapNamer) {
+	// TODO generalize to any type, not only File
+	public void setMapNamer(MapNamer<File> mapNamer) {
 		this.mapNamer = mapNamer;
 	}
 
-	public MapNamer getMapNamer() {
+	// TODO generalize to any type, not only File
+	public MapNamer<File> getMapNamer() {
 		return mapNamer;
 	}
 }

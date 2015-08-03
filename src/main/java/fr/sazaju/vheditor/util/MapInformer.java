@@ -1,21 +1,19 @@
 package fr.sazaju.vheditor.util;
 
-import java.io.File;
+public interface MapInformer<MapID> {
 
-public interface MapInformer {
+	public int getEntriesCount(MapID mapId) throws NoDataException;
 
-	public int getEntriesCount(File mapFile) throws NoDataException;
+	public int getEntriesRemaining(MapID mapId) throws NoDataException;
 
-	public int getEntriesRemaining(File mapFile) throws NoDataException;
+	public String getLabel(MapID mapId) throws NoDataException;
 
-	public String getLabel(File mapFile) throws NoDataException;
+	public void addMapSummaryListener(MapSummaryListener<MapID> listener);
 
-	public void addMapSummaryListener(MapSummaryListener listener);
+	public void removeMapSummaryListener(MapSummaryListener<MapID> listener);
 
-	public void removeMapSummaryListener(MapSummaryListener listener);
-
-	public interface MapSummaryListener {
-		public void mapSummarized(File map);
+	public interface MapSummaryListener<MapID> {
+		public void mapSummarized(MapID mapId);
 	}
 
 	@SuppressWarnings("serial")

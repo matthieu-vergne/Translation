@@ -1,17 +1,17 @@
 package fr.sazaju.vheditor.gui;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.commons.lang3.ArrayUtils;
-
+import fr.sazaju.vheditor.gui.tool.MapTreeNode;
 import fr.sazaju.vheditor.util.CollectionManager;
 import fr.sazaju.vheditor.util.MapInformer;
 import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
@@ -22,36 +22,35 @@ import fr.vergne.collection.util.NaturalComparator;
 import fr.vergne.collection.util.NaturalComparator.Translator;
 
 @SuppressWarnings("serial")
-public class ListModel extends DefaultTreeModel {
+public class ListModel<MapID> extends DefaultTreeModel {
 
 	private final DefaultMutableTreeNode root;
-	private final MapInformer informer;
-	private final Map<File, DefaultMutableTreeNode> fileMap;
-	private final CollectionManager<File> listManager = new CollectionManager<File>();
-	private final Collection<FilesChangedListener> listeners = new HashSet<FilesChangedListener>();
-	private final Filter<File> noFilter;
-	private final Filter<File> incompleteFilter;
-	private final Comparator<File> fileComparator;
-	private final Comparator<File> labelComparator;
-	private Order order = Order.File;
+	private final MapInformer<MapID> informer;
+	private final Map<MapID, MapTreeNode<MapID>> nodeMap;
+	private final CollectionManager<MapID> listManager = new CollectionManager<MapID>();
+	private final Collection<MapsChangedListener> listeners = new HashSet<MapsChangedListener>();
+	private final Filter<MapID> noFilter;
+	private final Filter<MapID> incompleteFilter;
+	private final Map<MapNamer<MapID>, Comparator<MapID>> comparators = new HashMap<>();
+	private MapNamer<MapID> orderNamer;
 
-	public ListModel(final MapInformer informer, final MapNamer fileNamer,
-			final MapNamer labelNamer) {
+	public ListModel(final MapInformer<MapID> informer,
+			final Collection<MapNamer<MapID>> namers) {
 		super(new DefaultMutableTreeNode("maps"));
 		root = (DefaultMutableTreeNode) getRoot();
 		this.informer = informer;
 
-		noFilter = new Filter<File>() {
+		noFilter = new Filter<MapID>() {
 
 			@Override
-			public Boolean isSupported(File file) {
+			public Boolean isSupported(MapID file) {
 				return true;
 			}
 		};
-		incompleteFilter = new Filter<File>() {
+		incompleteFilter = new Filter<MapID>() {
 
 			@Override
-			public Boolean isSupported(File file) {
+			public Boolean isSupported(MapID file) {
 				try {
 					return informer.getEntriesRemaining(file) > 0;
 				} catch (NoDataException e) {
@@ -60,37 +59,57 @@ public class ListModel extends DefaultTreeModel {
 			}
 		};
 
-		fileComparator = new NaturalComparator<File>(new Translator<File>() {
+		for (final MapNamer<MapID> mapNamer : namers) {
+			NaturalComparator<MapID> comparator = new NaturalComparator<MapID>(
+					new Translator<MapID>() {
+
+						@Override
+						public String toString(MapID file) {
+							return mapNamer.getNameFor(file);
+						}
+					}) {
+				@Override
+				public int compare(MapID id1, MapID id2) {
+					int comparison = super.compare(id1, id2);
+					if (comparison != 0) {
+						return comparison;
+					} else if (id1.equals(id2)) {
+						return 0;
+					}
+					/*
+					 * The last case enforces that two different IDs are not
+					 * confused due to their identical names. Although none of
+					 * the comparisons computed are 100% safe, having everyone
+					 * of them leading to a null comparison is improbable, so it
+					 * should be OK most of the time.
+					 */
+					else {
+						comparison = id1.hashCode() - id2.hashCode();
+						if (comparison == 0) {
+							comparison = id1.toString().compareTo(
+									id2.toString());
+						}
+						return comparison;
+					}
+				}
+			};
+			comparators.put(mapNamer, comparator);
+			listManager.addCollection(noFilter, comparator);
+			listManager.addCollection(incompleteFilter, comparator);
+		}
+		this.orderNamer = namers.iterator().next();
+
+		nodeMap = new HashMap<MapID, MapTreeNode<MapID>>();
+
+		informer.addMapSummaryListener(new MapSummaryListener<MapID>() {
 
 			@Override
-			public String toString(File file) {
-				return fileNamer.getNameFor(file);
-			}
-		});
-		labelComparator = new NaturalComparator<File>(new Translator<File>() {
+			public void mapSummarized(MapID mapId) {
+				Object node = nodeMap.get(mapId);
 
-			@Override
-			public String toString(File file) {
-				return labelNamer.getNameFor(file);
-			}
-		});
-
-		listManager.addCollection(noFilter, fileComparator);
-		listManager.addCollection(noFilter, labelComparator);
-		listManager.addCollection(incompleteFilter, fileComparator);
-		listManager.addCollection(incompleteFilter, labelComparator);
-
-		fileMap = new HashMap<File, DefaultMutableTreeNode>();
-
-		informer.addMapSummaryListener(new MapSummaryListener() {
-
-			@Override
-			public void mapSummarized(File map) {
-				Object node = fileMap.get(map);
-
-				Collection<File> files = listManager.getCollection(
+				Collection<MapID> ids = listManager.getCollection(
 						getCurrentFilter(), getCurrentComparator());
-				boolean oldContains = files.contains(map);
+				boolean oldContains = ids.contains(mapId);
 				int index = -1;
 				if (oldContains) {
 					index = getIndexOfChild(root, node);
@@ -98,9 +117,9 @@ public class ListModel extends DefaultTreeModel {
 					// not in the list
 				}
 
-				listManager.recheckElement(map);
+				listManager.recheckElement(mapId);
 
-				boolean newContains = files.contains(map);
+				boolean newContains = ids.contains(mapId);
 				if (index == -1 && newContains) {
 					index = getIndexOfChild(root, node);
 				} else {
@@ -130,57 +149,55 @@ public class ListModel extends DefaultTreeModel {
 		});
 	}
 
-	public void setFiles(Collection<File> files) {
+	public void setMaps(Collection<MapID> maps) {
 		listManager.clear();
-		listManager.addAllElements(files);
-
-		for (File file : files) {
-			DefaultMutableTreeNode node = new DefaultMutableTreeNode(file);
-			fileMap.put(file, node);
+		for (MapID id : maps) {
+			listManager.addElement(id);
+			nodeMap.put(id, new MapTreeNode<MapID>(root, id));
 		}
 		fireTreeStructureChanged(root, new Object[] { root }, null, null);
-		fireFilesChanged();
+		fireMapsChanged();
 	}
 
-	public void removeFile(File file) {
-		listManager.removeElement(file);
-		fileMap.remove(file);
+	public void removeID(MapID id) {
+		listManager.removeElement(id);
+		nodeMap.remove(id);
 		fireTreeStructureChanged(root, new Object[] { root }, null, null);
-		fireFilesChanged();
+		fireMapsChanged();
 	}
 
-	public static interface FilesChangedListener {
-		public void filesChanged();
+	public static interface MapsChangedListener {
+		public void mapsChanged();
 	}
 
-	public void addFilesChangedListener(FilesChangedListener listener) {
+	public void addMapsChangedListener(MapsChangedListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeFilesChangedListener(FilesChangedListener listener) {
+	public void removeMapsChangedListener(MapsChangedListener listener) {
 		listeners.remove(listener);
 	}
 
-	private void fireFilesChanged() {
-		for (FilesChangedListener listener : listeners) {
-			listener.filesChanged();
+	private void fireMapsChanged() {
+		for (MapsChangedListener listener : listeners) {
+			listener.mapsChanged();
 		}
 	}
 
-	public Collection<File> getCurrentFiles() {
+	public Collection<MapID> getCurrentMapIDs() {
 		return listManager.getCollection(getCurrentFilter(),
 				getCurrentComparator());
 	}
 
-	private Comparator<File> getCurrentComparator() {
-		return getOrder() == Order.File ? fileComparator : labelComparator;
+	private Comparator<MapID> getCurrentComparator() {
+		return comparators.get(getOrderNamer());
 	}
 
-	private Filter<File> getCurrentFilter() {
+	private Filter<MapID> getCurrentFilter() {
 		return isClearedDisplayed ? noFilter : incompleteFilter;
 	}
 
-	public Collection<File> getAllFiles() {
+	public Collection<MapID> getAllMapsIDs() {
 		return listManager.getAllElements();
 	}
 
@@ -202,7 +219,7 @@ public class ListModel extends DefaultTreeModel {
 	@Override
 	public Object getChild(Object parent, int index) {
 		if (parent == root) {
-			return fileMap.get(getFileAt(index));
+			return nodeMap.get(getFileAt(index));
 		} else {
 			return super.getChild(parent, index);
 		}
@@ -211,7 +228,7 @@ public class ListModel extends DefaultTreeModel {
 	@Override
 	public int getChildCount(Object parent) {
 		if (parent == root) {
-			return getCurrentFiles().size();
+			return getCurrentMapIDs().size();
 		} else {
 			return super.getChildCount(parent);
 		}
@@ -220,9 +237,10 @@ public class ListModel extends DefaultTreeModel {
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
 		if (parent == root) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) child;
-			File file = (File) node.getUserObject();
-			return getFileIndex(file);
+			@SuppressWarnings("unchecked")
+			MapTreeNode<MapID> node = (MapTreeNode<MapID>) child;
+			MapID id = node.getMapID();
+			return getIDIndex(id);
 		} else {
 			return super.getIndexOfChild(parent, child);
 		}
@@ -237,47 +255,29 @@ public class ListModel extends DefaultTreeModel {
 		}
 	}
 
-	private File getFileAt(int index) {
-		Collection<File> files = getCurrentFiles();
-		return (File) files.toArray()[index];
+	private MapID getFileAt(int index) {
+		List<MapID> ids = new LinkedList<>(getCurrentMapIDs());
+		return ids.get(index);
 	}
 
-	private int getFileIndex(File file) {
-		File[] files = getCurrentFiles().toArray(new File[0]);
-		return ArrayUtils.indexOf(files, file);
+	private int getIDIndex(MapID id) {
+		return new LinkedList<>(getCurrentMapIDs()).indexOf(id);
 	}
 
-	/**
-	 * Sorting used to display the list of maps.
-	 * 
-	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
-	 * 
-	 */
-	public static enum Order {
-		/**
-		 * Order the maps based on their file names.
-		 */
-		File,
-		/**
-		 * Order the maps based on their English labels.
-		 */
-		Label
+	public MapNamer<MapID> getOrderNamer() {
+		return orderNamer;
 	}
 
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		if (order != this.order) {
-			this.order = order;
+	public void setOrderNamer(MapNamer<MapID> orderNamer) {
+		if (!this.orderNamer.equals(orderNamer)) {
+			this.orderNamer = orderNamer;
 			fireTreeStructureChanged(root, new Object[] { root }, null, null);
 		} else {
 			// keep as is
 		}
 	}
 
-	public MapInformer getMapInformer() {
+	public MapInformer<MapID> getMapInformer() {
 		return informer;
 	}
 

@@ -1,8 +1,6 @@
 package fr.sazaju.vheditor.util;
 
-import java.io.File;
+public interface MapNamer<MapID> {
 
-public interface MapNamer {
-
-	public String getNameFor(File file);
+	public String getNameFor(MapID id);
 }

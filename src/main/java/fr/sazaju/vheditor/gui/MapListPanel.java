@@ -53,16 +53,15 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import fr.sazaju.vheditor.gui.ListModel.FilesChangedListener;
-import fr.sazaju.vheditor.gui.ListModel.Order;
+import fr.sazaju.vheditor.gui.ListModel.MapsChangedListener;
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
 import fr.sazaju.vheditor.gui.tool.MapCellRenderer;
+import fr.sazaju.vheditor.gui.tool.MapTreeNode;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
 import fr.sazaju.vheditor.translation.TranslationEntry;
@@ -87,11 +86,13 @@ public class MapListPanel extends JPanel {
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
+	private final Map<Order, MapNamer<File>> namers = new HashMap<Order, MapNamer<File>>();
 	private final Map<String, String> mapLabels = Collections
 			.synchronizedMap(new HashMap<String, String>());
 	private final Map<File, MapSummary> mapSummaries = Collections
 			.synchronizedMap(new HashMap<File, MapSummary>());
-	private final Collection<MapSummaryListener> mapSummaryListeners = new HashSet<MapSummaryListener>();
+	// TODO generalize to any type, not only File
+	private final Collection<MapSummaryListener<File>> mapSummaryListeners = new HashSet<MapSummaryListener<File>>();
 	private final TreeSet<File> currentFiles = new TreeSet<File>(
 			new Comparator<File>() {
 
@@ -102,7 +103,8 @@ public class MapListPanel extends JPanel {
 			});
 
 	public MapListPanel() {
-		final MapInformer mapInformer = new MapInformer() {
+		// TODO generalize to any type, not only File
+		final MapInformer<File> mapInformer = new MapInformer<File>() {
 
 			@Override
 			public String getLabel(File mapFile) throws NoDataException {
@@ -135,17 +137,19 @@ public class MapListPanel extends JPanel {
 			}
 
 			@Override
-			public void addMapSummaryListener(MapSummaryListener listener) {
+			public void addMapSummaryListener(MapSummaryListener<File> listener) {
 				mapSummaryListeners.add(listener);
 			}
 
 			@Override
-			public void removeMapSummaryListener(MapSummaryListener listener) {
+			public void removeMapSummaryListener(
+					MapSummaryListener<File> listener) {
 				mapSummaryListeners.remove(listener);
 			}
 		};
 
-		final MapNamer labelNamer = new MapNamer() {
+		// TODO generalize to any type, not only File
+		final MapNamer<File> labelNamer = new MapNamer<File>() {
 
 			@Override
 			public String getNameFor(File file) {
@@ -162,13 +166,16 @@ public class MapListPanel extends JPanel {
 				}
 			}
 		};
-		final MapNamer fileNamer = new MapNamer() {
+		namers.put(Order.LABEL, labelNamer);
+		// TODO generalize to any type, not only File
+		final MapNamer<File> fileNamer = new MapNamer<File>() {
 
 			@Override
 			public String getNameFor(File file) {
 				return file.getName();
 			}
 		};
+		namers.put(Order.FILE, fileNamer);
 
 		setBorder(new EtchedBorder());
 
@@ -197,8 +204,10 @@ public class MapListPanel extends JPanel {
 		updateFiles(new File(Gui.config.getProperty(CONFIG_MAP_DIR, "")));
 	}
 
-	private JPanel buildQuickOptions(final MapNamer labelNamer,
-			final MapNamer fileNamer) {
+	// TODO generalize to any type, not only File
+	@SuppressWarnings("unchecked")
+	private JPanel buildQuickOptions(final MapNamer<File> labelNamer,
+			final MapNamer<File> fileNamer) {
 		JPanel buttons = new JPanel(new GridLayout(0, 1));
 		JPanel row1 = new JPanel(new FlowLayout());
 		JPanel row2 = new JPanel(new FlowLayout());
@@ -212,10 +221,13 @@ public class MapListPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayCleared.isSelected();
 				Gui.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
-				((ListModel) tree.getModel()).setClearedDisplayed(selected);
+				// TODO generalize to any type, not only File
+				((ListModel<File>) tree.getModel())
+						.setClearedDisplayed(selected);
 			}
 		});
-		displayCleared.setSelected(((ListModel) tree.getModel())
+		// TODO generalize to any type, not only File
+		displayCleared.setSelected(((ListModel<File>) tree.getModel())
 				.isClearedDisplayed());
 		displayCleared.setToolTipText("Display cleared maps.");
 		row1.add(displayCleared);
@@ -230,7 +242,7 @@ public class MapListPanel extends JPanel {
 				((MapCellRenderer) tree.getCellRenderer())
 						.setMapNamer(selected ? labelNamer : fileNamer);
 
-				((ListModel) tree.getModel()).requestUpdate();
+				((ListModel<File>) tree.getModel()).requestUpdate();
 			}
 		});
 		displayLabels.setSelected(Boolean.parseBoolean(Gui.config.getProperty(
@@ -274,7 +286,8 @@ public class MapListPanel extends JPanel {
 				try {
 					loadLabels(true);
 					mapLabels.clear();
-					((ListModel) tree.getModel()).requestUpdate();
+					// TODO generalize to any type, not only File
+					((ListModel<File>) tree.getModel()).requestUpdate();
 				} catch (Exception e) {
 					displayError(e.getMessage());
 				}
@@ -284,18 +297,21 @@ public class MapListPanel extends JPanel {
 				.setToolTipText("Request the update of the labels from the label source.");
 		row2.add(updateLabels);
 
-		final JComboBox<Order> sortingChoice = new JComboBox<>(
-				ListModel.Order.values());
+		final JComboBox<Order> sortingChoice = new JComboBox<>(Order.values());
 		sortingChoice.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Order order = (Order) sortingChoice.getSelectedItem();
 				Gui.config.setProperty(CONFIG_LIST_ORDER, "" + order);
-				((ListModel) tree.getModel()).setOrder(order);
+				// TODO generalize to any type, not only File
+				((ListModel<File>) tree.getModel()).setOrderNamer(namers
+						.get(order));
 			}
 		});
-		sortingChoice.setSelectedItem(((ListModel) tree.getModel()).getOrder());
+		// TODO generalize to any type, not only File
+		sortingChoice.setSelectedItem(((ListModel<File>) tree.getModel())
+				.getOrderNamer());
 		sortingChoice.setToolTipText("Choose map sorting order.");
 		row1.add(new JLabel("Sort: "));
 		row1.add(sortingChoice);
@@ -303,6 +319,7 @@ public class MapListPanel extends JPanel {
 		return buttons;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void updateFiles(File folder) {
 		synchronized (mapSummaries) {
 			List<File> newFiles = Arrays.asList(retrieveFiles(folder));
@@ -320,7 +337,8 @@ public class MapListPanel extends JPanel {
 
 				Gui.config.setProperty(CONFIG_MAP_DIR, folder.toString());
 				folderPathField.setText(folder.toString());
-				((ListModel) tree.getModel()).setFiles(currentFiles);
+				// TODO generalize to any type, not only File
+				((ListModel<File>) tree.getModel()).setMaps(currentFiles);
 			}
 		}
 	}
@@ -384,14 +402,17 @@ public class MapListPanel extends JPanel {
 		return files;
 	}
 
-	private JTree buildTreeComponent(MapInformer mapInformer,
-			final MapNamer fileNamer, final MapNamer labelNamer) {
-		final ListModel listModel = new ListModel(mapInformer, fileNamer,
-				labelNamer);
+	// TODO generalize to any type, not only File
+	private JTree buildTreeComponent(MapInformer<File> mapInformer,
+			final MapNamer<File> fileNamer, final MapNamer<File> labelNamer) {
+		// TODO generalize to any type, not only File
+		final ListModel<File> listModel = new ListModel<File>(mapInformer,
+				namers.values());
 		listModel.setClearedDisplayed(Boolean.parseBoolean(Gui.config
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
-		listModel.setOrder(Order.valueOf(Gui.config.getProperty(
-				CONFIG_LIST_ORDER, Order.File.toString())));
+		Order order = Order.valueOf(Gui.config.getProperty(CONFIG_LIST_ORDER,
+				Order.FILE.toString()).toUpperCase());
+		listModel.setOrderNamer(namers.get(order));
 		final JTree tree = new JTree(listModel);
 
 		MapCellRenderer cellRenderer = new MapCellRenderer(
@@ -431,10 +452,12 @@ public class MapListPanel extends JPanel {
 					public void run() {
 						if (selection[0] != null) {
 							TreePath path = selection[0];
-							File file = (File) ((DefaultMutableTreeNode) path
-									.getLastPathComponent()).getUserObject();
+							@SuppressWarnings("unchecked")
+							// TODO generalize to any type, not only File
+							File file = ((MapTreeNode<File>) path
+									.getLastPathComponent()).getMapID();
 							Collection<File> files = listModel
-									.getCurrentFiles();
+									.getCurrentMapIDs();
 							if (files.contains(file)) {
 								tree.clearSelection();
 								tree.setSelectionPath(selection[0]);
@@ -641,9 +664,11 @@ public class MapListPanel extends JPanel {
 	}
 
 	private File getSelectedFile(final JTree tree) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-				.getSelectionPath().getLastPathComponent();
-		File file = (File) node.getUserObject();
+		// TODO generalize to any type, not only File
+		@SuppressWarnings("unchecked")
+		MapTreeNode<File> node = (MapTreeNode<File>) tree.getSelectionPath()
+				.getLastPathComponent();
+		File file = node.getMapID();
 		return file;
 	}
 
@@ -723,10 +748,13 @@ public class MapListPanel extends JPanel {
 			}
 
 			private File getWaitingMap() {
-				ListModel model = (ListModel) tree.getModel();
-				MapInformer mapInformer = model.getMapInformer();
+				// TODO generalize to any type, not only File
+				@SuppressWarnings("unchecked")
+				ListModel<File> model = (ListModel<File>) tree.getModel();
+				// TODO generalize to any type, not only File
+				MapInformer<File> mapInformer = model.getMapInformer();
 
-				Iterator<File> iterator = model.getCurrentFiles().iterator();
+				Iterator<File> iterator = model.getCurrentMapIDs().iterator();
 				while (iterator.hasNext()) {
 					File file = iterator.next();
 					try {
@@ -736,7 +764,7 @@ public class MapListPanel extends JPanel {
 					}
 				}
 
-				Iterator<File> iterator2 = model.getAllFiles().iterator();
+				Iterator<File> iterator2 = model.getAllMapsIDs().iterator();
 				while (iterator2.hasNext()) {
 					File file = iterator2.next();
 					try {
@@ -751,11 +779,13 @@ public class MapListPanel extends JPanel {
 		};
 
 		// sense the necessity to launch the task
-		ListModel model = (ListModel) tree.getModel();
-		model.addFilesChangedListener(new FilesChangedListener() {
+		// TODO generalize to any type, not only File
+		@SuppressWarnings("unchecked")
+		ListModel<File> model = (ListModel<File>) tree.getModel();
+		model.addMapsChangedListener(new MapsChangedListener() {
 
 			@Override
-			public void filesChanged() {
+			public void mapsChanged() {
 				if (isRunning[0]) {
 					// already running
 				} else {
@@ -797,14 +827,17 @@ public class MapListPanel extends JPanel {
 
 				if (summary == null) {
 					mapSummaries.remove(file);
-					ListModel model = (ListModel) tree.getModel();
-					model.removeFile(file);
+					// TODO generalize to any type, not only File
+					@SuppressWarnings("unchecked")
+					ListModel<File> model = (ListModel<File>) tree.getModel();
+					model.removeID(file);
 					logger.warning("This file is not a map: " + file);
 				} else {
 					mapSummaries.put(file, summary);
 					logger.info("File summarized: " + file);
 
-					for (MapSummaryListener listener : mapSummaryListeners) {
+					// TODO generalize to any type, not only File
+					for (MapSummaryListener<File> listener : mapSummaryListeners) {
 						listener.mapSummarized(file);
 					}
 				}
@@ -836,5 +869,23 @@ public class MapListPanel extends JPanel {
 
 	public Collection<File> getFiles() {
 		return currentFiles;
+	}
+
+	/**
+	 * Sorting used to display the list of maps.
+	 * 
+	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
+	 * 
+	 */
+	// TODO generalize to any type, not only File
+	private static enum Order {
+		/**
+		 * Order the maps based on their file names.
+		 */
+		FILE,
+		/**
+		 * Order the maps based on their English labels.
+		 */
+		LABEL
 	}
 }
