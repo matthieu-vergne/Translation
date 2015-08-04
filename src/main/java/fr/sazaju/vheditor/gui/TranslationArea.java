@@ -40,7 +40,7 @@ public class TranslationArea extends JTextArea {
 			Color.LIGHT_GRAY);
 
 	public TranslationArea(TranslationEntry entry) {
-		super(entry.getTranslatedVersion());
+		super(entry.getCurrentTranslation());
 		this.entry = entry;
 		limits = new TreeSet<Integer>(new Comparator<Integer>() {
 
@@ -104,15 +104,15 @@ public class TranslationArea extends JTextArea {
 	}
 
 	public void save() {
-		entry.setTranslatedVersion(getText());
+		entry.setCurrentTranslation(getText());
 	}
 
 	public void reset() {
-		setText(entry.getTranslatedVersion());
+		setText(entry.getCurrentTranslation());
 	}
 
 	public boolean isModified() {
-		return !getText().equals(entry.getTranslatedVersion());
+		return !getText().equals(entry.getCurrentTranslation());
 	}
 
 	@Override

@@ -9,9 +9,11 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationEntryTest;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 
-public class MapEntryTest {
+public class MapEntryTest extends TranslationEntryTest {
 
 	private final File testFolder = new File("src/test/resources");
 	private final FileFilter entryFilter = new FileFilter() {
@@ -20,6 +22,37 @@ public class MapEntryTest {
 			return file.isFile() && file.getName().endsWith(".entry");
 		}
 	};
+
+	@Override
+	protected TranslationEntry createTranslationEntry() {
+		try {
+			File templateFile = new File(testFolder, "translation.entry");
+			File entryFile = File.createTempFile("translation", ".entry");
+			FileUtils.copyFile(templateFile, entryFile);
+			MapEntry entry = new MapEntry();
+			entry.setContent(FileUtils.readFileToString(entryFile));
+			return entry;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	protected String getInitialReference() {
+		try {
+			File entryFile = new File(testFolder, "translation.entry");
+			MapEntry entry = new MapEntry();
+			entry.setContent(FileUtils.readFileToString(entryFile));
+			return entry.getReferenceTranslation();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	protected String createNewTranslation(String currentTranslation) {
+		return currentTranslation + ".";
+	}
 
 	@Test
 	public void testTextualVersionMap() throws IOException {

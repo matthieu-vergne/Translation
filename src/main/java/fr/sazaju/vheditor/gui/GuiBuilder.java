@@ -55,7 +55,7 @@ public class GuiBuilder {
 					constraints);
 			panel.add(instantiateEntryGui(mapEntry.get(3), mapEntry),
 					constraints);
-			JTextArea original = new JTextArea(mapEntry.getOriginalVersion());
+			JTextArea original = new JTextArea(mapEntry.getOriginalContent());
 			original.setEditable(false);
 			panel.add(original, constraints);
 			panel.add(instantiateEntryGui(mapEntry.get(5), mapEntry),

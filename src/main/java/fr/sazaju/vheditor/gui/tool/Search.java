@@ -315,9 +315,9 @@ public class Search extends JPanel implements Tool {
 				while (searching && iterator.hasNext()) {
 					TranslationEntry entry = iterator.next();
 					index++;
-					String original = entry.getOriginalVersion().replaceAll(
+					String original = entry.getOriginalContent().replaceAll(
 							blanks, " ");
-					String translation = entry.getTranslatedVersion()
+					String translation = entry.getCurrentTranslation()
 							.replaceAll(blanks, " ");
 					if (original.contains(searched)
 							|| translation.contains(searched)) {

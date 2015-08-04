@@ -8,14 +8,14 @@ public class TranslationUtil {
 
 	/**
 	 * 
-	 * @return <code>true</code> if both {@link #getTranslatedVersion()} and
-	 *         {@link #getOriginalVersion()} are empty or if both are not,
+	 * @return <code>true</code> if both {@link #getCurrentTranslation()} and
+	 *         {@link #getOriginalContent()} are empty or if both are not,
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean isActuallyTranslated(TranslationEntry entry) {
-		return !entry.getTranslatedVersion().trim().isEmpty()
-				|| entry.getOriginalVersion().trim().isEmpty()
-				|| isNotJapanese(entry.getOriginalVersion());
+		return !entry.getCurrentTranslation().trim().isEmpty()
+				|| entry.getOriginalContent().trim().isEmpty()
+				|| isNotJapanese(entry.getOriginalContent());
 	}
 
 	private static final String hiragana = "\u3041-\u3096";
