@@ -6,17 +6,18 @@ import java.util.HashSet;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMetadata;
 
-public class SimpleTranslationEntry implements TranslationEntry {
+public class SimpleTranslationEntry<Metadata extends TranslationMetadata>
+		implements TranslationEntry<Metadata> {
 
 	private final String original;
 	private final TranslationReader reader;
 	private final TranslationWriter writer;
 	private String currentTranslation = null;
-	private final TranslationMetadata metadata;
+	private final Metadata metadata;
 	private final Collection<TranslationListener> listeners = new HashSet<>();
 
 	public SimpleTranslationEntry(String original, TranslationReader reader,
-			TranslationWriter writer, TranslationMetadata metadata) {
+			TranslationWriter writer, Metadata metadata) {
 		this.reader = reader;
 		this.writer = writer;
 		this.original = original;
@@ -78,7 +79,7 @@ public class SimpleTranslationEntry implements TranslationEntry {
 	}
 
 	@Override
-	public TranslationMetadata getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 

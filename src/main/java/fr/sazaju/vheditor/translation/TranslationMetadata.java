@@ -1,5 +1,9 @@
 package fr.sazaju.vheditor.translation;
 
+import java.util.Iterator;
+
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+
 /**
  * A {@link TranslationMetadata} aims at storing any additional data which would
  * enrich a {@link TranslationEntry}. Typically, the context of the
@@ -10,7 +14,19 @@ package fr.sazaju.vheditor.translation;
  * @author Sazaju HITOKAGE <sazaju@gmail.com>
  * 
  */
-public interface TranslationMetadata {
+public interface TranslationMetadata extends Iterable<Field<?>> {
+
+	/**
+	 * Provides all the {@link Field}s managed so far. If a {@link Field} is
+	 * provided by this {@link Iterator}, it does not mean that its (stored)
+	 * value is not <code>null</code>, so it can provide more {@link Field}s
+	 * than expected. Similarly, if a {@link Field} is not provided by this
+	 * {@link Iterator} it does not mean that it cannot be used, so it is not a
+	 * way to retrieve all the possible {@link Field}s of this
+	 * {@link TranslationMetadata}.
+	 */
+	@Override
+	public Iterator<Field<?>> iterator();
 
 	/**
 	 * The stored value of a {@link Field} corresponds to a reference. Upon
@@ -139,9 +155,7 @@ public interface TranslationMetadata {
 
 	/**
 	 * A {@link Field} represents a specific data which can be retrieved from a
-	 * {@link TranslationMetadata}. Such a data needs to be managed somehow, and
-	 * {@link Field}s recognised by the editor are provided as static members of
-	 * this class, like {@link #MARKED_AS_TRANSLATED}.
+	 * {@link TranslationMetadata}.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -149,13 +163,6 @@ public interface TranslationMetadata {
 	 *            the type of value assigned to the given field
 	 */
 	public static class Field<T> {
-		// FIXME replace generic fields by map-specific fields
-		public static final Field<Boolean> MARKED_AS_TRANSLATED = new Field<Boolean>(
-				"Translated mark");
-		public static final Field<Integer> CHAR_LIMIT_FACE = new Field<Integer>(
-				"Char limit (face)");
-		public static final Field<Integer> CHAR_LIMIT_NO_FACE = new Field<Integer>(
-				"Char limit (no face)");
 
 		private String name;
 

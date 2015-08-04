@@ -4,45 +4,57 @@ import java.io.File;
 import java.util.Iterator;
 
 /**
- * A {@link TranslationMap} describes a complete map {@link File}.
+ * A {@link TranslationMap} describes a purpose-dedicated set of
+ * {@link TranslationEntry}s. In other words, it represents a set of
+ * {@link TranslationEntry}s which are somehow related, typically because they
+ * relate to a specific scene or similar, so they order matter.
  * 
- * @author sazaju
- * 
+ * @author Sazaju HITOKAGE <sazaju@gmail.com>
+ *
+ * @param <Entry>
  */
-public interface TranslationMap extends Iterable<TranslationEntry> {
+public interface TranslationMap<Entry extends TranslationEntry<?>> extends
+		Iterable<Entry> {
 
 	/**
 	 * This method should return an {@link Iterator} which provides all the
-	 * {@link TranslationEntry}s that should be translated. Moreover, they
-	 * should be in the "right order", meaning that if the
-	 * {@link TranslationMap} is built from an existing {@link File}, this
-	 * {@link Iterator} should provide the corresponding
-	 * {@link TranslationEntry}s in the same order.
+	 * {@link Entry}s that should be translated. Moreover, they should be in the
+	 * "right order", meaning that if the {@link TranslationMap} is built from
+	 * an existing {@link File}, this {@link Iterator} should provide the
+	 * corresponding {@link Entry}s in the same order.
 	 */
 	@Override
-	public Iterator<TranslationEntry> iterator();
+	public Iterator<Entry> iterator();
 
 	/**
-	 * This method aims at providing the requested {@link TranslationEntry} of
-	 * the current {@link TranslationMap}. The first entry is at the index 0 and
-	 * the entries are in the same order than for {@link #iterator()}.
+	 * This method aims at providing the requested {@link Entry} of the current
+	 * {@link TranslationMap}. The first entry is at the index 0 and the entries
+	 * are in the same order than for {@link #iterator()}.
 	 * 
 	 * @param index
-	 *            the index of the {@link TranslationEntry}
-	 * @return the corresponding {@link TranslationEntry}
+	 *            the index of the {@link Entry}
+	 * @return the corresponding {@link Entry}
 	 */
-	public TranslationEntry getEntry(int index);
+	public Entry getEntry(int index);
 
 	/**
-	 * @return the number of {@link TranslationEntry}s in this
-	 *         {@link TranslationMap}
+	 * @return the number of {@link Entry}s in this {@link TranslationMap}
 	 */
 	public int size();
 
 	/**
-	 * Save the current content of the {@link TranslationMap} to the
-	 * corresponding file(s).
+	 * This method should be equivalent to calling
+	 * {@link TranslationEntry#saveAll()} for each {@link TranslationEntry} of
+	 * this {@link TranslationMap} in an atomic way, thus reducing the overhead
+	 * of calling each one separately.
 	 */
-	public void save();
+	public void saveAll();
 
+	/**
+	 * This method should be equivalent to calling
+	 * {@link TranslationEntry#resetAll()} for each {@link TranslationEntry} of
+	 * this {@link TranslationMap} in an atomic way, thus reducing the overhead
+	 * of calling each one separately.
+	 */
+	public void resetAll();
 }

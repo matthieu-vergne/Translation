@@ -11,8 +11,36 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationMapTest;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 
-public class BackedTranslationMapTest {
+public class BackedTranslationMapTest extends TranslationMapTest<MapEntry> {
+
+	private final File testFolder = new File("src/test/resources");
+
+	@Override
+	protected TranslationMap<MapEntry> createTranslationMap() {
+		try {
+			File templateFile = new File(testFolder, "map.txt");
+			File mapFile = File.createTempFile("map", ".txt");
+			FileUtils.copyFile(templateFile, mapFile);
+			return new BackedTranslationMap(templateFile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> T createNewEditableFieldValue(Field<T> field, T currentValue) {
+		if (field == MapEntry.MARKED_AS_UNTRANSLATED) {
+			return (T) (Boolean) !((Boolean) currentValue);
+		} else {
+			throw new RuntimeException("The field " + field
+					+ " is not supposed to be editable");
+		}
+	}
 
 	@Test
 	public void testReadWriteMap() throws IOException {

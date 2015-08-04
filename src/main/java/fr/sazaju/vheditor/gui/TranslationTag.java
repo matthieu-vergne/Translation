@@ -11,23 +11,24 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
-public class TranslationTag extends JPanel {
+public class TranslationTag<Entry extends TranslationEntry<?>> extends JPanel {
 
-	private final TranslationEntry entry;
+	private final Entry entry;
 	private boolean isMarked;
 
-	public TranslationTag(final TranslationEntry entry) {
+	public TranslationTag(final Entry entry) {
 		this.entry = entry;
-		this.isMarked = !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED);
+		this.isMarked = entry.getMetadata()
+				.get(MapEntry.MARKED_AS_UNTRANSLATED);
 
 		final JLabel tag = new JLabel() {
 			@Override
 			public String getText() {
-				return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) ? "# UNTRANSLATED"
+				return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) ? "# UNTRANSLATED"
 						: "<html><s># UNTRANSLATED</s></html>";
 			}
 		};
@@ -36,19 +37,22 @@ public class TranslationTag extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				entry.getMetadata().set(Field.MARKED_AS_TRANSLATED,
-						!entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
+				entry.getMetadata().set(
+						MapEntry.MARKED_AS_UNTRANSLATED,
+						!entry.getMetadata().get(
+								MapEntry.MARKED_AS_UNTRANSLATED));
 				/*
 				 * Set a different text than the current value to force the
 				 * generation of the update event.
 				 */
 				tag.setText(""
-						+ !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED));
+						+ entry.getMetadata().get(
+								MapEntry.MARKED_AS_UNTRANSLATED));
 			}
 		}) {
 			@Override
 			public String getText() {
-				return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) ? "-"
+				return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) ? "-"
 						: "+";
 			}
 		};
@@ -74,10 +78,10 @@ public class TranslationTag extends JPanel {
 	}
 
 	public boolean isModified() {
-		return !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED) != isMarked;
+		return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) != isMarked;
 	}
 
 	public void save() {
-		isMarked = !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED);
+		isMarked = entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED);
 	}
 }

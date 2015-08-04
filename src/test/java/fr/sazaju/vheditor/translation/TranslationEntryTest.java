@@ -2,25 +2,31 @@ package fr.sazaju.vheditor.translation;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
 
-public abstract class TranslationEntryTest {
+public abstract class TranslationEntryTest<Metadata extends TranslationMetadata> {
 
-	protected abstract TranslationEntry createTranslationEntry();
+	protected abstract TranslationEntry<Metadata> createTranslationEntry();
 
 	protected abstract String getInitialStoredTranslation();
 
 	protected abstract String createNewTranslation(String currentTranslation);
 
+	protected abstract <T> T createNewEditableFieldValue(Field<T> field,
+			T currentValue);
+
 	@Test
 	public void testAbstractMethodsProvideProperValues() {
-		Set<TranslationEntry> entries = new HashSet<TranslationEntry>();
+		Set<TranslationEntry<Metadata>> entries = new HashSet<TranslationEntry<Metadata>>();
 		for (int i = 0; i < 10; i++) {
 			entries.add(createTranslationEntry());
 		}
@@ -54,18 +60,47 @@ public abstract class TranslationEntryTest {
 			assertFalse(errorMessage,
 					nextTranslation.equals(currentTranslation));
 		}
+
+		Metadata metadata = createTranslationEntry().getMetadata();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				stressNewValues(metadata, field);
+			} else {
+				// ignore
+			}
+		}
+	}
+
+	private <T> void stressNewValues(Metadata metadata, Field<T> field) {
+		T currentValue = metadata.get(field);
+		for (int i = 0; i < 10; i++) {
+			T nextValue;
+			try {
+				nextValue = createNewEditableFieldValue(field, currentValue);
+			} catch (Exception e) {
+				fail("Exception thrown while asking a new value for " + field);
+				return;
+			}
+			String errorMessage = "the same value (" + currentValue
+					+ ") is returned when asking for a new one for " + field;
+			if (nextValue == null) {
+				assertFalse(errorMessage, nextValue == currentValue);
+			} else {
+				assertFalse(errorMessage, nextValue.equals(currentValue));
+			}
+		}
 	}
 
 	@Test
 	public void testGetStoredProperlyRetrievesStoredTranslationBeforeModification() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		assertEquals(getInitialStoredTranslation(),
 				entry.getStoredTranslation());
 	}
 
 	@Test
 	public void testGetStoredProperlyRetrievesStoredTranslationAfterModification() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		assertEquals(getInitialStoredTranslation(),
@@ -74,14 +109,14 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testGetCurrentProperlyRetrievesStoredTranslationBeforeModification() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		assertEquals(getInitialStoredTranslation(),
 				entry.getCurrentTranslation());
 	}
 
 	@Test
 	public void testGetCurrentProperlyRetrievesUpdatedTranslationAfterModification() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		assertEquals(translation, entry.getCurrentTranslation());
@@ -89,7 +124,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testSetCurrentThrowsExceptionOnNullTranslation() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		try {
 			entry.setCurrentTranslation(null);
 			fail("No exception thrown");
@@ -99,7 +134,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testStoredProperlyUpdatedAfterSaveTranslation() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.saveTranslation();
@@ -108,7 +143,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testGetCurrentProperlyUpdatedAfterResetTranslation() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetTranslation();
@@ -118,7 +153,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testTranslationProperlyMaintainedAfterSaveAll() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.saveAll();
@@ -127,7 +162,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testStoredProperlyUpdatedAfterSaveAll() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.saveAll();
@@ -135,16 +170,57 @@ public abstract class TranslationEntryTest {
 				entry.getStoredTranslation());
 	}
 
-	@Ignore
 	@Test
 	public void testMetadataProperlyMaintainedAfterSaveAll() {
-		// TODO
-		fail("not implemented yet");
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+
+		Map<Field<?>, Object> savedValues = new HashMap<>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				Object value = change(metadata, field);
+				savedValues.put(field, value);
+			} else {
+				// ignore
+			}
+		}
+		assertFalse("Unable to apply the test: no field modified",
+				savedValues.isEmpty());
+		entry.saveAll();
+		for (Field<?> field : savedValues.keySet()) {
+			Object value = savedValues.get(field);
+			assertEquals(field.toString(), value, entry.getMetadata()
+					.get(field));
+		}
+	}
+
+	@Test
+	public void testMetadataProperlySavedAfterSaveAll() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+
+		Map<Field<?>, Object> savedValues = new HashMap<>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				Object value = change(metadata, field);
+				savedValues.put(field, value);
+			} else {
+				// ignore
+			}
+		}
+		assertFalse("Unable to apply the test: no field modified",
+				savedValues.isEmpty());
+		entry.saveAll();
+		for (Field<?> field : savedValues.keySet()) {
+			Object value = savedValues.get(field);
+			assertEquals(field.toString(), value, entry.getMetadata()
+					.getStored(field));
+		}
 	}
 
 	@Test
 	public void testTranslationProperlyDiscardedAfterResetAll() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetAll();
@@ -153,7 +229,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testStoredProperlyMaintainedAfterResetAll() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetAll();
@@ -161,16 +237,30 @@ public abstract class TranslationEntryTest {
 				entry.getStoredTranslation());
 	}
 
-	@Ignore
 	@Test
 	public void testMetadataProperlyDiscardedAfterResetAll() {
-		// TODO
-		fail("not implemented yet");
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+
+		Map<Field<?>, Object> values = new HashMap<>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				values.put(field, metadata.get(field));
+				change(metadata, field);
+			} else {
+				// ignore
+			}
+		}
+		entry.resetAll();
+		for (Field<?> field : values.keySet()) {
+			Object value = values.get(field);
+			assertEquals(value, entry.getMetadata().get(field));
+		}
 	}
 
 	@Test
 	public void testListenerNotifiedAfterSetCurrentWhenRegistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		entry.addTranslationListener(new TranslationListener() {
 
@@ -186,7 +276,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testListenerNotNotifiedAfterSetCurrentWhenUnregistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		TranslationListener listener = new TranslationListener() {
 
@@ -204,7 +294,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testListenerNotifiedAfterResetTranslationWhenRegistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		entry.addTranslationListener(new TranslationListener() {
 
@@ -221,7 +311,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testListenerNotNotifiedAfterResetTranslationWhenUnregistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		TranslationListener listener = new TranslationListener() {
 
@@ -240,7 +330,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testListenerNotifiedAfterResetAllWhenRegistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		entry.addTranslationListener(new TranslationListener() {
 
@@ -257,7 +347,7 @@ public abstract class TranslationEntryTest {
 
 	@Test
 	public void testListenerNotNotifiedAfterResetAllWhenUnregistered() {
-		TranslationEntry entry = createTranslationEntry();
+		TranslationEntry<Metadata> entry = createTranslationEntry();
 		final String[] notified = { null };
 		TranslationListener listener = new TranslationListener() {
 
@@ -274,17 +364,67 @@ public abstract class TranslationEntryTest {
 		assertNull(notified[0]);
 	}
 
-	@Ignore
 	@Test
 	public void testFieldListenerNotifiedAfterResetAllWhenRegistered() {
-		// TODO
-		fail("not implemented yet");
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
+		metadata.addFieldListener(new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				notified.put(field, newValue);
+			}
+		});
+		Map<Field<?>, Object> resetValues = new HashMap<>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				resetValues.put(field, metadata.getStored(field));
+				Object nonResetValue = change(metadata, field);
+				notified.put(field, nonResetValue);
+			} else {
+				// ignore
+			}
+		}
+		metadata.resetAll();
+		for (Field<?> field : resetValues.keySet()) {
+			assertEquals(resetValues.get(field), notified.get(field));
+		}
 	}
 
-	@Ignore
 	@Test
 	public void testFieldNotNotifiedAfterResetAllWhenUnregistered() {
-		// TODO
-		fail("not implemented yet");
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+		final Map<Field<?>, Object> notified = new HashMap<Field<?>, Object>();
+		FieldListener listener = new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				notified.put(field, newValue);
+			}
+		};
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
+		Map<Field<?>, Object> nonResetValues = new HashMap<>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				Object nonResetValue = change(metadata, field);
+				notified.put(field, nonResetValue);
+				nonResetValues.put(field, nonResetValue);
+			} else {
+				// ignore
+			}
+		}
+		metadata.resetAll();
+		for (Field<?> field : nonResetValues.keySet()) {
+			assertEquals(nonResetValues.get(field), notified.get(field));
+		}
+	}
+
+	private <T> T change(Metadata metadata, Field<T> field) {
+		T value = createNewEditableFieldValue(field, metadata.get(field));
+		metadata.set(field, value);
+		return value;
 	}
 }

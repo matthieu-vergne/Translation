@@ -3,6 +3,7 @@ package fr.sazaju.vheditor.translation.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +84,11 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 		orderedFields.add(field);
 	}
 
+	@Override
+	public Iterator<Field<?>> iterator() {
+		return orderedFields.iterator();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getStored(Field<T> field) {
@@ -94,8 +100,10 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 	public <T> T get(Field<T> field) {
 		if (changedValues.containsKey(field)) {
 			return (T) changedValues.get(field);
-		} else {
+		} else if (readers.containsKey(field)) {
 			return (T) readers.get(field).read();
+		} else {
+			throw new IllegalArgumentException("Unmanaged field: " + field);
 		}
 	}
 

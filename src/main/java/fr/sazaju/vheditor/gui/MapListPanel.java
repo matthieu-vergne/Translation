@@ -64,7 +64,7 @@ import fr.sazaju.vheditor.gui.tool.MapCellRenderer;
 import fr.sazaju.vheditor.gui.tool.MapTreeNode;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
-import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.sazaju.vheditor.util.MapInformer;
 import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
@@ -806,10 +806,9 @@ public class MapListPanel extends JPanel {
 					BackedTranslationMap map = new BackedTranslationMap(file);
 					summary.total = map.size();
 					summary.remaining = 0;
-					Iterator<? extends TranslationEntry> iterator = map
-							.iterator();
+					Iterator<MapEntry> iterator = map.iterator();
 					while (iterator.hasNext()) {
-						TranslationEntry entry = iterator.next();
+						MapEntry entry = iterator.next();
 						summary.remaining += TranslationUtil
 								.isActuallyTranslated(entry) ? 0 : 1;
 					}

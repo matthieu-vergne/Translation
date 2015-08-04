@@ -105,7 +105,7 @@ public class GuiBuilder {
 	}
 
 	public static Component instantiateEntryGui(Layer layer,
-			TranslationEntry entry) {
+			TranslationEntry<?> entry) {
 		if (layer instanceof StartLine || layer instanceof ContextLine
 				|| layer instanceof AdviceLine
 				|| layer instanceof TranslationLine) {
@@ -135,7 +135,7 @@ public class GuiBuilder {
 			Option<?> option = (Option<?>) layer;
 			Layer sublayer = option.getOption();
 			if (sublayer instanceof UntranslatedLine) {
-				return new TranslationTag(entry);
+				return new TranslationTag<TranslationEntry<?>>(entry);
 			} else if (sublayer instanceof AdviceLine) {
 				return option.isPresent() ? instantiateEntryGui(sublayer, entry)
 						: new JLabel();
@@ -155,13 +155,14 @@ public class GuiBuilder {
 		public TranslationArea getTranslationArea() {
 			return (TranslationArea) getComponent(6);
 		}
-		
-		public TranslationEntry getEntry() {
+
+		public TranslationEntry<?> getEntry() {
 			return getTranslationArea().getEntry();
 		}
 
-		public TranslationTag getTranslationTag() {
-			return (TranslationTag) getComponent(1);
+		@SuppressWarnings("unchecked")
+		public TranslationTag<TranslationEntry<?>> getTranslationTag() {
+			return (TranslationTag<TranslationEntry<?>>) getComponent(1);
 		}
 	}
 }

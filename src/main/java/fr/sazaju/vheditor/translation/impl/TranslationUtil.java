@@ -12,7 +12,7 @@ public class TranslationUtil {
 	 *         {@link #getOriginalContent()} are empty or if both are not,
 	 *         <code>false</code> otherwise
 	 */
-	public static boolean isActuallyTranslated(TranslationEntry entry) {
+	public static boolean isActuallyTranslated(TranslationEntry<?> entry) {
 		return !entry.getCurrentTranslation().trim().isEmpty()
 				|| entry.getOriginalContent().trim().isEmpty()
 				|| isNotJapanese(entry.getOriginalContent());

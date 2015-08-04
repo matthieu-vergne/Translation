@@ -3,15 +3,15 @@ package fr.sazaju.vheditor.translation;
 /**
  * A {@link TranslationEntry} describes a single entry to translate, so it
  * relates an original content ({@link #getOriginalContent()}) to a translation
- * ({@link #getCurrentTranslation()}). Optionally, some
- * {@link TranslationMetadata} can be provided through {@link #getMetadata()} to
- * enrich the description of the {@link TranslationEntry}, like the limits of
- * characters, a description of the context, etc.
+ * ({@link #getCurrentTranslation()}). Optionally, some {@link Metadata} can be
+ * provided through {@link #getMetadata()} to enrich the description of the
+ * {@link TranslationEntry}, like the limits of characters, a description of the
+ * context, etc.
  * 
  * @author Sazaju HITOKAGE <sazaju@gmail.com>
- *
+ * 
  */
-public interface TranslationEntry {
+public interface TranslationEntry<Metadata extends TranslationMetadata> {
 
 	/**
 	 * 
@@ -24,8 +24,8 @@ public interface TranslationEntry {
 	 * instantiation, {@link #getCurrentTranslation()} should return the same
 	 * translation, before to diverge by using
 	 * {@link #setCurrentTranslation(String)}. In the case of divergence,
-	 * calling {@link #reset()} should align the current translation on the
-	 * stored one, while calling {@link #save()} should align the stored
+	 * calling {@link #resetAll()} should align the current translation on the
+	 * stored one, while calling {@link #saveAll()} should align the stored
 	 * translation on the current one.
 	 * 
 	 * @return the stored translation
@@ -76,24 +76,24 @@ public interface TranslationEntry {
 
 	/**
 	 * This method should be equivalent to calling {@link #saveTranslation()}
-	 * and {@link TranslationMetadata#saveAll()} in an atomic way, thus reducing
-	 * the overhead of calling each method separately.
+	 * and {@link Metadata#saveAll()} in an atomic way, thus reducing the
+	 * overhead of calling each method separately.
 	 */
 	public void saveAll();
 
 	/**
 	 * This method should be equivalent to calling {@link #resetTranslation()}
-	 * and {@link TranslationMetadata#resetAll()} in an atomic way, thus
-	 * reducing the overhead of calling each method separately.
+	 * and {@link Metadata#resetAll()} in an atomic way, thus reducing the
+	 * overhead of calling each method separately.
 	 */
 	public void resetAll();
 
 	/**
 	 * 
-	 * @return a {@link TranslationMetadata} providing extra information on this
+	 * @return a {@link Metadata} providing extra information on this
 	 *         {@link TranslationEntry}
 	 */
-	public TranslationMetadata getMetadata();
+	public Metadata getMetadata();
 
 	/**
 	 * A {@link TranslationListener} allows to be notified when the translation

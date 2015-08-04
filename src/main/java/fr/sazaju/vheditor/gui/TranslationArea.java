@@ -26,7 +26,7 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
@@ -34,12 +34,12 @@ public class TranslationArea extends JTextArea {
 
 	private static final String ACTION_UNDO = "undo";
 	private static final String ACTION_REDO = "redo";
-	private final TranslationEntry entry;
+	private final TranslationEntry<?> entry;
 	private final TreeSet<Integer> limits;
 	private static final List<Color> limitColors = Arrays.asList(Color.RED,
 			Color.LIGHT_GRAY);
 
-	public TranslationArea(TranslationEntry entry) {
+	public TranslationArea(TranslationEntry<?> entry) {
 		super(entry.getCurrentTranslation());
 		this.entry = entry;
 		limits = new TreeSet<Integer>(new Comparator<Integer>() {
@@ -58,8 +58,8 @@ public class TranslationArea extends JTextArea {
 				}
 			}
 		};
-		limits.add(entry.getMetadata().get(Field.CHAR_LIMIT_NO_FACE));
-		limits.add(entry.getMetadata().get(Field.CHAR_LIMIT_FACE));
+		limits.add(entry.getMetadata().get(MapEntry.CHAR_LIMIT_NO_FACE));
+		limits.add(entry.getMetadata().get(MapEntry.CHAR_LIMIT_FACE));
 		setBorder(new EtchedBorder());
 		setFont(new Font("monospaced", Font.PLAIN, getFont().getSize()));
 
@@ -187,7 +187,7 @@ public class TranslationArea extends JTextArea {
 		}
 	}
 
-	public TranslationEntry getEntry() {
+	public TranslationEntry<?> getEntry() {
 		return entry;
 	}
 }

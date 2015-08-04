@@ -32,7 +32,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
-import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 
 @SuppressWarnings("serial")
 public class Search extends JPanel implements Tool {
@@ -310,10 +310,10 @@ public class Search extends JPanel implements Tool {
 					.replaceAll(blanks, " ");
 			if (mapContent.contains(searched)) {
 				BackedTranslationMap map = new BackedTranslationMap(file);
-				Iterator<? extends TranslationEntry> iterator = map.iterator();
+				Iterator<MapEntry> iterator = map.iterator();
 				int index = -1;
 				while (searching && iterator.hasNext()) {
-					TranslationEntry entry = iterator.next();
+					MapEntry entry = iterator.next();
 					index++;
 					String original = entry.getOriginalContent().replaceAll(
 							blanks, " ");

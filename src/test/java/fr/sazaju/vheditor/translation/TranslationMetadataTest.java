@@ -3,6 +3,7 @@ package fr.sazaju.vheditor.translation;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,6 +60,9 @@ public abstract class TranslationMetadataTest {
 				editableFields.contains(null));
 		assertEquals("some editable fields are used several time",
 				editableFields.size(), new HashSet<>(editableFields).size());
+		assertTrue("there is shared fields between the non-editables "
+				+ nonEditableFields + " and the editables " + editableFields,
+				Collections.disjoint(nonEditableFields, editableFields));
 		for (Field<?> field : editableFields) {
 			try {
 				getInitialStoredValue(field);
@@ -89,6 +93,85 @@ public abstract class TranslationMetadataTest {
 				assertFalse(errorMessage, nextValue.equals(currentValue));
 			}
 		}
+	}
+
+	@Test
+	public void testIteratorDoesNotProvideSeveralTimesTheSameField() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		Collection<Field<?>> fields = new HashSet<>();
+		for (Field<?> field : metadata) {
+			assertFalse(field + " already seen: " + fields,
+					fields.contains(field));
+			fields.add(field);
+		}
+	}
+
+	@Test
+	public void testIteratorDoesNotProvideFieldsOutOfEditableAndNonEditableFields() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		Collection<Field<?>> editableFields = getEditableFields();
+		Collection<Field<?>> nonEditableFields = getNonEditableFields();
+		for (Field<?> field : metadata) {
+			assertTrue(editableFields.contains(field)
+					|| nonEditableFields.contains(field));
+		}
+	}
+
+	@Test
+	public void testIteratorProvidesFieldsWhichHaveStoredValue() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		Collection<Field<?>> fields = new HashSet<>();
+		for (Field<?> field : getNonEditableFields()) {
+			if (metadata.getStored(field) != null) {
+				fields.add(field);
+			} else {
+				// ignore
+			}
+		}
+		for (Field<?> field : getEditableFields()) {
+			if (metadata.getStored(field) != null) {
+				fields.add(field);
+			} else {
+				// ignore
+			}
+		}
+
+		for (Field<?> field : metadata) {
+			fields.remove(field);
+		}
+
+		assertTrue(
+				"some fields are not provided while they have a stored value: "
+						+ fields, fields.isEmpty());
+	}
+
+	@Test
+	public void testIteratorProvidesFieldsWhichHaveCurrentValue() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		Collection<Field<?>> fields = new HashSet<>();
+		for (Field<?> field : getNonEditableFields()) {
+			if (metadata.get(field) != null) {
+				fields.add(field);
+			} else {
+				// ignore
+			}
+		}
+		for (Field<?> field : getEditableFields()) {
+			if (metadata.get(field) != null) {
+				// already filled
+			} else {
+				change(metadata, field);
+			}
+			fields.add(field);
+		}
+
+		for (Field<?> field : metadata) {
+			fields.remove(field);
+		}
+
+		assertTrue(
+				"some fields are not provided while they have a current value: "
+						+ fields, fields.isEmpty());
 	}
 
 	@Test

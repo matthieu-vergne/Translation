@@ -32,8 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
@@ -240,7 +239,7 @@ public class MapContentPanel extends JPanel {
 		}
 	}
 
-	public TranslationMap getMap() {
+	public TranslationMap<?> getMap() {
 		return map;
 	}
 
@@ -257,7 +256,7 @@ public class MapContentPanel extends JPanel {
 			panel.getTranslationTag().save();
 		}
 		logger.info("Saving map to " + map.getBaseFile() + "...");
-		map.save();
+		map.saveAll();
 		logger.info("Map saved.");
 		for (MapSavedListener listener : listeners) {
 			listener.mapSaved(map.getBaseFile());
@@ -304,12 +303,12 @@ public class MapContentPanel extends JPanel {
 
 	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
 		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<? extends TranslationEntry> iterator = map.iterator();
+		Iterator<MapEntry> iterator = map.iterator();
 		int count = 0;
 		while (iterator.hasNext()) {
-			TranslationEntry entry = iterator.next();
+			MapEntry entry = iterator.next();
 			if (relyOnTags
-					&& !entry.getMetadata().get(Field.MARKED_AS_TRANSLATED)
+					&& entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED)
 					|| !relyOnTags
 					&& !TranslationUtil.isActuallyTranslated(entry)) {
 				untranslatedEntries.add(count);
@@ -331,7 +330,7 @@ public class MapContentPanel extends JPanel {
 						// look for another one
 					}
 				} else if (component instanceof TranslationTag) {
-					if (((TranslationTag) component).isModified()) {
+					if (((TranslationTag<?>) component).isModified()) {
 						return true;
 					} else {
 						// look for another one
