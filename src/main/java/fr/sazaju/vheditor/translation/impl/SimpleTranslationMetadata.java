@@ -29,9 +29,9 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 	private final Set<Field<?>> orderedFields = new LinkedHashSet<Field<?>>();
 
 	/**
-	 * A {@link FieldReader} aims at retrieving the value of a given
+	 * A {@link FieldReader} aims at retrieving the reference value of a given
 	 * {@link Field} in order to feed the
-	 * {@link SimpleTranslationMetadata#get(Field)} method.
+	 * {@link SimpleTranslationMetadata#getReference(Field)} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -42,9 +42,9 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 	}
 
 	/**
-	 * A {@link FieldWriter} aims at replacing the current value of a
+	 * A {@link FieldWriter} aims at replacing the reference value of a
 	 * {@link Field} by a new one, providing a way to execute the
-	 * {@link SimpleTranslationMetadata#set(Field, Object)} method.
+	 * {@link SimpleTranslationMetadata#save(Field)} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
