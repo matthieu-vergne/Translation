@@ -153,6 +153,7 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 
 	@Override
 	public void saveAll() {
+		// TODO use a custom saver (minimize overhead)
 		for (Field<?> field : orderedFields) {
 			save(field);
 		}
