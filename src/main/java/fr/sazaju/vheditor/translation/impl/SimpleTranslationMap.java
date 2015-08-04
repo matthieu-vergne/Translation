@@ -1,6 +1,5 @@
 package fr.sazaju.vheditor.translation.impl;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class SimpleTranslationMap<Entry extends TranslationEntry<?>> implements
 
 	private final EntryBuilder<Entry> builder;
 	private final int size;
-	private final Map<Integer, WeakReference<Entry>> cache = new HashMap<Integer, WeakReference<Entry>>();
+	private final Map<Integer, Entry> entries = new HashMap<Integer, Entry>();
 
 	public SimpleTranslationMap(EntryBuilder<Entry> builder, int size) {
 		this.builder = builder;
@@ -55,13 +54,13 @@ public class SimpleTranslationMap<Entry extends TranslationEntry<?>> implements
 	}
 
 	private Entry retrieveEntry(int index) {
-		WeakReference<Entry> reference = cache.get(index);
-		if (reference == null || reference.get() == null) {
-			Entry entry = builder.build(index);
-			cache.put(index, new WeakReference<>(entry));
+		Entry entry = entries.get(index);
+		if (entry == null) {
+			entry = builder.build(index);
+			entries.put(index, entry);
 			return entry;
 		} else {
-			return reference.get();
+			return entry;
 		}
 	}
 
