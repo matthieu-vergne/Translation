@@ -1,8 +1,11 @@
 package fr.sazaju.vheditor.translation;
 
 /**
- * A {@link TranslationMetadata} aims at interacting with the specific data
- * contained into the comment of a {@link TranslationEntry}.
+ * A {@link TranslationMetadata} aims at storing any additional data which would
+ * enrich a {@link TranslationEntry}. Typically, the context of the
+ * {@link TranslationEntry} and the constraints of the translation, like a limit
+ * of characters, are the kind of data which can be stored in a
+ * {@link TranslationMetadata}.
  * 
  * @author Sazaju HITOKAGE <sazaju@gmail.com>
  * 

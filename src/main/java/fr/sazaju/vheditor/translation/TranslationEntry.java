@@ -3,10 +3,13 @@ package fr.sazaju.vheditor.translation;
 /**
  * A {@link TranslationEntry} describes a single entry to translate, so it
  * relates an original content ({@link #getOriginalContent()}) to a translation
- * ({@link #getCurrentTranslation()}). The
+ * ({@link #getCurrentTranslation()}). Optionally, some
+ * {@link TranslationMetadata} can be provided through {@link #getMetadata()} to
+ * enrich the description of the {@link TranslationEntry}, like the limits of
+ * characters, a description of the context, etc.
  * 
- * @author sazaju
- * 
+ * @author Sazaju HITOKAGE <sazaju@gmail.com>
+ *
  */
 public interface TranslationEntry {
 
