@@ -25,7 +25,7 @@ public class BackedTranslationMapTest extends TranslationMapTest<MapEntry> {
 			File templateFile = new File(testFolder, "map.txt");
 			File mapFile = File.createTempFile("map", ".txt");
 			FileUtils.copyFile(templateFile, mapFile);
-			return new BackedTranslationMap(templateFile);
+			return new BackedTranslationMap(mapFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
