@@ -12,7 +12,7 @@ public class SimpleTranslationEntry<Metadata extends TranslationMetadata>
 	private final String original;
 	private final TranslationReader reader;
 	private final TranslationWriter writer;
-	private String currentTranslation = null;
+	private String currentTranslation;
 	private final Metadata metadata;
 	private final Collection<TranslationListener> listeners = new HashSet<>();
 
@@ -22,6 +22,7 @@ public class SimpleTranslationEntry<Metadata extends TranslationMetadata>
 		this.writer = writer;
 		this.original = original;
 		this.metadata = metadata;
+		this.currentTranslation = reader.read();
 	}
 
 	@Override
@@ -36,11 +37,7 @@ public class SimpleTranslationEntry<Metadata extends TranslationMetadata>
 
 	@Override
 	public String getCurrentTranslation() {
-		if (currentTranslation != null) {
-			return currentTranslation;
-		} else {
-			return getStoredTranslation();
-		}
+		return currentTranslation;
 	}
 
 	@Override
