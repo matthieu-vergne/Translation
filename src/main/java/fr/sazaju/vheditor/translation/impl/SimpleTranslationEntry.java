@@ -46,7 +46,7 @@ public class SimpleTranslationEntry<Metadata extends TranslationMetadata>
 	@Override
 	public void setCurrentTranslation(String translation) {
 		if (translation == null) {
-			throw new NullPointerException("No translation provided");
+			throw new IllegalArgumentException("No translation provided");
 		} else {
 			this.currentTranslation = translation;
 			for (TranslationListener listener : listeners) {
