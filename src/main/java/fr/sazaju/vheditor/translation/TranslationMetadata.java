@@ -10,19 +10,19 @@ package fr.sazaju.vheditor.translation;
 public interface TranslationMetadata {
 
 	/**
-	 * The reference value of a {@link Field} is the initial value to consider.
-	 * Upon instantiation, {@link #get(Field)} should return the same value,
-	 * before to diverge by using {@link #set(Field, Object)}. In the case of
+	 * The stored value of a {@link Field} corresponds to a reference. Upon
+	 * instantiation, {@link #get(Field)} should return the same value, before
+	 * to diverge by using {@link #set(Field, Object)}. In the case of
 	 * divergence, calling {@link #reset(Field)} should align the current value
-	 * on the reference value, while calling {@link #save(Field)} should align
-	 * the reference value on the current value.
+	 * on the stored one, while calling {@link #save(Field)} should align the
+	 * stored value on the current one.
 	 * 
 	 * @param field
-	 *            the {@link Field} to retrieve the value for
-	 * @return the value of reference for the {@link Field}, which can be
+	 *            the {@link Field} to retrieve the stored value for
+	 * @return the stored value for the {@link Field}, which can be
 	 *         <code>null</code>
 	 */
-	public <T> T getReference(Field<T> field);
+	public <T> T getStored(Field<T> field);
 
 	/**
 	 * 
@@ -30,7 +30,7 @@ public interface TranslationMetadata {
 	 *            the {@link Field} to retrieve the value for
 	 * @return the value of the {@link Field}, <code>null</code> if there is no
 	 *         value assigned to it
-	 * @see #getReference(Field)
+	 * @see #getStored(Field)
 	 */
 	public <T> T get(Field<T> field);
 
@@ -59,9 +59,10 @@ public interface TranslationMetadata {
 	 *             returns <code>false</code>)
 	 * @see #isEditable(Field)
 	 * @see #get(Field)
-	 * @see #getReference(Field)
+	 * @see #getStored(Field)
 	 */
-	public <T> void set(Field<T> field, T value) throws UneditableFieldException;
+	public <T> void set(Field<T> field, T value)
+			throws UneditableFieldException;
 
 	/**
 	 * A {@link FieldListener} allows to be notified when a {@link Field} of a
@@ -93,11 +94,11 @@ public interface TranslationMetadata {
 	public void removeFieldListener(FieldListener listener);
 
 	/**
-	 * Saving a {@link Field} leads to align its reference value to its current
-	 * value. After the process, {@link #getReference(Field)} should return the
-	 * same result than {@link #get(Field)}. This method should also lead to
-	 * update the storage (usually a file) on which this
-	 * {@link TranslationMetadata} is based on.
+	 * Saving a {@link Field} leads to align its stored value to its current
+	 * value. After the process, {@link #getStored(Field)} should return the
+	 * same result than {@link #get(Field)}. This also means that the storage
+	 * (usually a file or database) on which this {@link TranslationMetadata} is
+	 * based on should be updated.
 	 * 
 	 * @param field
 	 *            the {@link Field} to save
@@ -105,14 +106,14 @@ public interface TranslationMetadata {
 	public <T> void save(Field<T> field);
 
 	/**
-	 * Resetting a {@link Field} leads to align its current value to its
-	 * reference value. After the process, {@link #get(Field)} should return the
-	 * same result than {@link #getReference(Field)}. This method should be a
-	 * way to recover the same content than the storage (usually a file) on
+	 * Resetting a {@link Field} leads to align its current value to its stored
+	 * value. After the process, {@link #get(Field)} should return the same
+	 * result than {@link #getStored(Field)}. This method should be a way to
+	 * recover the same content than the storage (usually a file or database) on
 	 * which this {@link TranslationMetadata} is based on. After the reset, any
 	 * {@link FieldListener} registered through
 	 * {@link #addFieldListener(FieldListener)} should be notified of the new
-	 * values of the resetted {@link Field}s.
+	 * values of the reset {@link Field}s.
 	 * 
 	 * @param field
 	 *            the {@link Field} to reset

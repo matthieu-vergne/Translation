@@ -14,7 +14,7 @@ public abstract class TranslationEntryTest {
 
 	protected abstract TranslationEntry createTranslationEntry();
 
-	protected abstract String getInitialReference();
+	protected abstract String getInitialStoredTranslation();
 
 	protected abstract String createNewTranslation(String currentTranslation);
 
@@ -31,14 +31,14 @@ public abstract class TranslationEntryTest {
 				entries.size());
 
 		try {
-			getInitialReference();
+			getInitialStoredTranslation();
 		} catch (Exception e) {
-			fail("Exception thrown while asking the reference translation");
+			fail("Exception thrown while asking the stored translation");
 		}
 		assertNotNull("a translation can be empty, but not null",
-				getInitialReference());
+				getInitialStoredTranslation());
 
-		String currentTranslation = getInitialReference();
+		String currentTranslation = getInitialStoredTranslation();
 		for (int i = 0; i < 10; i++) {
 			String nextTranslation;
 			try {
@@ -57,23 +57,26 @@ public abstract class TranslationEntryTest {
 	}
 
 	@Test
-	public void testGetReferenceProperlyRetrievesReferenceTranslationBeforeModification() {
+	public void testGetStoredProperlyRetrievesStoredTranslationBeforeModification() {
 		TranslationEntry entry = createTranslationEntry();
-		assertEquals(getInitialReference(), entry.getReferenceTranslation());
+		assertEquals(getInitialStoredTranslation(),
+				entry.getStoredTranslation());
 	}
 
 	@Test
-	public void testGetReferenceProperlyRetrievesReferenceTranslationAfterModification() {
+	public void testGetStoredProperlyRetrievesStoredTranslationAfterModification() {
 		TranslationEntry entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
-		assertEquals(getInitialReference(), entry.getReferenceTranslation());
+		assertEquals(getInitialStoredTranslation(),
+				entry.getStoredTranslation());
 	}
 
 	@Test
-	public void testGetCurrentProperlyRetrievesReferenceTranslationBeforeModification() {
+	public void testGetCurrentProperlyRetrievesStoredTranslationBeforeModification() {
 		TranslationEntry entry = createTranslationEntry();
-		assertEquals(getInitialReference(), entry.getCurrentTranslation());
+		assertEquals(getInitialStoredTranslation(),
+				entry.getCurrentTranslation());
 	}
 
 	@Test
@@ -95,12 +98,12 @@ public abstract class TranslationEntryTest {
 	}
 
 	@Test
-	public void testReferenceProperlyUpdatedAfterSaveTranslation() {
+	public void testStoredProperlyUpdatedAfterSaveTranslation() {
 		TranslationEntry entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.saveTranslation();
-		assertEquals(translation, entry.getReferenceTranslation());
+		assertEquals(translation, entry.getStoredTranslation());
 	}
 
 	@Test
@@ -109,7 +112,8 @@ public abstract class TranslationEntryTest {
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetTranslation();
-		assertEquals(getInitialReference(), entry.getCurrentTranslation());
+		assertEquals(getInitialStoredTranslation(),
+				entry.getCurrentTranslation());
 	}
 
 	@Test
@@ -122,13 +126,13 @@ public abstract class TranslationEntryTest {
 	}
 
 	@Test
-	public void testReferenceProperlyUpdatedAfterSaveAll() {
+	public void testStoredProperlyUpdatedAfterSaveAll() {
 		TranslationEntry entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.saveAll();
 		assertEquals(entry.getCurrentTranslation(),
-				entry.getReferenceTranslation());
+				entry.getStoredTranslation());
 	}
 
 	@Ignore
@@ -148,12 +152,13 @@ public abstract class TranslationEntryTest {
 	}
 
 	@Test
-	public void testReferenceProperlyMaintainedAfterResetAll() {
+	public void testStoredProperlyMaintainedAfterResetAll() {
 		TranslationEntry entry = createTranslationEntry();
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetAll();
-		assertEquals(getInitialReference(), entry.getReferenceTranslation());
+		assertEquals(getInitialStoredTranslation(),
+				entry.getStoredTranslation());
 	}
 
 	@Ignore
@@ -211,7 +216,7 @@ public abstract class TranslationEntryTest {
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetTranslation();
-		assertEquals(entry.getReferenceTranslation(), notified[0]);
+		assertEquals(entry.getStoredTranslation(), notified[0]);
 	}
 
 	@Test
@@ -247,7 +252,7 @@ public abstract class TranslationEntryTest {
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		entry.resetAll();
-		assertEquals(entry.getReferenceTranslation(), notified[0]);
+		assertEquals(entry.getStoredTranslation(), notified[0]);
 	}
 
 	@Test

@@ -38,12 +38,12 @@ public class MapEntryTest extends TranslationEntryTest {
 	}
 
 	@Override
-	protected String getInitialReference() {
+	protected String getInitialStoredTranslation() {
 		try {
 			File entryFile = new File(testFolder, "translation.entry");
 			MapEntry entry = new MapEntry();
 			entry.setContent(FileUtils.readFileToString(entryFile));
-			return entry.getReferenceTranslation();
+			return entry.getStoredTranslation();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

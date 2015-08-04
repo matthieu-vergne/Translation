@@ -22,7 +22,7 @@ public abstract class TranslationMetadataTest {
 
 	protected abstract Collection<Field<?>> getEditableFields();
 
-	protected abstract <T> T getInitialReference(Field<T> field);
+	protected abstract <T> T getInitialStoredValue(Field<T> field);
 
 	protected abstract <T> T createNewEditableFieldValue(Field<T> field,
 			T currentValue);
@@ -47,9 +47,10 @@ public abstract class TranslationMetadataTest {
 				new HashSet<>(nonEditableFields).size());
 		for (Field<?> field : nonEditableFields) {
 			try {
-				getInitialReference(field);
+				getInitialStoredValue(field);
 			} catch (Exception e) {
-				fail("Exception thrown while asking the reference for " + field);
+				fail("Exception thrown while asking the stored value of "
+						+ field);
 			}
 		}
 
@@ -60,9 +61,10 @@ public abstract class TranslationMetadataTest {
 				editableFields.size(), new HashSet<>(editableFields).size());
 		for (Field<?> field : editableFields) {
 			try {
-				getInitialReference(field);
+				getInitialStoredValue(field);
 			} catch (Exception e) {
-				fail("Exception thrown while asking the reference for " + field);
+				fail("Exception thrown while asking the stored value of "
+						+ field);
 			}
 
 			stressNewValues(field);
@@ -70,7 +72,7 @@ public abstract class TranslationMetadataTest {
 	}
 
 	private <T> void stressNewValues(Field<T> field) {
-		T currentValue = getInitialReference(field);
+		T currentValue = getInitialStoredValue(field);
 		for (int i = 0; i < 10; i++) {
 			T nextValue;
 			try {
@@ -90,26 +92,26 @@ public abstract class TranslationMetadataTest {
 	}
 
 	@Test
-	public void testGetReferenceProperlyRetrievesReferenceValueBeforeModification() {
+	public void testGetStoredProperlyRetrievesStoredValueBeforeModification() {
 		TranslationMetadata metadata = createTranslationMetadata();
 
 		for (Field<?> field : getNonEditableFields()) {
-			assertEquals(getInitialReference(field),
-					metadata.getReference(field));
+			assertEquals(getInitialStoredValue(field),
+					metadata.getStored(field));
 		}
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(getInitialReference(field),
-					metadata.getReference(field));
+			assertEquals(getInitialStoredValue(field),
+					metadata.getStored(field));
 		}
 	}
 
 	@Test
-	public void testGetReferenceProperlyRetrievesReferenceValueAfterModification() {
+	public void testGetStoredProperlyRetrievesStoredValueAfterModification() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
-			assertEquals(getInitialReference(field),
-					metadata.getReference(field));
+			assertEquals(getInitialStoredValue(field),
+					metadata.getStored(field));
 		}
 	}
 
@@ -118,7 +120,7 @@ public abstract class TranslationMetadataTest {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getNonEditableFields()) {
 			try {
-				setToReference(metadata, field);
+				setToStoredValue(metadata, field);
 				fail("No exception thrown");
 			} catch (UneditableFieldException e) {
 			}
@@ -126,18 +128,18 @@ public abstract class TranslationMetadataTest {
 	}
 
 	@Test
-	public void testNonEditableFieldProperlyRetrieveReferenceValue() {
+	public void testNonEditableFieldProperlyRetrieveStoredValue() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getNonEditableFields()) {
-			assertEquals(getInitialReference(field), metadata.get(field));
+			assertEquals(getInitialStoredValue(field), metadata.get(field));
 		}
 	}
 
 	@Test
-	public void testEditableFieldProperlyRetrieveReferenceValueBeforeModification() {
+	public void testEditableFieldProperlyRetrieveStoredValueBeforeModification() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(getInitialReference(field), metadata.get(field));
+			assertEquals(getInitialStoredValue(field), metadata.get(field));
 		}
 	}
 
@@ -151,12 +153,12 @@ public abstract class TranslationMetadataTest {
 	}
 
 	@Test
-	public void testReferenceProperlyUpdatedAfterSave() {
+	public void testStoredValueProperlyUpdatedAfterSave() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
 			Object value = change(metadata, field);
 			metadata.save(field);
-			assertEquals(value, metadata.getReference(field));
+			assertEquals(value, metadata.getStored(field));
 		}
 	}
 
@@ -166,7 +168,7 @@ public abstract class TranslationMetadataTest {
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
 			metadata.reset(field);
-			assertEquals(getInitialReference(field), metadata.get(field));
+			assertEquals(getInitialStoredValue(field), metadata.get(field));
 		}
 	}
 
@@ -184,14 +186,14 @@ public abstract class TranslationMetadataTest {
 	}
 
 	@Test
-	public void testAllReferencesProperlyUpdatedAfterSaveAll() {
+	public void testAllStoredValuesProperlyUpdatedAfterSaveAll() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
 		}
 		metadata.saveAll();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(metadata.get(field), metadata.getReference(field));
+			assertEquals(metadata.get(field), metadata.getStored(field));
 		}
 	}
 
@@ -214,15 +216,15 @@ public abstract class TranslationMetadataTest {
 	}
 
 	@Test
-	public void testAllReferencesProperlyMaintainedAfterResetAll() {
+	public void testAllStoredValuesProperlyMaintainedAfterResetAll() {
 		TranslationMetadata metadata = createTranslationMetadata();
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
 		}
 		metadata.resetAll();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(getInitialReference(field),
-					metadata.getReference(field));
+			assertEquals(getInitialStoredValue(field),
+					metadata.getStored(field));
 		}
 	}
 
@@ -276,7 +278,7 @@ public abstract class TranslationMetadataTest {
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
 			metadata.reset(field);
-			assertEquals(getInitialReference(field), notified.get(field));
+			assertEquals(getInitialStoredValue(field), notified.get(field));
 		}
 	}
 
@@ -316,7 +318,7 @@ public abstract class TranslationMetadataTest {
 		}
 		metadata.resetAll();
 		for (Field<?> field : getEditableFields()) {
-			assertEquals(getInitialReference(field), notified.get(field));
+			assertEquals(getInitialStoredValue(field), notified.get(field));
 		}
 	}
 
@@ -346,8 +348,9 @@ public abstract class TranslationMetadataTest {
 		return value;
 	}
 
-	private <T> void setToReference(TranslationMetadata metadata, Field<T> field) {
-		metadata.set(field, getInitialReference(field));
+	private <T> void setToStoredValue(TranslationMetadata metadata,
+			Field<T> field) {
+		metadata.set(field, getInitialStoredValue(field));
 	}
 
 }

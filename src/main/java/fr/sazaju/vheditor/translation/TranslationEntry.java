@@ -17,22 +17,22 @@ public interface TranslationEntry {
 	public String getOriginalContent();
 
 	/**
-	 * The reference translation is the initial translation to consider. Upon
+	 * The stored translation is the reference translation to consider. Upon
 	 * instantiation, {@link #getCurrentTranslation()} should return the same
 	 * translation, before to diverge by using
 	 * {@link #setCurrentTranslation(String)}. In the case of divergence,
 	 * calling {@link #reset()} should align the current translation on the
-	 * reference one, while calling {@link #save()} should align the reference
+	 * stored one, while calling {@link #save()} should align the stored
 	 * translation on the current one.
 	 * 
-	 * @return the reference translation
+	 * @return the stored translation
 	 */
-	public String getReferenceTranslation();
+	public String getStoredTranslation();
 
 	/**
 	 * 
 	 * @return the current translation
-	 * @see #getReferenceTranslation()
+	 * @see #getStoredTranslation()
 	 */
 	public String getCurrentTranslation();
 
@@ -46,25 +46,25 @@ public interface TranslationEntry {
 	 * @param translation
 	 *            the new translation
 	 * @see #getCurrentTranslation()
-	 * @see #getReferenceTranslation()
+	 * @see #getStoredTranslation()
 	 */
 	public void setCurrentTranslation(String translation);
 
 	/**
-	 * Saving a translation leads to align the reference translation to the
-	 * current one. After the process, {@link #getReferenceTranslation()} should
-	 * return the same result than {@link #getCurrentTranslation()}. This method
-	 * should also lead to update the storage (usually a file) on which this
-	 * {@link TranslationEntry} is based on.
+	 * Saving a translation leads to align the stored translation to the current
+	 * one. After the process, {@link #getStoredTranslation()} should return the
+	 * same result than {@link #getCurrentTranslation()}. This method should
+	 * also lead to update the storage (usually a file or database) on which
+	 * this {@link TranslationEntry} is based on.
 	 */
 	public void saveTranslation();
 
 	/**
 	 * Resetting a translation leads to align the current translation to the
-	 * reference one. After the process, {@link #getCurrentTranslation()} should
-	 * return the same result than {@link #getReferenceTranslation()}. This
-	 * method should be a way to recover the same content than the storage
-	 * (usually a file) on which this {@link TranslationEntry} is based on.
+	 * stored one. After the process, {@link #getCurrentTranslation()} should
+	 * return the same result than {@link #getStoredTranslation()}. This method
+	 * should be a way to recover the same content than the storage (usually a
+	 * file or database) on which this {@link TranslationEntry} is based on.
 	 * After the reset, any {@link TranslationListener} registered through
 	 * {@link #addTranslationListener(TranslationListener)} should be notified
 	 * of the new current translation.

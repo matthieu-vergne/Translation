@@ -29,7 +29,7 @@ public class SimpleTranslationEntry implements TranslationEntry {
 	}
 
 	@Override
-	public String getReferenceTranslation() {
+	public String getStoredTranslation() {
 		return reader.read();
 	}
 
@@ -38,7 +38,7 @@ public class SimpleTranslationEntry implements TranslationEntry {
 		if (currentTranslation != null) {
 			return currentTranslation;
 		} else {
-			return getReferenceTranslation();
+			return getStoredTranslation();
 		}
 	}
 
@@ -61,7 +61,7 @@ public class SimpleTranslationEntry implements TranslationEntry {
 
 	@Override
 	public void resetTranslation() {
-		setCurrentTranslation(getReferenceTranslation());
+		setCurrentTranslation(getStoredTranslation());
 	}
 
 	@Override
@@ -93,9 +93,9 @@ public class SimpleTranslationEntry implements TranslationEntry {
 	}
 
 	/**
-	 * A {@link TranslationReader} aims at retrieving the reference translation
-	 * of a given {@link TranslationEntry} in order to feed the
-	 * {@link SimpleTranslationEntry#getReferenceTranslation()} method.
+	 * A {@link TranslationReader} aims at retrieving the stored translation of
+	 * a given {@link TranslationEntry} in order to feed the
+	 * {@link SimpleTranslationEntry#getStoredTranslation()} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -105,9 +105,9 @@ public class SimpleTranslationEntry implements TranslationEntry {
 	}
 
 	/**
-	 * A {@link TranslationWriter} aims at replacing the reference translation
-	 * of a {@link TranslationEntry} by a new one, providing a way to execute
-	 * the {@link SimpleTranslationEntry#saveTranslation()} method.
+	 * A {@link TranslationWriter} aims at replacing the stored translation of a
+	 * {@link TranslationEntry} by a new one, providing a way to execute the
+	 * {@link SimpleTranslationEntry#saveTranslation()} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 

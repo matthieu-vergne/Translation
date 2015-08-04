@@ -22,9 +22,10 @@ public class SimpleTranslationMetadataTest extends TranslationMetadataTest {
 	@Override
 	protected TranslationMetadata createTranslationMetadata() {
 		SimpleTranslationMetadata metadata = new SimpleTranslationMetadata();
-		final Integer[] datastore = { getInitialReference(nonEditable0),
-				getInitialReference(nonEditable1),
-				getInitialReference(editable0), getInitialReference(editable1) };
+		final Integer[] datastore = { getInitialStoredValue(nonEditable0),
+				getInitialStoredValue(nonEditable1),
+				getInitialStoredValue(editable0),
+				getInitialStoredValue(editable1) };
 		metadata.configureField(nonEditable0,
 				new SimpleTranslationMetadata.FieldReader<Integer>() {
 
@@ -90,7 +91,7 @@ public class SimpleTranslationMetadataTest extends TranslationMetadataTest {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T getInitialReference(Field<T> field) {
+	protected <T> T getInitialStoredValue(Field<T> field) {
 		return (T) (Integer) 10;
 	}
 

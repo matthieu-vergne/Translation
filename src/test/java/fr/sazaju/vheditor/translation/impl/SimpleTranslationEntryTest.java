@@ -11,7 +11,7 @@ public class SimpleTranslationEntryTest extends TranslationEntryTest {
 	@Override
 	protected TranslationEntry createTranslationEntry() {
 		String original = "エントリー";
-		final String[] datastore = { getInitialReference() };
+		final String[] datastore = { getInitialStoredTranslation() };
 		TranslationReader reader = new TranslationReader() {
 
 			@Override
@@ -31,7 +31,7 @@ public class SimpleTranslationEntryTest extends TranslationEntryTest {
 	}
 
 	@Override
-	protected String getInitialReference() {
+	protected String getInitialStoredTranslation() {
 		return "Entry";
 	}
 

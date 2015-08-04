@@ -29,9 +29,9 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 	private final Set<Field<?>> orderedFields = new LinkedHashSet<Field<?>>();
 
 	/**
-	 * A {@link FieldReader} aims at retrieving the reference value of a given
+	 * A {@link FieldReader} aims at retrieving the stored value of a given
 	 * {@link Field} in order to feed the
-	 * {@link SimpleTranslationMetadata#getReference(Field)} method.
+	 * {@link SimpleTranslationMetadata#getStored(Field)} method.
 	 * 
 	 * @author Sazaju HITOKAGE <sazaju@gmail.com>
 	 * 
@@ -42,7 +42,7 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 	}
 
 	/**
-	 * A {@link FieldWriter} aims at replacing the reference value of a
+	 * A {@link FieldWriter} aims at replacing the stored value of a
 	 * {@link Field} by a new one, providing a way to execute the
 	 * {@link SimpleTranslationMetadata#save(Field)} method.
 	 * 
@@ -85,7 +85,7 @@ public class SimpleTranslationMetadata implements TranslationMetadata {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getReference(Field<T> field) {
+	public <T> T getStored(Field<T> field) {
 		return (T) readers.get(field).read();
 	}
 

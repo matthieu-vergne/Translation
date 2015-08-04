@@ -106,7 +106,7 @@ public class MapEntry extends Suite implements TranslationEntry {
 	}
 
 	@Override
-	public String getReferenceTranslation() {
+	public String getStoredTranslation() {
 		return reference;
 	}
 
