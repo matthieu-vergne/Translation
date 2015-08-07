@@ -30,6 +30,39 @@ public abstract class TranslationMapTest<Entry extends TranslationEntry<? extend
 		assertFalse("null instances are provided as maps", maps.contains(null));
 		assertEquals("the same maps are reused instead of creating new ones",
 				10, maps.size());
+
+		TranslationMap<Entry> map = createTranslationMap();
+		for (Entry entry : map) {
+			TranslationMetadata metadata = entry.getMetadata();
+			for (Field<?> field : metadata) {
+				if (metadata.isEditable(field)) {
+					stressNewValues(metadata, field);
+				} else {
+					// ignore
+				}
+			}
+		}
+	}
+
+	private <T> void stressNewValues(TranslationMetadata metadata,
+			Field<T> field) {
+		T currentValue = metadata.get(field);
+		for (int i = 0; i < 10; i++) {
+			T nextValue;
+			try {
+				nextValue = createNewEditableFieldValue(field, currentValue);
+			} catch (Exception e) {
+				fail("Exception thrown while asking a new value for " + field);
+				return;
+			}
+			String errorMessage = "the same value (" + currentValue
+					+ ") is returned when asking for a new one for " + field;
+			if (nextValue == null) {
+				assertFalse(errorMessage, nextValue == currentValue);
+			} else {
+				assertFalse(errorMessage, nextValue.equals(currentValue));
+			}
+		}
 	}
 
 	@Test

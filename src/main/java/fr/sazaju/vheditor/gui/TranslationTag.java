@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
@@ -22,13 +22,12 @@ public class TranslationTag<Entry extends TranslationEntry<?>> extends JPanel {
 
 	public TranslationTag(final Entry entry) {
 		this.entry = entry;
-		this.isMarked = entry.getMetadata()
-				.get(MapEntry.MARKED_AS_UNTRANSLATED);
+		this.isMarked = entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED);
 
 		final JLabel tag = new JLabel() {
 			@Override
 			public String getText() {
-				return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) ? "# UNTRANSLATED"
+				return entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED) ? "# UNTRANSLATED"
 						: "<html><s># UNTRANSLATED</s></html>";
 			}
 		};
@@ -38,21 +37,21 @@ public class TranslationTag<Entry extends TranslationEntry<?>> extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				entry.getMetadata().set(
-						MapEntry.MARKED_AS_UNTRANSLATED,
-						!entry.getMetadata().get(
-								MapEntry.MARKED_AS_UNTRANSLATED));
+						VHEntry.MARKED_AS_UNTRANSLATED,
+						!entry.getMetadata()
+								.get(VHEntry.MARKED_AS_UNTRANSLATED));
 				/*
 				 * Set a different text than the current value to force the
 				 * generation of the update event.
 				 */
 				tag.setText(""
 						+ entry.getMetadata().get(
-								MapEntry.MARKED_AS_UNTRANSLATED));
+								VHEntry.MARKED_AS_UNTRANSLATED));
 			}
 		}) {
 			@Override
 			public String getText() {
-				return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) ? "-"
+				return entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED) ? "-"
 						: "+";
 			}
 		};
@@ -78,10 +77,10 @@ public class TranslationTag<Entry extends TranslationEntry<?>> extends JPanel {
 	}
 
 	public boolean isModified() {
-		return entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED) != isMarked;
+		return entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED) != isMarked;
 	}
 
 	public void save() {
-		isMarked = entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED);
+		isMarked = entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED);
 	}
 }

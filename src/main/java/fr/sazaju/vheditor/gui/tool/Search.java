@@ -31,8 +31,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.commons.io.FileUtils;
 
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 
 @SuppressWarnings("serial")
 public class Search extends JPanel implements Tool {
@@ -309,11 +309,11 @@ public class Search extends JPanel implements Tool {
 			String mapContent = FileUtils.readFileToString(file, "UTF-8")
 					.replaceAll(blanks, " ");
 			if (mapContent.contains(searched)) {
-				BackedTranslationMap map = new BackedTranslationMap(file);
-				Iterator<MapEntry> iterator = map.iterator();
+				VHMap map = new VHMap(file);
+				Iterator<VHEntry> iterator = map.iterator();
 				int index = -1;
 				while (searching && iterator.hasNext()) {
-					MapEntry entry = iterator.next();
+					VHEntry entry = iterator.next();
 					index++;
 					String original = entry.getOriginalContent().replaceAll(
 							blanks, " ");

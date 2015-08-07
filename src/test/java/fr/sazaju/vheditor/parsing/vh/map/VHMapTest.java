@@ -10,22 +10,22 @@ import java.util.Comparator;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationMapTest;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 
-public class BackedTranslationMapTest extends TranslationMapTest<MapEntry> {
+public class VHMapTest extends TranslationMapTest<VHEntry> {
 
 	private final File testFolder = new File("src/test/resources");
 
 	@Override
-	protected TranslationMap<MapEntry> createTranslationMap() {
+	protected TranslationMap<VHEntry> createTranslationMap() {
 		try {
 			File templateFile = new File(testFolder, "map.txt");
 			File mapFile = File.createTempFile("map", ".txt");
 			FileUtils.copyFile(templateFile, mapFile);
-			return new BackedTranslationMap(mapFile);
+			return new VHMap(mapFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -34,7 +34,7 @@ public class BackedTranslationMapTest extends TranslationMapTest<MapEntry> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> T createNewEditableFieldValue(Field<T> field, T currentValue) {
-		if (field == MapEntry.MARKED_AS_UNTRANSLATED) {
+		if (field == VHEntry.MARKED_AS_UNTRANSLATED) {
 			return (T) (Boolean) !((Boolean) currentValue);
 		} else {
 			throw new RuntimeException("The field " + field
@@ -68,8 +68,7 @@ public class BackedTranslationMapTest extends TranslationMapTest<MapEntry> {
 						.replaceAll("[^ß]", "").length();
 
 				try {
-					BackedTranslationMap map = new BackedTranslationMap(
-							originalFile);
+					VHMap map = new VHMap(originalFile);
 					assertEquals(numberEntries,
 							map.sizeUsed() + map.sizeUnused());
 					FileUtils.write(writtenFile, map.getContent());

@@ -62,9 +62,9 @@ import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
 import fr.sazaju.vheditor.gui.tool.MapCellRenderer;
 import fr.sazaju.vheditor.gui.tool.MapTreeNode;
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.sazaju.vheditor.util.MapInformer;
 import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
@@ -803,12 +803,12 @@ public class MapListPanel extends JPanel {
 				logger.info("Analysing " + file.getName() + "...");
 				MapSummary summary = new MapSummary();
 				try {
-					BackedTranslationMap map = new BackedTranslationMap(file);
+					VHMap map = new VHMap(file);
 					summary.total = map.size();
 					summary.remaining = 0;
-					Iterator<MapEntry> iterator = map.iterator();
+					Iterator<VHEntry> iterator = map.iterator();
 					while (iterator.hasNext()) {
-						MapEntry entry = iterator.next();
+						VHEntry entry = iterator.next();
 						summary.remaining += TranslationUtil
 								.isActuallyTranslated(entry) ? 0 : 1;
 					}

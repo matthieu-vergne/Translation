@@ -11,17 +11,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
 import fr.sazaju.vheditor.parsing.vh.map.EndLine;
 import fr.sazaju.vheditor.parsing.vh.map.EntryLoop;
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
 import fr.sazaju.vheditor.parsing.vh.map.MapHeader;
 import fr.sazaju.vheditor.parsing.vh.map.StartLine;
 import fr.sazaju.vheditor.parsing.vh.map.TranslationLine;
 import fr.sazaju.vheditor.parsing.vh.map.UntranslatedLine;
 import fr.sazaju.vheditor.parsing.vh.map.UnusedTransLine;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.vergne.parsing.layer.Layer;
 import fr.vergne.parsing.layer.standard.Loop;
@@ -36,7 +36,7 @@ public class GuiBuilder {
 	public static Component instantiateMapGui(Layer layer) {
 		if (layer instanceof MapHeader || layer instanceof UnusedTransLine) {
 			return new JLabel(layer.getContent());
-		} else if (layer instanceof MapEntry) {
+		} else if (layer instanceof VHEntry) {
 			// use a specific panel to simplify the map browsing
 			JPanel panel = new EntryPanel();
 			panel.setOpaque(false);
@@ -46,7 +46,7 @@ public class GuiBuilder {
 			constraints.anchor = GridBagConstraints.LINE_START;
 			constraints.fill = GridBagConstraints.HORIZONTAL;
 			constraints.weightx = 1;
-			MapEntry mapEntry = (MapEntry) layer;
+			VHEntry mapEntry = (VHEntry) layer;
 			panel.add(instantiateEntryGui(mapEntry.get(0), mapEntry),
 					constraints);
 			panel.add(instantiateEntryGui(mapEntry.get(1), mapEntry),
@@ -70,16 +70,16 @@ public class GuiBuilder {
 			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 			panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 			EntryLoop loop = (EntryLoop) layer;
-			for (MapEntry mapEntry : loop) {
+			for (VHEntry mapEntry : loop) {
 				panel.add(instantiateMapGui(mapEntry));
 			}
 			return panel;
-		} else if (layer instanceof BackedTranslationMap) {
+		} else if (layer instanceof VHMap) {
 			JPanel panel = new JPanel();
 			panel.setOpaque(false);
 			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 			panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-			BackedTranslationMap map = (BackedTranslationMap) layer;
+			VHMap map = (VHMap) layer;
 			panel.add(instantiateMapGui(map.get(0)));
 			panel.add(instantiateMapGui(map.get(1)));
 

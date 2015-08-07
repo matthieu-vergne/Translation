@@ -6,14 +6,14 @@ import java.util.NoSuchElementException;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldReader;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldWriter;
+import fr.sazaju.vheditor.translation.impl.OnDemandMetadata;
+import fr.sazaju.vheditor.util.Reader;
+import fr.sazaju.vheditor.util.Writer;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 
-public class MapEntry extends Suite implements
-		TranslationEntry<SimpleTranslationMetadata> {
+public class VHEntry extends Suite implements
+		TranslationEntry<OnDemandMetadata> {
 
 	public static final Field<Boolean> MARKED_AS_UNTRANSLATED = new Field<Boolean>(
 			"Untranslated mark");
@@ -22,27 +22,27 @@ public class MapEntry extends Suite implements
 	public static final Field<Integer> CHAR_LIMIT_NO_FACE = new Field<Integer>(
 			"Char limit (no face)");
 	public static final Field<String> CONTEXT = new Field<String>("Context");
-	private final SimpleTranslationMetadata metadata;
+	private final OnDemandMetadata metadata;
 	private String translation = null;
 	private final Collection<TranslationListener> listeners = new HashSet<>();;
 	private final MapSaver saver;
 
-	public MapEntry(final MapSaver saver) {
+	public VHEntry(final MapSaver saver) {
 		super(new StartLine(), new Option<UntranslatedLine>(
 				new UntranslatedLine()), new ContextLine(),
 				new Option<AdviceLine>(new AdviceLine()), new ContentBlock(),
 				new TranslationLine(), new ContentBlock(), new EndLine());
 		this.saver = saver;
-		this.metadata = new SimpleTranslationMetadata();
+		this.metadata = new OnDemandMetadata();
 		this.metadata.configureField(MARKED_AS_UNTRANSLATED,
-				new FieldReader<Boolean>() {
+				new Reader<Boolean>() {
 
 					@Override
 					public Boolean read() {
 						Option<UntranslatedLine> option = get(1);
-						return !option.isPresent();
+						return option.isPresent();
 					}
-				}, new FieldWriter<Boolean>() {
+				}, new Writer<Boolean>() {
 
 					@Override
 					public void write(Boolean isMarkedAsTranslated) {
@@ -51,7 +51,7 @@ public class MapEntry extends Suite implements
 					}
 
 				});
-		this.metadata.configureField(CONTEXT, new FieldReader<String>() {
+		this.metadata.configureField(CONTEXT, new Reader<String>() {
 
 			@Override
 			public String read() {
@@ -59,44 +59,42 @@ public class MapEntry extends Suite implements
 				return context.getContext().getContent();
 			}
 		});
-		this.metadata.configureField(CHAR_LIMIT_FACE,
-				new FieldReader<Integer>() {
+		this.metadata.configureField(CHAR_LIMIT_FACE, new Reader<Integer>() {
 
-					@Override
-					public Integer read() {
-						Option<AdviceLine> option = get(3);
-						if (option.isPresent()) {
-							AdviceLine advice = option.getOption();
-							try {
-								return Integer.parseInt(advice.getFaceLimit()
-										.getContent());
-							} catch (NoSuchElementException e) {
-								return null;
-							}
-						} else {
-							return null;
-						}
+			@Override
+			public Integer read() {
+				Option<AdviceLine> option = get(3);
+				if (option.isPresent()) {
+					AdviceLine advice = option.getOption();
+					try {
+						return Integer.parseInt(advice.getFaceLimit()
+								.getContent());
+					} catch (NoSuchElementException e) {
+						return null;
 					}
-				});
-		this.metadata.configureField(CHAR_LIMIT_NO_FACE,
-				new FieldReader<Integer>() {
+				} else {
+					return null;
+				}
+			}
+		});
+		this.metadata.configureField(CHAR_LIMIT_NO_FACE, new Reader<Integer>() {
 
-					@Override
-					public Integer read() {
-						Option<AdviceLine> option = get(3);
-						if (option.isPresent()) {
-							AdviceLine advice = option.getOption();
-							try {
-								return Integer.parseInt(advice
-										.getGeneralLimit().getContent());
-							} catch (NoSuchElementException e) {
-								return null;
-							}
-						} else {
-							return null;
-						}
+			@Override
+			public Integer read() {
+				Option<AdviceLine> option = get(3);
+				if (option.isPresent()) {
+					AdviceLine advice = option.getOption();
+					try {
+						return Integer.parseInt(advice.getGeneralLimit()
+								.getContent());
+					} catch (NoSuchElementException e) {
+						return null;
 					}
-				});
+				} else {
+					return null;
+				}
+			}
+		});
 	}
 
 	@Override
@@ -175,7 +173,7 @@ public class MapEntry extends Suite implements
 	}
 
 	@Override
-	public SimpleTranslationMetadata getMetadata() {
+	public OnDemandMetadata getMetadata() {
 		return metadata;
 	}
 
@@ -195,6 +193,6 @@ public class MapEntry extends Suite implements
 
 	private void applyUntranslatedTag(Boolean isMarkedAsTranslated) {
 		Option<UntranslatedLine> option = get(1);
-		option.setContent(!isMarkedAsTranslated ? "# UNTRANSLATED\n" : "");
+		option.setContent(isMarkedAsTranslated ? "# UNTRANSLATED\n" : "");
 	}
 }

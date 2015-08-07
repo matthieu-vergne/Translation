@@ -8,24 +8,23 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.io.FileUtils;
 
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry.MapSaver;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry.MapSaver;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.vergne.parsing.layer.standard.GreedyMode;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 
-public class BackedTranslationMap extends Suite implements
-		TranslationMap<MapEntry> {
+public class VHMap extends Suite implements TranslationMap<VHEntry> {
 
 	private static final String ENCODING = "UTF-8";
 	private File file;
 
-	public BackedTranslationMap(File file) throws IOException {
+	public VHMap(File file) throws IOException {
 		this();
 		setBaseFile(file);
 	}
 
-	public BackedTranslationMap(Saver saver) {
+	public VHMap(Saver saver) {
 		super(new MapHeader(), new EntryLoop(saver), new Option<Suite>(
 				new Suite(new UnusedTransLine(), new EntryLoop(saver)),
 				GreedyMode.POSSESSIVE));
@@ -36,7 +35,7 @@ public class BackedTranslationMap extends Suite implements
 
 	private static class Saver implements MapSaver {
 
-		BackedTranslationMap map = null;
+		VHMap map = null;
 
 		@Override
 		public void saveMapFile() {
@@ -49,7 +48,7 @@ public class BackedTranslationMap extends Suite implements
 
 	}
 
-	public BackedTranslationMap() {
+	public VHMap() {
 		this(new Saver());
 		saver.map = this;
 	}
@@ -61,27 +60,26 @@ public class BackedTranslationMap extends Suite implements
 		}
 	}
 
-	public Iterator<? extends MapEntry> iteratorUsed() {
+	public Iterator<? extends VHEntry> iteratorUsed() {
 		EntryLoop usedEntries = get(1);
 		return usedEntries.iterator();
 	}
 
-	public Iterator<? extends MapEntry> iteratorUnused() {
+	public Iterator<? extends VHEntry> iteratorUnused() {
 		Option<Suite> option = get(2);
 		if (option.isPresent()) {
 			EntryLoop unusedEntries = option.getOption().get(1);
 			return unusedEntries.iterator();
 		} else {
-			return new LinkedList<MapEntry>().iterator();
+			return new LinkedList<VHEntry>().iterator();
 		}
 	}
 
 	/**
-	 * This method set the base file of this {@link BackedTranslationMap}. If it
-	 * is different from the previous base file, the file is parsed and the
-	 * content of this map updated correspondingly. Otherwise, nothing change.
-	 * If you want to reset changes made on this map, use the
-	 * {@link #resetAll()} method.
+	 * This method set the base file of this {@link VHMap}. If it is different
+	 * from the previous base file, the file is parsed and the content of this
+	 * map updated correspondingly. Otherwise, nothing change. If you want to
+	 * reset changes made on this map, use the {@link #resetAll()} method.
 	 * 
 	 * @param file
 	 *            the map file to parse
@@ -105,12 +103,12 @@ public class BackedTranslationMap extends Suite implements
 		return file;
 	}
 
-	public MapEntry getUsedEntry(int index) {
+	public VHEntry getUsedEntry(int index) {
 		EntryLoop usedEntries = get(1);
 		return usedEntries.get(index);
 	}
 
-	public MapEntry getUnusedEntry(int index) {
+	public VHEntry getUnusedEntry(int index) {
 		Option<Suite> option = get(2);
 		if (option.isPresent()) {
 			EntryLoop unusedEntries = option.getOption().get(1);
@@ -137,9 +135,9 @@ public class BackedTranslationMap extends Suite implements
 	}
 
 	@Override
-	public Iterator<MapEntry> iterator() {
-		return new Iterator<MapEntry>() {
-			private final Iterator<? extends MapEntry> iterator = iteratorUsed();
+	public Iterator<VHEntry> iterator() {
+		return new Iterator<VHEntry>() {
+			private final Iterator<? extends VHEntry> iterator = iteratorUsed();
 
 			@Override
 			public boolean hasNext() {
@@ -147,7 +145,7 @@ public class BackedTranslationMap extends Suite implements
 			}
 
 			@Override
-			public MapEntry next() {
+			public VHEntry next() {
 				return iterator.next();
 			}
 
@@ -160,7 +158,7 @@ public class BackedTranslationMap extends Suite implements
 	}
 
 	@Override
-	public MapEntry getEntry(int index) {
+	public VHEntry getEntry(int index) {
 		return getUsedEntry(index);
 	}
 
@@ -171,7 +169,7 @@ public class BackedTranslationMap extends Suite implements
 
 	@Override
 	public void saveAll() {
-		for (MapEntry entry : this) {
+		for (VHEntry entry : this) {
 			entry.pseudoSaveAll();
 		}
 		saver.saveMapFile();
@@ -179,7 +177,7 @@ public class BackedTranslationMap extends Suite implements
 
 	@Override
 	public void resetAll() {
-		for (MapEntry entry : this) {
+		for (VHEntry entry : this) {
 			entry.resetAll();
 		}
 	}

@@ -30,9 +30,9 @@ import javax.swing.border.EtchedBorder;
 import org.apache.commons.lang3.ArrayUtils;
 
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap;
-import fr.sazaju.vheditor.parsing.vh.map.BackedTranslationMap.EmptyMapException;
-import fr.sazaju.vheditor.parsing.vh.map.MapEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
@@ -44,7 +44,7 @@ public class MapContentPanel extends JPanel {
 	private final JPanel mapLoadingArea;
 	private final JScrollPane mapContentScroll;
 	private final JLabel mapTitleField;
-	private final BackedTranslationMap map = new BackedTranslationMap();
+	private final VHMap map = new VHMap();
 	private final LoadingManager loading;
 	private final JLabel loadingLabel;
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
@@ -303,12 +303,12 @@ public class MapContentPanel extends JPanel {
 
 	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
 		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<MapEntry> iterator = map.iterator();
+		Iterator<VHEntry> iterator = map.iterator();
 		int count = 0;
 		while (iterator.hasNext()) {
-			MapEntry entry = iterator.next();
+			VHEntry entry = iterator.next();
 			if (relyOnTags
-					&& entry.getMetadata().get(MapEntry.MARKED_AS_UNTRANSLATED)
+					&& entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED)
 					|| !relyOnTags
 					&& !TranslationUtil.isActuallyTranslated(entry)) {
 				untranslatedEntries.add(count);

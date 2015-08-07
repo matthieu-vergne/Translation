@@ -3,49 +3,48 @@ package fr.sazaju.vheditor.translation.impl;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntryTest;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationEntry.TranslationReader;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationEntry.TranslationWriter;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldReader;
-import fr.sazaju.vheditor.translation.impl.SimpleTranslationMetadata.FieldWriter;
+import fr.sazaju.vheditor.util.Reader;
+import fr.sazaju.vheditor.util.Writer;
+import fr.sazaju.vheditor.util.impl.ConstantReader;
 
-public class SimpleTranslationEntryTest extends
-		TranslationEntryTest<SimpleTranslationMetadata> {
+public class OnDemandEntryTest extends
+		TranslationEntryTest<OnDemandMetadata> {
 
 	@Override
-	protected TranslationEntry<SimpleTranslationMetadata> createTranslationEntry() {
-		String original = "エントリー";
+	protected TranslationEntry<OnDemandMetadata> createTranslationEntry() {
 		final String[] datastore = { getInitialStoredTranslation() };
 		final Integer[] metadatastore = { 10 };
-		TranslationReader reader = new TranslationReader() {
+		Reader<String> original = new ConstantReader<String>("エントリー");
+		Reader<String> reader = new Reader<String>() {
 
 			@Override
 			public String read() {
 				return datastore[0];
 			}
 		};
-		TranslationWriter writer = new TranslationWriter() {
+		Writer<String> writer = new Writer<String>() {
 
 			@Override
 			public void write(String translation) {
 				datastore[0] = translation;
 			}
 		};
-		SimpleTranslationMetadata metadata = new SimpleTranslationMetadata();
+		OnDemandMetadata metadata = new OnDemandMetadata();
 		metadata.configureField(new Field<Integer>("integer"),
-				new FieldReader<Integer>() {
+				new Reader<Integer>() {
 
 					@Override
 					public Integer read() {
 						return metadatastore[0];
 					}
-				}, new FieldWriter<Integer>() {
+				}, new Writer<Integer>() {
 
 					@Override
 					public void write(Integer value) {
 						metadatastore[0] = value;
 					}
 				});
-		return new SimpleTranslationEntry<>(original, reader, writer, metadata);
+		return new OnDemandEntry<>(original, reader, writer, metadata);
 	}
 
 	@Override
