@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EnrichedComponent;
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
@@ -150,14 +151,15 @@ public class GuiBuilder {
 	}
 
 	@SuppressWarnings("serial")
-	public static class EntryPanel extends JPanel {
+	public static class EntryPanel extends JPanel implements EnrichedComponent {
 
-		public TranslationArea getTranslationArea() {
+		@Override
+		public TranslationArea getTranslationComponent() {
 			return (TranslationArea) getComponent(6);
 		}
 
 		public TranslationEntry<?> getEntry() {
-			return getTranslationArea().getEntry();
+			return getTranslationComponent().getEntry();
 		}
 
 		@SuppressWarnings("unchecked")

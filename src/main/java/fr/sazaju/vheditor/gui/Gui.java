@@ -38,8 +38,13 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
+import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
+import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap;
+import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
@@ -88,7 +93,14 @@ public class Gui extends JFrame {
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
 		final MapListPanel listPanel = new MapListPanel();
-		final MapContentPanel mapPanel = new MapContentPanel();
+		final MapContentPanel<VHEntry, VHMap, EntryPanel> mapPanel = new MapContentPanel<>(
+				new EntryComponentFactory<VHEntry, EntryPanel>() {
+
+					@Override
+					public EntryPanel createEntryComponent(VHEntry entry) {
+						return (EntryPanel) GuiBuilder.instantiateMapGui(entry);
+					}
+				}, VHEntry.MARKED_AS_UNTRANSLATED);
 		configureListeners(listPanel, mapPanel);
 		ToolPanel toolPanel = new ToolPanel();
 
@@ -101,12 +113,30 @@ public class Gui extends JFrame {
 
 			@Override
 			public void loadMap(File mapFile) {
-				mapPanel.setMap(mapFile);
+				try {
+					mapPanel.setMap(new VHMap(mapFile));
+				} catch (EmptyMapException e) {
+					JOptionPane.showMessageDialog(Gui.this, "The map "
+							+ mapFile + " is empty.", "Empty Map",
+							JOptionPane.WARNING_MESSAGE);
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 
 			@Override
 			public void loadMapEntry(File mapFile, int entryIndex) {
-				mapPanel.setMap(mapFile, entryIndex);
+				try {
+					mapPanel.setMap(new VHMap(mapFile), entryIndex);
+				} catch (EmptyMapException e) {
+					JOptionPane.showMessageDialog(Gui.this, "The map "
+							+ mapFile + " is empty.", "Empty Map",
+							JOptionPane.WARNING_MESSAGE);
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		};
 		configureTools(toolPanel, provider);
@@ -197,7 +227,7 @@ public class Gui extends JFrame {
 	}
 
 	private void configureListeners(final MapListPanel listPanel,
-			final MapContentPanel mapPanel) {
+			final MapContentPanel<VHEntry, VHMap, ?> mapPanel) {
 		addWindowListener(new WindowListener() {
 
 			@Override
@@ -245,29 +275,38 @@ public class Gui extends JFrame {
 			@Override
 			public void fileSelected(File file) {
 				if (isMapSafe(mapPanel)) {
-					mapPanel.setMap(file);
+					try {
+						mapPanel.setMap(new VHMap(file));
+					} catch (EmptyMapException e) {
+						JOptionPane.showMessageDialog(Gui.this, "The map "
+								+ file + " is empty.", "Empty Map",
+								JOptionPane.WARNING_MESSAGE);
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
 					// map unsafe
 				}
 			}
 		});
 
-		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
+		mapPanel.addListener(new MapContentPanel.MapSavedListener<VHMap>() {
 
 			@Override
-			public void mapSaved(final File mapFile) {
+			public void mapSaved(final VHMap map) {
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
-						listPanel.updateMapSummary(mapFile, true);
+						listPanel.updateMapSummary(map.getBaseFile(), true);
 					}
 				});
 			}
 		});
 	}
 
-	private JPanel configureButtons(final MapContentPanel mapPanel) {
+	private JPanel configureButtons(final MapContentPanel<?, ?, ?> mapPanel) {
 		ActionMap actions = getRootPane().getActionMap();
 		InputMap inputs = getRootPane().getInputMap(
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -417,8 +456,8 @@ public class Gui extends JFrame {
 		return buttonPanel;
 	}
 
-	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
-		boolean mapSafe = !mapContentPanel.isModified();
+	private boolean isMapSafe(final MapContentPanel<?, ?, ?> mapContentPanel) {
+		boolean mapSafe = !mapContentPanel.isMapModified();
 		if (!mapSafe) {
 			int answer = JOptionPane.showOptionDialog(Gui.this,
 					"The map has been modified. Would you like to save it?",
