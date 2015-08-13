@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JButton;
+
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
@@ -144,4 +146,25 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 		modifiedMaps.clear();
 	}
 
+	private final Map<TMapID, String> mapNames = new HashMap<>();
+
+	@Override
+	public String getMapName(TMapID id) {
+		return mapNames.get(id);
+	}
+
+	public void setMapName(TMapID id, String name) {
+		mapNames.put(id, name);
+	}
+
+	private final Collection<JButton> features = new LinkedHashSet<>();
+
+	@Override
+	public Collection<JButton> getExtraFeatures() {
+		return features;
+	}
+
+	public void addExtraFeature(JButton feature) {
+		features.add(feature);
+	}
 }

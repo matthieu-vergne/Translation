@@ -2,7 +2,6 @@ package fr.sazaju.vheditor.gui.tool;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.io.File;
 import java.util.logging.Logger;
 
 import javax.swing.JTree;
@@ -14,16 +13,14 @@ import fr.sazaju.vheditor.util.MapInformer.NoDataException;
 import fr.sazaju.vheditor.util.MapNamer;
 import fr.vergne.logging.LoggerConfiguration;
 
-public class MapCellRenderer implements TreeCellRenderer {
+public class MapCellRenderer<MapID> implements TreeCellRenderer {
 
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final TreeCellRenderer basicRenderer;
-	// TODO generalize to any type, not only File
-	private final MapInformer<File> informer;
+	private final MapInformer<MapID> informer;
 
-	// TODO generalize to any type, not only File
 	public MapCellRenderer(TreeCellRenderer basicRenderer,
-			MapInformer<File> informer) {
+			MapInformer<MapID> informer) {
 		this.basicRenderer = basicRenderer;
 		this.informer = informer;
 	}
@@ -34,12 +31,12 @@ public class MapCellRenderer implements TreeCellRenderer {
 			boolean hasFocus) {
 		if (cell instanceof MapTreeNode) {
 			@SuppressWarnings("unchecked")
-			File file = ((MapTreeNode<File>) cell).getMapID();
+			MapID id = ((MapTreeNode<MapID>) cell).getMapID();
 
 			String description;
 			try {
-				int remaining = informer.getEntriesRemaining(file);
-				int total = informer.getEntriesCount(file);
+				int remaining = informer.getEntriesRemaining(id);
+				int total = informer.getEntriesCount(id);
 				if (remaining > 0) {
 					int percent = 100 - 100 * remaining / total;
 					description = percent + "%, " + remaining + " remaining";
@@ -50,12 +47,12 @@ public class MapCellRenderer implements TreeCellRenderer {
 				description = "loading";
 			}
 
-			String value = mapNamer.getNameFor(file) + " (" + description + ")";
+			String label = mapNamer.getNameFor(id) + " (" + description + ")";
 			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) basicRenderer
-					.getTreeCellRendererComponent(tree, value, selected,
+					.getTreeCellRendererComponent(tree, label, selected,
 							expanded, leaf, row, hasFocus);
 			try {
-				if (informer.getEntriesRemaining(file) == 0) {
+				if (informer.getEntriesRemaining(id) == 0) {
 					renderer.setEnabled(false);
 				} else {
 					// keep it as is
@@ -73,22 +70,19 @@ public class MapCellRenderer implements TreeCellRenderer {
 		}
 	}
 
-	// TODO generalize to any type, not only File
-	private MapNamer<File> mapNamer = new MapNamer<File>() {
+	private MapNamer<MapID> mapNamer = new MapNamer<MapID>() {
 
 		@Override
-		public String getNameFor(File file) {
-			return file.getName();
+		public String getNameFor(MapID id) {
+			return id.toString();
 		}
 	};
 
-	// TODO generalize to any type, not only File
-	public void setMapNamer(MapNamer<File> mapNamer) {
+	public void setMapNamer(MapNamer<MapID> mapNamer) {
 		this.mapNamer = mapNamer;
 	}
 
-	// TODO generalize to any type, not only File
-	public MapNamer<File> getMapNamer() {
+	public MapNamer<MapID> getMapNamer() {
 		return mapNamer;
 	}
 }

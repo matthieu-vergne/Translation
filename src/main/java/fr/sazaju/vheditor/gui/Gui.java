@@ -39,12 +39,15 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
+import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
+import fr.sazaju.vheditor.parsing.vh.VHProject;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
+import fr.sazaju.vheditor.util.ProjectLoader;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
@@ -92,7 +95,14 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
-		final MapListPanel listPanel = new MapListPanel();
+		final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel = new MapListPanel<>(
+				new ProjectLoader<VHProject>() {
+
+					@Override
+					public VHProject load(File directory) {
+						return new VHProject(directory);
+					}
+				});
 		final MapContentPanel<VHEntry, VHMap, EntryPanel> mapPanel = new MapContentPanel<>(
 				new EntryComponentFactory<VHEntry, EntryPanel>() {
 
@@ -112,12 +122,12 @@ public class Gui extends JFrame {
 			}
 
 			@Override
-			public void loadMap(File mapFile) {
+			public void loadMap(File file) {
 				try {
-					mapPanel.setMap(new VHMap(mapFile));
+					mapPanel.setMap(new VHMap(file), file.toString());
 				} catch (EmptyMapException e) {
-					JOptionPane.showMessageDialog(Gui.this, "The map "
-							+ mapFile + " is empty.", "Empty Map",
+					JOptionPane.showMessageDialog(Gui.this, "The map " + file
+							+ " is empty.", "Empty Map",
 							JOptionPane.WARNING_MESSAGE);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
@@ -126,12 +136,13 @@ public class Gui extends JFrame {
 			}
 
 			@Override
-			public void loadMapEntry(File mapFile, int entryIndex) {
+			public void loadMapEntry(File file, int entryIndex) {
 				try {
-					mapPanel.setMap(new VHMap(mapFile), entryIndex);
+					mapPanel.setMap(new VHMap(file), file.toString(),
+							entryIndex);
 				} catch (EmptyMapException e) {
-					JOptionPane.showMessageDialog(Gui.this, "The map "
-							+ mapFile + " is empty.", "Empty Map",
+					JOptionPane.showMessageDialog(Gui.this, "The map " + file
+							+ " is empty.", "Empty Map",
 							JOptionPane.WARNING_MESSAGE);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
@@ -226,7 +237,8 @@ public class Gui extends JFrame {
 		});
 	}
 
-	private void configureListeners(final MapListPanel listPanel,
+	private void configureListeners(
+			final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel,
 			final MapContentPanel<VHEntry, VHMap, ?> mapPanel) {
 		addWindowListener(new WindowListener() {
 
@@ -270,13 +282,13 @@ public class Gui extends JFrame {
 			}
 		});
 
-		listPanel.addListener(new MapListPanel.FileSelectedListener() {
+		listPanel.addListener(new MapSelectedListener<File>() {
 
 			@Override
-			public void fileSelected(File file) {
+			public void mapSelected(File file) {
 				if (isMapSafe(mapPanel)) {
 					try {
-						mapPanel.setMap(new VHMap(file));
+						mapPanel.setMap(new VHMap(file), file.toString());
 					} catch (EmptyMapException e) {
 						JOptionPane.showMessageDialog(Gui.this, "The map "
 								+ file + " is empty.", "Empty Map",

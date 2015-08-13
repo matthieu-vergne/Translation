@@ -1,6 +1,9 @@
 package fr.sazaju.vheditor.translation;
 
+import java.util.Collection;
 import java.util.Iterator;
+
+import javax.swing.JButton;
 
 public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 		extends Iterable<MapID> {
@@ -23,6 +26,21 @@ public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 	public Map getMap(MapID id);
 
 	/**
+	 * This method allows to know the purpose of a given {@link Map}. A
+	 * {@link Map} corresponding to a set of {@link TranslationEntry}s which
+	 * share the same purpose, this purpose should be known in some way. Because
+	 * this purpose is decided before to create the {@link Map} (the {@link Map}
+	 * is made in a given way <i>because</i> we want it to have a given
+	 * purpose), thus it is an information which relates to the full
+	 * {@link TranslationProject}, which represents the context in which this
+	 * purpose makes sense. For practicality, the purpose is represented as a
+	 * name for the {@link Map}, so it can be used easily for display.
+	 * 
+	 * @return the name of a given {@link Map}
+	 */
+	public String getMapName(MapID id);
+
+	/**
 	 * @return the number of {@link Map}s in this {@link TranslationProject}
 	 */
 	public int size();
@@ -30,16 +48,19 @@ public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 	/**
 	 * This method should be equivalent to calling
 	 * {@link TranslationMap#saveAll()} for each {@link TranslationMap} of this
-	 * {@link TranslationProject} in an atomic way, thus reducing the
-	 * overhead of calling each one separately.
+	 * {@link TranslationProject} in an atomic way, thus reducing the overhead
+	 * of calling each one separately.
 	 */
 	public void saveAll();
 
 	/**
 	 * This method should be equivalent to calling
 	 * {@link TranslationMap#resetAll()} for each {@link TranslationMap} of this
-	 * {@link TranslationProject} in an atomic way, thus reducing the
-	 * overhead of calling each one separately.
+	 * {@link TranslationProject} in an atomic way, thus reducing the overhead
+	 * of calling each one separately.
 	 */
 	public void resetAll();
+	
+	// TODO refine for a more generic design
+	public Collection<JButton> getExtraFeatures();
 }

@@ -11,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JButton;
+
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
@@ -146,5 +148,28 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 			map.resetAll();
 		}
 		modifiedMaps.clear();
+	}
+
+	private final Map<File, String> mapNames = new HashMap<>();
+
+	@Override
+	public String getMapName(File id) {
+		return mapNames.get(id);
+	}
+
+	public void setMapName(File id, String name) {
+		mapNames.put(id, name);
+	}
+	
+	
+	private final Collection<JButton> features = new LinkedHashSet<>();
+	
+	@Override
+	public Collection<JButton> getExtraFeatures() {
+		return features;
+	}
+	
+	public void addExtraFeature(JButton feature) {
+		features.add(feature);
 	}
 }

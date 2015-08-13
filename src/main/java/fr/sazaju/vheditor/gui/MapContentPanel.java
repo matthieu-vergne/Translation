@@ -157,15 +157,15 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		}
 	}
 
-	public void setMap(Map map) {
-		setMap(map, 0);
+	public void setMap(Map map, String name) {
+		setMap(map, name, 0);
 	}
 
-	public void setMap(final Map map, final int entryIndex) {
+	public void setMap(final Map map, final String name, final int entryIndex) {
 		if (this.map != null && this.map.equals(map)) {
 			goToEntry(entryIndex);
 		} else {
-			loadingLabel.setText("Loading map " + map + "...");
+			loadingLabel.setText("Loading map " + name + "...");
 			loading.start();
 			this.map = map;
 			SwingUtilities.invokeLater(new Runnable() {
@@ -174,7 +174,7 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 				public void run() {
 					synchronized (map) {
 						// TODO add map title (English label)
-						mapTitleField.setText(map.toString());
+						mapTitleField.setText(name);
 						mapContentArea.removeAll();
 						entryComponents.clear();
 
