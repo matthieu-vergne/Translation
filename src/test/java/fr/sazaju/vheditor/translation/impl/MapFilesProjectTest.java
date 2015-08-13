@@ -2,8 +2,10 @@ package fr.sazaju.vheditor.translation.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+
+import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
@@ -18,10 +20,18 @@ public class MapFilesProjectTest extends TranslationProjectTest<File, VHMap> {
 
 	@Override
 	protected TranslationProject<File, VHMap> createTranslationProject() {
-		File file1 = new File(testDirectory, "Map1.txt");
-		File file2 = new File(testDirectory, "Map2.txt");
-		File file3 = new File(testDirectory, "Map3.txt");
-		Collection<File> files = Arrays.asList(file1, file2, file3);
+		Collection<File> files = new LinkedList<>();
+		try {
+			for (String map : new String[] { "Map1.txt", "Map2.txt", "Map3.txt" }) {
+				File original = new File(testDirectory, map);
+				File copy = File.createTempFile("test", map);
+				FileUtils.copyFile(original, copy);
+				files.add(copy);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		MultiReader<File, VHMap> mapReader = new MultiReader<File, VHMap>() {
 
 			@Override
