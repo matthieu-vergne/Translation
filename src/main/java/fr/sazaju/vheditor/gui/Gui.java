@@ -15,13 +15,8 @@ import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
-import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -41,6 +36,7 @@ import javax.swing.border.EtchedBorder;
 import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
+import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
 import fr.sazaju.vheditor.parsing.vh.VHProject;
@@ -65,32 +61,10 @@ public class Gui extends JFrame {
 	private static final String CONFIG_WIDTH = "width";
 	private static final String CONFIG_HEIGHT = "height";
 	private static final String CONFIG_SPLIT = "split";
-	public static final File configFile = new File("vh-editor.ini");
-	public static final Properties config = new Properties() {
-		public synchronized Object setProperty(String key, String value) {
-			Object result = super.setProperty(key, value);
-			try {
-				configFile.createNewFile();
-				store(new FileOutputStream(configFile), null);
-			} catch (IOException e) {
-				throw new RuntimeException(
-						"Impossible to create the config file " + configFile, e);
-			}
-			return result;
-		};
-	};
+	public static final FileBasedProperties config = new FileBasedProperties(
+			"vh-editor.ini", true);
 
 	public Gui() {
-		try {
-			InputStream is = new FileInputStream(configFile);
-			config.load(is);
-		} catch (FileNotFoundException e) {
-			// the file just does not exist yet
-		} catch (IOException e) {
-			throw new RuntimeException("Impossible to load the config file "
-					+ configFile, e);
-		}
-
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);

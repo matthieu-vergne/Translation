@@ -11,8 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JButton;
-
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
@@ -20,6 +18,7 @@ import fr.sazaju.vheditor.translation.TranslationMetadata;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
 import fr.sazaju.vheditor.translation.TranslationProject;
+import fr.sazaju.vheditor.util.Feature;
 import fr.sazaju.vheditor.util.MultiReader;
 import fr.sazaju.vheditor.util.Writer;
 
@@ -160,16 +159,16 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 	public void setMapName(File id, String name) {
 		mapNames.put(id, name);
 	}
-	
-	
-	private final Collection<JButton> features = new LinkedHashSet<>();
-	
+
+	private final Collection<Feature> features = new LinkedHashSet<>();
+
 	@Override
-	public Collection<JButton> getExtraFeatures() {
+	public Collection<Feature> getFeatures() {
 		return features;
 	}
-	
-	public void addExtraFeature(JButton feature) {
+
+	public void addFeature(Feature feature) {
 		features.add(feature);
 	}
+
 }

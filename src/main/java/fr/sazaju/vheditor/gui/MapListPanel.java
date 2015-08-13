@@ -50,7 +50,9 @@ import fr.sazaju.vheditor.gui.tool.MapTreeNode;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationProject;
+import fr.sazaju.vheditor.translation.impl.EmptyProject;
 import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.util.Feature;
 import fr.sazaju.vheditor.util.MapInformer;
 import fr.sazaju.vheditor.util.MapInformer.MapSummaryListener;
 import fr.sazaju.vheditor.util.MapInformer.NoDataException;
@@ -82,25 +84,14 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				}
 			});
 	private final ProjectLoader<TProject> projectLoader;
-	private TProject project;
+	private TranslationProject<MapID, TMap> project = new EmptyProject<>();
+	private final Collection<MapListListener> listeners = new HashSet<MapListListener>();
+	private final JPanel featureRow = new JPanel(new FlowLayout());
 
 	public MapListPanel(ProjectLoader<TProject> projectLoader) {
 		this.projectLoader = projectLoader;
-		File projectDirectory = new File(Gui.config.getProperty(CONFIG_MAP_DIR,
-				""));
-		this.project = projectLoader.load(projectDirectory);
 
 		final MapInformer<MapID> mapInformer = new MapInformer<MapID>() {
-
-			@Override
-			public String getLabel(MapID id) throws NoDataException {
-				String label = project.getMapName(id);
-				if (label == null) {
-					throw new NoDataException();
-				} else {
-					return label;
-				}
-			}
 
 			@Override
 			public int getEntriesCount(MapID id) throws NoDataException {
@@ -138,20 +129,15 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 			@Override
 			public String getNameFor(MapID id) {
-				String label;
-				try {
-					label = mapInformer.getLabel(id);
-				} catch (NoDataException e) {
-					label = null;
-				}
-				if (label == null || !label.matches("[^a-zA-Z]*[a-zA-Z]+.*")) {
+				String label = project.getMapName(id);
+				if (label == null) {
 					return "[" + id + "]";
 				} else {
 					return label;
 				}
 			}
 		};
-		namers.put(Order.PURPOSE, labelNamer);
+		namers.put(Order.NAME, labelNamer);
 		final MapNamer<MapID> idNamer = new MapNamer<MapID>() {
 
 			@Override
@@ -185,17 +171,21 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		add(options, constraints);
 
 		configureBackgroundSummarizing();
-		loadProjectFrom(projectDirectory);
+		String projectPath = Gui.config.getProperty(CONFIG_MAP_DIR, null);
+		if (projectPath == null) {
+			// nothing to load
+		} else {
+			loadProjectFrom(new File(projectPath));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private JPanel buildQuickOptions(final MapNamer<MapID> labelNamer,
 			final MapNamer<MapID> idNamer) {
 		JPanel buttons = new JPanel(new GridLayout(0, 1));
-		JPanel row1 = new JPanel(new FlowLayout());
-		JPanel row2 = new JPanel(new FlowLayout());
-		buttons.add(row1);
-		buttons.add(row2);
+		JPanel options = new JPanel(new FlowLayout());
+		buttons.add(options);
+		buttons.add(featureRow);
 
 		final JCheckBox displayCleared = new JCheckBox();
 		displayCleared.setAction(new AbstractAction("Cleared") {
@@ -211,7 +201,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		displayCleared.setSelected(((ListModel<MapID>) tree.getModel())
 				.isClearedDisplayed());
 		displayCleared.setToolTipText("Display cleared maps.");
-		row1.add(displayCleared);
+		options.add(displayCleared);
 
 		final JCheckBox displayLabels = new JCheckBox();
 		displayLabels.setAction(new AbstractAction("Labels") {
@@ -229,12 +219,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		displayLabels.setSelected(Boolean.parseBoolean(Gui.config.getProperty(
 				CONFIG_LABELS_DISPLAYED, "false")));
 		displayLabels.setToolTipText("Display maps' English labels.");
-		row1.add(displayLabels);
-
-		for (JButton feature : project.getExtraFeatures()) {
-			row2.add(feature);
-		}
-		;
+		options.add(displayLabels);
 
 		final JComboBox<Order> sortingChoice = new JComboBox<>(Order.values());
 		sortingChoice.addActionListener(new ActionListener() {
@@ -247,11 +232,15 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 						.get(order));
 			}
 		});
-		sortingChoice.setSelectedItem(((ListModel<MapID>) tree.getModel())
-				.getOrderNamer());
+		try {
+			sortingChoice.setSelectedItem(Order.valueOf(Gui.config.getProperty(
+					CONFIG_LIST_ORDER, Order.ID.toString())));
+		} catch (IllegalArgumentException e) {
+			sortingChoice.setSelectedItem(Order.ID);
+		}
 		sortingChoice.setToolTipText("Choose map sorting order.");
-		row1.add(new JLabel("Sort: "));
-		row1.add(sortingChoice);
+		options.add(new JLabel("Sort: "));
+		options.add(sortingChoice);
 
 		return buttons;
 	}
@@ -260,6 +249,20 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	private void loadProjectFrom(File directory) {
 		synchronized (mapSummaries) {
 			project = projectLoader.load(directory);
+
+			featureRow.removeAll();
+			for (final Feature feature : project.getFeatures()) {
+				JButton featuerButton = new JButton();
+				featuerButton.setAction(new AbstractAction(feature.getName()) {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						feature.run();
+					}
+				});
+				featuerButton.setToolTipText(feature.getDescription());
+				featureRow.add(featuerButton);
+			}
 
 			Collection<MapID> newIDs = new LinkedList<>();
 			for (MapID id : project) {
@@ -643,8 +646,6 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		int remaining;
 	}
 
-	private final Collection<MapListListener> listeners = new HashSet<MapListListener>();
-
 	public void addListener(MapListListener listener) {
 		listeners.add(listener);
 	}
@@ -676,8 +677,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		 */
 		ID,
 		/**
-		 * Order the maps based on their name (purpose).
+		 * Order the maps based on their name.
 		 */
-		PURPOSE
+		NAME
 	}
 }

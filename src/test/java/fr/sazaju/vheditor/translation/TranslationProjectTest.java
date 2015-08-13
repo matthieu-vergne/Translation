@@ -14,6 +14,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.sazaju.vheditor.util.Feature;
 
 public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap<? extends TranslationEntry<? extends TranslationMetadata>>> {
 
@@ -335,6 +336,22 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 					assertEquals(initialValues.get(field), metadata.get(field));
 				}
 			}
+		}
+	}
+
+	@Test
+	public void testProjectFeaturesHaveProperNames() {
+		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		for (Feature feature : project.getFeatures()) {
+			assertNotNull(feature.getName());
+		}
+	}
+
+	@Test
+	public void testProjectFeaturesDoNotThrowExceptionOnDescription() {
+		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		for (Feature feature : project.getFeatures()) {
+			feature.getDescription();
 		}
 	}
 

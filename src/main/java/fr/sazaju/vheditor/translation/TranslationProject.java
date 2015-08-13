@@ -3,7 +3,7 @@ package fr.sazaju.vheditor.translation;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.swing.JButton;
+import fr.sazaju.vheditor.util.Feature;
 
 public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 		extends Iterable<MapID> {
@@ -60,7 +60,11 @@ public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 	 * of calling each one separately.
 	 */
 	public void resetAll();
-	
-	// TODO refine for a more generic design
-	public Collection<JButton> getExtraFeatures();
+
+	/**
+	 * 
+	 * @return the additional {@link Feature}s provided by this
+	 *         {@link TranslationProject}
+	 */
+	public Collection<Feature> getFeatures();
 }

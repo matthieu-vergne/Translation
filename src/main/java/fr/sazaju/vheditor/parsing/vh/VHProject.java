@@ -1,6 +1,5 @@
 package fr.sazaju.vheditor.parsing.vh;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -9,26 +8,23 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import fr.sazaju.vheditor.gui.Gui;
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
+import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.translation.impl.MapFilesProject;
 import fr.sazaju.vheditor.util.MultiReader;
+import fr.sazaju.vheditor.util.impl.SimpleFeature;
 import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.parsing.layer.exception.ParsingException;
 
@@ -36,13 +32,11 @@ public class VHProject extends MapFilesProject<VHMap> {
 
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private static final String CONFIG_LABEL_SOURCE = "labelSource";
-	private static final String CONFIG_LABEL_PREFIX = "label.";
+	private static final String CACHE_LABEL_PREFIX = "label.";
 	private static final String CONFIG_LABEL_LAST_UPDATE = "lastLabelUpdate";
-	private final Map<String, String> mapLabels = Collections
-			.synchronizedMap(new HashMap<String, String>());
+	private final FileBasedProperties cache = new FileBasedProperties(
+			"vh-cache", false);
 
-	// FIXME consider map labels
-	@SuppressWarnings("serial")
 	public VHProject(File directory) {
 		super(retrieveFiles(directory), new MultiReader<File, VHMap>() {
 
@@ -56,11 +50,19 @@ public class VHProject extends MapFilesProject<VHMap> {
 			}
 		});
 
-		final JButton labelSource = new JButton();
-		labelSource.setAction(new AbstractAction("Source") {
+		if (Gui.config.containsKey(CONFIG_LABEL_SOURCE)) {
+			// source already configured
+		} else {
+			Gui.config.setProperty(CONFIG_LABEL_SOURCE,
+					"https://www.assembla.com/spaces/VH/wiki/Map_List");
+		}
+		loadLabels(false);
+
+		addFeature(new SimpleFeature("Source",
+				"Configure the source where to load the maps' labels from.") {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void run() {
 				String source = Gui.config.getProperty(CONFIG_LABEL_SOURCE);
 				Object answer = JOptionPane
 						.showInputDialog(
@@ -80,28 +82,26 @@ public class VHProject extends MapFilesProject<VHMap> {
 				}
 			}
 		});
-		labelSource
-				.setToolTipText("Configure the source where to load the maps' labels from.");
-		addExtraFeature(labelSource);
 
-		final JButton updateLabels = new JButton();
-		updateLabels.setAction(new AbstractAction("Update") {
+		addFeature(new SimpleFeature("Update",
+				"Request the update of the labels from the label source.") {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void run() {
 				try {
+					cache.clear();
 					loadLabels(true);
-					mapLabels.clear();
-					// TODO reactivate
-					// ((ListModel<File>) tree.getModel()).requestUpdate();
+					// TODO update list panel
 				} catch (Exception e) {
-					displayError(e.getMessage());
+					e.printStackTrace();
+					String message = e.getMessage() != null ? e.getMessage()
+							: "An error occurred ("
+									+ e.getClass().getSimpleName()
+									+ "). Please read the logs.";
+					displayError(message);
 				}
 			}
 		});
-		updateLabels
-				.setToolTipText("Request the update of the labels from the label source.");
-		addExtraFeature(updateLabels);
 	}
 
 	@SuppressWarnings("serial")
@@ -114,25 +114,25 @@ public class VHProject extends MapFilesProject<VHMap> {
 			}
 
 		});
-		LinkedList<File> files = new LinkedList<>();
-		for (File file : f) {
-			files.add(new File(file.getPath()) {
-				@Override
-				public String toString() {
-					return this.getName();
-				}
-			});
+
+		if (f == null) {
+			throw new RuntimeException("Impossible to retrieve the files from "
+					+ directory);
+		} else {
+			LinkedList<File> files = new LinkedList<>();
+			for (File file : f) {
+				files.add(new File(file.getPath()) {
+					@Override
+					public String toString() {
+						return this.getName();
+					}
+				});
+			}
+			return files;
 		}
-		return files;
 	}
 
 	private void loadLabels(boolean force) {
-		if (Gui.config.containsKey(CONFIG_LABEL_SOURCE)) {
-			// source already configured
-		} else {
-			Gui.config.setProperty(CONFIG_LABEL_SOURCE,
-					"https://www.assembla.com/spaces/VH/wiki/Map_List");
-		}
 		long lastUpdate = Long.parseLong(Gui.config.getProperty(
 				CONFIG_LABEL_LAST_UPDATE, "0"));
 		if (!force && System.currentTimeMillis() < lastUpdate + 86400000) {
@@ -193,32 +193,33 @@ public class VHProject extends MapFilesProject<VHMap> {
 
 		logger.info("Saving labels...");
 		MapTable table = mapLabelPage.getTable();
-		int total = table.size();
+		int total = 0;
 		for (MapRow row : table) {
 			String name = "Map" + row.getId() + ".txt";
 			String label = row.getEnglishLabel();
-			Gui.config.setProperty(CONFIG_LABEL_PREFIX + name, label);
+			String key = CACHE_LABEL_PREFIX + name;
+			if (!label.matches("[^a-zA-Z]*[a-zA-Z]+.*")) {
+				logger.finest("- " + name + " = " + label + " (ignored)");
+				cache.remove(key);
+			} else {
+				logger.finest("- " + name + " = " + label);
+				cache.setProperty(key, label);
+				total++;
+			}
 		}
+		cache.save();
 		logger.info("Labels saved: " + total);
 	}
 
-	protected String retrieveMapLabel(File id) {
-		String idName = id.toString();
-		logger.finest("Retrieving label for " + idName + "...");
-		if (mapLabels.containsKey(idName)) {
-			// already loaded
-		} else {
-			try {
-				loadLabels(false);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			mapLabels.put(idName,
-					Gui.config.getProperty(CONFIG_LABEL_PREFIX + idName, null));
-		}
-		String label = mapLabels.get(idName);
-		logger.finest("Label retrieved: " + idName + " = " + label);
-		return label;
+	@Override
+	public String getMapName(File file) {
+		return cache.getProperty(CACHE_LABEL_PREFIX + file.getName());
+	}
+
+	@Override
+	public void setMapName(File file, String name) {
+		throw new UnsupportedOperationException(
+				"Map names are retrieved another way, this method cannot be used anymore.");
 	}
 
 	private void displayError(String message) {
