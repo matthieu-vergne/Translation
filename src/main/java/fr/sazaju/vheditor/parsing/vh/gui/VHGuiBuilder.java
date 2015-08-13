@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.gui;
+package fr.sazaju.vheditor.parsing.vh.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -30,7 +30,7 @@ import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 import fr.vergne.parsing.layer.util.Newline;
 
-public class GuiBuilder {
+public class VHGuiBuilder {
 
 	private static final Color UNUSED_COLOR = Color.MAGENTA;
 

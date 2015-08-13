@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.gui;
+package fr.sazaju.vheditor.parsing.vh.gui;
 
 import java.awt.Color;
 import java.awt.Font;

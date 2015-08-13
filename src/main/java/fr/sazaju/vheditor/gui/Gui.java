@@ -33,13 +33,14 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.gui.GuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
 import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
 import fr.sazaju.vheditor.parsing.vh.VHProject;
+import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder;
+import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
@@ -82,7 +83,7 @@ public class Gui extends JFrame {
 
 					@Override
 					public EntryPanel createEntryComponent(VHEntry entry) {
-						return (EntryPanel) GuiBuilder.instantiateMapGui(entry);
+						return (EntryPanel) VHGuiBuilder.instantiateMapGui(entry);
 					}
 				}, VHEntry.MARKED_AS_UNTRANSLATED);
 		configureListeners(listPanel, mapPanel);
