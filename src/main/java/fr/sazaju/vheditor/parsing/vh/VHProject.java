@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import fr.sazaju.vheditor.gui.Gui;
+import fr.sazaju.vheditor.gui.Editor;
 import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
 import fr.sazaju.vheditor.gui.parsing.MapRow;
 import fr.sazaju.vheditor.gui.parsing.MapTable;
@@ -50,10 +50,10 @@ public class VHProject extends MapFilesProject<VHMap> {
 			}
 		});
 
-		if (Gui.config.containsKey(CONFIG_LABEL_SOURCE)) {
+		if (Editor.config.containsKey(CONFIG_LABEL_SOURCE)) {
 			// source already configured
 		} else {
-			Gui.config.setProperty(CONFIG_LABEL_SOURCE,
+			Editor.config.setProperty(CONFIG_LABEL_SOURCE,
 					"https://www.assembla.com/spaces/VH/wiki/Map_List");
 		}
 		loadLabels(false);
@@ -63,7 +63,7 @@ public class VHProject extends MapFilesProject<VHMap> {
 
 			@Override
 			public void run() {
-				String source = Gui.config.getProperty(CONFIG_LABEL_SOURCE);
+				String source = Editor.config.getProperty(CONFIG_LABEL_SOURCE);
 				Object answer = JOptionPane
 						.showInputDialog(
 								null,
@@ -76,9 +76,9 @@ public class VHProject extends MapFilesProject<VHMap> {
 					displayError("An empty location is of no use, so the change is cancelled.");
 				} else {
 					logger.info("Label source set: " + answer);
-					Gui.config.setProperty(CONFIG_LABEL_SOURCE,
+					Editor.config.setProperty(CONFIG_LABEL_SOURCE,
 							answer.toString());
-					Gui.config.setProperty(CONFIG_LABEL_LAST_UPDATE, "" + 0);
+					Editor.config.setProperty(CONFIG_LABEL_LAST_UPDATE, "" + 0);
 				}
 			}
 		});
@@ -133,12 +133,12 @@ public class VHProject extends MapFilesProject<VHMap> {
 	}
 
 	private void loadLabels(boolean force) {
-		long lastUpdate = Long.parseLong(Gui.config.getProperty(
+		long lastUpdate = Long.parseLong(Editor.config.getProperty(
 				CONFIG_LABEL_LAST_UPDATE, "0"));
 		if (!force && System.currentTimeMillis() < lastUpdate + 86400000) {
 			// not old enough
 		} else {
-			String source = Gui.config.getProperty(CONFIG_LABEL_SOURCE);
+			String source = Editor.config.getProperty(CONFIG_LABEL_SOURCE);
 			URL url;
 			try {
 				url = new URL(source);
@@ -152,7 +152,7 @@ public class VHProject extends MapFilesProject<VHMap> {
 			try {
 				loadLabelsFrom(url);
 			} finally {
-				Gui.config.setProperty(CONFIG_LABEL_LAST_UPDATE,
+				Editor.config.setProperty(CONFIG_LABEL_LAST_UPDATE,
 						"" + System.currentTimeMillis());
 			}
 		}

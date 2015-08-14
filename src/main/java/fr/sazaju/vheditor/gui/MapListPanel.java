@@ -171,7 +171,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		add(options, constraints);
 
 		configureBackgroundSummarizing();
-		String projectPath = Gui.config.getProperty(CONFIG_MAP_DIR, null);
+		String projectPath = Editor.config.getProperty(CONFIG_MAP_DIR, null);
 		if (projectPath == null) {
 			// nothing to load
 		} else {
@@ -193,7 +193,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayCleared.isSelected();
-				Gui.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
+				Editor.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
 				((ListModel<MapID>) tree.getModel())
 						.setClearedDisplayed(selected);
 			}
@@ -209,14 +209,14 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayLabels.isSelected();
-				Gui.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
+				Editor.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
 				((MapCellRenderer<MapID>) tree.getCellRenderer())
 						.setMapNamer(selected ? labelNamer : idNamer);
 
 				((ListModel<MapID>) tree.getModel()).requestUpdate();
 			}
 		});
-		displayLabels.setSelected(Boolean.parseBoolean(Gui.config.getProperty(
+		displayLabels.setSelected(Boolean.parseBoolean(Editor.config.getProperty(
 				CONFIG_LABELS_DISPLAYED, "false")));
 		displayLabels.setToolTipText("Display maps' English labels.");
 		options.add(displayLabels);
@@ -227,13 +227,13 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Order order = (Order) sortingChoice.getSelectedItem();
-				Gui.config.setProperty(CONFIG_LIST_ORDER, "" + order);
+				Editor.config.setProperty(CONFIG_LIST_ORDER, "" + order);
 				((ListModel<MapID>) tree.getModel()).setOrderNamer(namers
 						.get(order));
 			}
 		});
 		try {
-			sortingChoice.setSelectedItem(Order.valueOf(Gui.config.getProperty(
+			sortingChoice.setSelectedItem(Order.valueOf(Editor.config.getProperty(
 					CONFIG_LIST_ORDER, Order.ID.toString())));
 		} catch (IllegalArgumentException e) {
 			sortingChoice.setSelectedItem(Order.ID);
@@ -281,7 +281,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				currentIDs.clear();
 				currentIDs.addAll(newIDs);
 
-				Gui.config.setProperty(CONFIG_MAP_DIR, directory.toString());
+				Editor.config.setProperty(CONFIG_MAP_DIR, directory.toString());
 				folderPathField.setText(directory.toString());
 				((ListModel<MapID>) tree.getModel()).setMaps(currentIDs);
 			}
@@ -329,11 +329,11 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			final MapNamer<MapID> idNamer, final MapNamer<MapID> labelNamer) {
 		final ListModel<MapID> listModel = new ListModel<MapID>(mapInformer,
 				namers.values());
-		listModel.setClearedDisplayed(Boolean.parseBoolean(Gui.config
+		listModel.setClearedDisplayed(Boolean.parseBoolean(Editor.config
 				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
 		Order order;
 		try {
-			order = Order.valueOf(Gui.config.getProperty(CONFIG_LIST_ORDER,
+			order = Order.valueOf(Editor.config.getProperty(CONFIG_LIST_ORDER,
 					Order.ID.toString()));
 		} catch (IllegalArgumentException e) {
 			order = Order.ID;
@@ -343,7 +343,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 		MapCellRenderer<MapID> cellRenderer = new MapCellRenderer<MapID>(
 				tree.getCellRenderer(), mapInformer);
-		boolean isLabelDisplayed = Boolean.parseBoolean(Gui.config.getProperty(
+		boolean isLabelDisplayed = Boolean.parseBoolean(Editor.config.getProperty(
 				CONFIG_LABELS_DISPLAYED, "false"));
 		cellRenderer.setMapNamer(isLabelDisplayed ? labelNamer : idNamer);
 		tree.setCellRenderer(cellRenderer);

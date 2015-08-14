@@ -49,7 +49,7 @@ import fr.sazaju.vheditor.translation.TranslationProject;
 import fr.sazaju.vheditor.util.ProjectLoader;
 
 @SuppressWarnings("serial")
-public class Gui extends JFrame {
+public class Editor extends JFrame {
 
 	private static final String ACTION_NEXT_JAP = "nextJap";
 	private static final String ACTION_NEXT_UNTRANSLATED = "nextUntranslated";
@@ -67,7 +67,7 @@ public class Gui extends JFrame {
 	public static final FileBasedProperties config = new FileBasedProperties(
 			"vh-editor.ini", true);
 
-	public Gui() {
+	public Editor() {
 		setTitle("VH Translation Tool");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -104,7 +104,7 @@ public class Gui extends JFrame {
 				try {
 					mapPanel.setMap(getProject().getMap(file), file.toString());
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -115,7 +115,7 @@ public class Gui extends JFrame {
 					mapPanel.setMap(getProject().getMap(file), file.toString(),
 							entryIndex);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -260,11 +260,11 @@ public class Gui extends JFrame {
 					try {
 						mapPanel.setMap(new VHMap(file), file.toString());
 					} catch (EmptyMapException e) {
-						JOptionPane.showMessageDialog(Gui.this, "The map "
+						JOptionPane.showMessageDialog(Editor.this, "The map "
 								+ file + " is empty.", "Empty Map",
 								JOptionPane.WARNING_MESSAGE);
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
+						JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
@@ -442,7 +442,7 @@ public class Gui extends JFrame {
 	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
 		boolean mapSafe = !mapContentPanel.isMapModified();
 		if (!mapSafe) {
-			int answer = JOptionPane.showOptionDialog(Gui.this,
+			int answer = JOptionPane.showOptionDialog(Editor.this,
 					"The map has been modified. Would you like to save it?",
 					"Save the Current Map?", JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, new String[] { "Yes",
@@ -466,7 +466,7 @@ public class Gui extends JFrame {
 	public static void main(String[] args) {
 		new Runnable() {
 			public void run() {
-				new Gui().setVisible(true);
+				new Editor().setVisible(true);
 			}
 		}.run();
 	}
