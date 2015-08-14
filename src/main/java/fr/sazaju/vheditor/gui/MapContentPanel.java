@@ -35,8 +35,7 @@ import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
-public class MapContentPanel<EntryComponent extends Component & EnrichedComponent>
-		extends JPanel {
+public class MapContentPanel extends JPanel {
 
 	private final JPanel mapContentArea;
 	private final JPanel mapLoadingArea;
@@ -46,13 +45,13 @@ public class MapContentPanel<EntryComponent extends Component & EnrichedComponen
 	private final LoadingManager loading;
 	private final JLabel loadingLabel;
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
-	private EntryComponentFactory<EntryComponent> entryFactory;
-	private final List<EntryComponent> entryComponents = new LinkedList<>();
+	private EntryComponentFactory<?> entryFactory;
+	private final List<EnrichedComponent> entryComponents = new LinkedList<>();
 	private boolean isMapModified = false;
-	private EntryComponent lastFocusedEntry;
+	private EnrichedComponent lastFocusedEntry;
 	private final Field<Boolean> untranslatedField;
 
-	public MapContentPanel(EntryComponentFactory<EntryComponent> entryFactory,
+	public MapContentPanel(EntryComponentFactory<?> entryFactory,
 			Field<Boolean> untranslatedField) {
 		this.entryFactory = entryFactory;
 		this.untranslatedField = untranslatedField;
@@ -121,8 +120,9 @@ public class MapContentPanel<EntryComponent extends Component & EnrichedComponen
 							.requestFocusInWindow();
 				} else {
 					Rectangle visible = mapContentArea.getVisibleRect();
-					EntryComponent entryComponent = entryComponents.get(index);
-					Component target = entryComponent;
+					EnrichedComponent entryComponent = entryComponents
+							.get(index);
+					Component target = (Component) entryComponent;
 					visible.y = 0;
 					while (target != mapContentArea) {
 						visible.y += target.getBounds().y;
@@ -195,9 +195,9 @@ public class MapContentPanel<EntryComponent extends Component & EnrichedComponen
 							}
 						};
 						for (TranslationEntry<?> entry : map) {
-							final EntryComponent entryComponent = entryFactory
+							final EnrichedComponent entryComponent = entryFactory
 									.createEntryComponent(entry);
-							mapContentArea.add(entryComponent);
+							mapContentArea.add((Component) entryComponent);
 							entryComponents.add(entryComponent);
 							entryComponent.getTranslationComponent()
 									.addFocusListener(new FocusListener() {
@@ -303,8 +303,7 @@ public class MapContentPanel<EntryComponent extends Component & EnrichedComponen
 
 	}
 
-	public void setEntryComponentFactory(
-			EntryComponentFactory<EntryComponent> entryFactory) {
+	public void setEntryComponentFactory(EntryComponentFactory<?> entryFactory) {
 		if (entryFactory == null) {
 			throw new IllegalArgumentException("No entry factory provided: "
 					+ entryFactory);
@@ -313,7 +312,7 @@ public class MapContentPanel<EntryComponent extends Component & EnrichedComponen
 		}
 	}
 
-	public EntryComponentFactory<EntryComponent> getEntryComponentFactory() {
+	public EntryComponentFactory<?> getEntryComponentFactory() {
 		return entryFactory;
 	}
 

@@ -80,7 +80,7 @@ public class Gui extends JFrame {
 						return new VHProject(directory);
 					}
 				});
-		final MapContentPanel<EntryPanel> mapPanel = new MapContentPanel<>(
+		final MapContentPanel mapPanel = new MapContentPanel(
 				new EntryComponentFactory<EntryPanel>() {
 
 					@Override
@@ -209,7 +209,7 @@ public class Gui extends JFrame {
 
 	private void configureListeners(
 			final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel,
-			final MapContentPanel<?> mapPanel) {
+			final MapContentPanel mapPanel) {
 		addWindowListener(new WindowListener() {
 
 			@Override
@@ -289,7 +289,7 @@ public class Gui extends JFrame {
 		});
 	}
 
-	private JPanel configureButtons(final MapContentPanel<?> mapPanel) {
+	private JPanel configureButtons(final MapContentPanel mapPanel) {
 		ActionMap actions = getRootPane().getActionMap();
 		InputMap inputs = getRootPane().getInputMap(
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -439,7 +439,7 @@ public class Gui extends JFrame {
 		return buttonPanel;
 	}
 
-	private boolean isMapSafe(final MapContentPanel<?> mapContentPanel) {
+	private boolean isMapSafe(final MapContentPanel mapContentPanel) {
 		boolean mapSafe = !mapContentPanel.isMapModified();
 		if (!mapSafe) {
 			int answer = JOptionPane.showOptionDialog(Gui.this,
