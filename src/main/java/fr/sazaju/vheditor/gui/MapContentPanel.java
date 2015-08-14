@@ -35,25 +35,24 @@ import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
-public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends TranslationMap<Entry>, EntryComponent extends Component & EnrichedComponent>
+public class MapContentPanel<EntryComponent extends Component & EnrichedComponent>
 		extends JPanel {
 
 	private final JPanel mapContentArea;
 	private final JPanel mapLoadingArea;
 	private final JScrollPane mapContentScroll;
 	private final JLabel mapTitleField;
-	private Map map;
+	private TranslationMap<?> map;
 	private final LoadingManager loading;
 	private final JLabel loadingLabel;
 	public Logger logger = LoggerConfiguration.getSimpleLogger();
-	private EntryComponentFactory<Entry, EntryComponent> entryFactory;
+	private EntryComponentFactory<EntryComponent> entryFactory;
 	private final List<EntryComponent> entryComponents = new LinkedList<>();
 	private boolean isMapModified = false;
 	private EntryComponent lastFocusedEntry;
 	private final Field<Boolean> untranslatedField;
 
-	public MapContentPanel(
-			EntryComponentFactory<Entry, EntryComponent> entryFactory,
+	public MapContentPanel(EntryComponentFactory<EntryComponent> entryFactory,
 			Field<Boolean> untranslatedField) {
 		this.entryFactory = entryFactory;
 		this.untranslatedField = untranslatedField;
@@ -157,11 +156,12 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		}
 	}
 
-	public void setMap(Map map, String name) {
+	public void setMap(TranslationMap<?> map, String name) {
 		setMap(map, name, 0);
 	}
 
-	public void setMap(final Map map, final String name, final int entryIndex) {
+	public void setMap(final TranslationMap<?> map, final String name,
+			final int entryIndex) {
 		if (this.map != null && this.map.equals(map)) {
 			goToEntry(entryIndex);
 		} else {
@@ -194,7 +194,7 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 								isMapModified = true;
 							}
 						};
-						for (Entry entry : map) {
+						for (TranslationEntry<?> entry : map) {
 							final EntryComponent entryComponent = entryFactory
 									.createEntryComponent(entry);
 							mapContentArea.add(entryComponent);
@@ -231,7 +231,7 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		}
 	}
 
-	public TranslationMap<Entry> getMap() {
+	public TranslationMap<?> getMap() {
 		return map;
 	}
 
@@ -245,7 +245,7 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		logger.info("Saving map " + map + "...");
 		map.saveAll();
 		logger.info("Map saved.");
-		for (MapSavedListener<Map> listener : listeners) {
+		for (MapSavedListener listener : listeners) {
 			listener.mapSaved(map);
 		}
 	}
@@ -271,10 +271,10 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 	// TODO make tag-based unavailable if field not provided
 	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
 		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<Entry> iterator = map.iterator();
+		Iterator<? extends TranslationEntry<?>> iterator = map.iterator();
 		int count = 0;
 		while (iterator.hasNext()) {
-			Entry entry = iterator.next();
+			TranslationEntry<?> entry = iterator.next();
 			if (relyOnTags && entry.getMetadata().get(untranslatedField)
 					|| !relyOnTags
 					&& !TranslationUtil.isActuallyTranslated(entry)) {
@@ -287,24 +287,24 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		return untranslatedEntries;
 	}
 
-	private final Collection<MapSavedListener<Map>> listeners = new HashSet<MapSavedListener<Map>>();
+	private final Collection<MapSavedListener> listeners = new HashSet<MapSavedListener>();
 
-	public void addListener(MapSavedListener<Map> listener) {
+	public void addListener(MapSavedListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListener(MapSavedListener<Map> listener) {
+	public void removeListener(MapSavedListener listener) {
 		listeners.remove(listener);
 	}
 
-	public static interface MapSavedListener<Map extends TranslationMap<?>> {
+	public static interface MapSavedListener {
 
-		void mapSaved(Map map);
+		void mapSaved(TranslationMap<?> map);
 
 	}
 
 	public void setEntryComponentFactory(
-			EntryComponentFactory<Entry, EntryComponent> entryFactory) {
+			EntryComponentFactory<EntryComponent> entryFactory) {
 		if (entryFactory == null) {
 			throw new IllegalArgumentException("No entry factory provided: "
 					+ entryFactory);
@@ -313,7 +313,7 @@ public class MapContentPanel<Entry extends TranslationEntry<?>, Map extends Tran
 		}
 	}
 
-	public EntryComponentFactory<Entry, EntryComponent> getEntryComponentFactory() {
+	public EntryComponentFactory<EntryComponent> getEntryComponentFactory() {
 		return entryFactory;
 	}
 

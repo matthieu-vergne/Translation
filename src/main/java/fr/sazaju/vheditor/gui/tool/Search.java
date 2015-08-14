@@ -10,8 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,15 +27,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.commons.io.FileUtils;
-
-import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
-import fr.sazaju.vheditor.parsing.vh.map.VHMap;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationProject;
 
 @SuppressWarnings("serial")
-public class Search extends JPanel implements Tool {
+public class Search<MapID> extends JPanel implements Tool<MapID> {
 
-	private ToolProvider provider;
+	private ToolProvider<MapID> provider;
 	private final JTree results;
 	private boolean searching = false;
 
@@ -166,7 +163,10 @@ public class Search extends JPanel implements Tool {
 					clearResults();
 					final String searched = input.getText().replaceAll(
 							"[\\s\u3000]++", " ");
-					for (final File file : provider.getMapFiles()) {
+					TranslationProject<MapID, ?> project = provider
+							.getProject();
+					for (final MapID id : project) {
+						final TranslationMap<?> map = project.getMap(id);
 						executor.submit(new Runnable() {
 
 							@Override
@@ -174,7 +174,35 @@ public class Search extends JPanel implements Tool {
 								if (!searching) {
 									// search stopped
 								} else {
-									searchInMap(file, searched);
+									try {
+										String blanks = "[\\s\u3000]++";
+										Iterator<? extends TranslationEntry<?>> iterator = map
+												.iterator();
+										int index = -1;
+										while (searching && iterator.hasNext()) {
+											TranslationEntry<?> entry = iterator
+													.next();
+											index++;
+											String original = entry
+													.getOriginalContent()
+													.replaceAll(blanks, " ");
+											String translation = entry
+													.getCurrentTranslation()
+													.replaceAll(blanks, " ");
+											if (original.contains(searched)
+													|| translation
+															.contains(searched)) {
+												// overload minimization
+												Thread.sleep(100);
+												addResult(new Result<MapID>(id,
+														index));
+											} else {
+												// not this entry
+											}
+										}
+									} catch (InterruptedException e) {
+										// do not care about sleep interruption
+									}
 								}
 							}
 
@@ -229,8 +257,9 @@ public class Search extends JPanel implements Tool {
 				if (event.getClickCount() == 2) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) results
 							.getSelectionPath().getLastPathComponent();
-					Result target = (Result) node.getUserObject();
-					provider.loadMapEntry(target.getMapFile(),
+					@SuppressWarnings("unchecked")
+					Result<MapID> target = (Result<MapID>) node.getUserObject();
+					provider.loadMapEntry(target.getMapID(),
 							target.getEntryIndex());
 				} else {
 					// single click
@@ -246,10 +275,11 @@ public class Search extends JPanel implements Tool {
 					boolean leaf, int row, boolean hasFocus) {
 				value = ((DefaultMutableTreeNode) value).getUserObject();
 				if (value instanceof Result) {
-					Result result = (Result) value;
-					File file = result.getMapFile();
+					@SuppressWarnings("unchecked")
+					Result<MapID> result = (Result<MapID>) value;
+					MapID id = result.getMapID();
 					int index = result.getEntryIndex();
-					value = file.getName() + "(" + index + ")";
+					value = id + "(" + index + ")";
 				} else {
 					// not managed
 				}
@@ -261,7 +291,7 @@ public class Search extends JPanel implements Tool {
 	}
 
 	@Override
-	public void setToolProvider(ToolProvider provider) {
+	public void setToolProvider(ToolProvider<MapID> provider) {
 		this.provider = provider;
 	}
 
@@ -275,7 +305,7 @@ public class Search extends JPanel implements Tool {
 		return this;
 	}
 
-	private void addResult(final Result result) {
+	private void addResult(final Result<MapID> result) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -303,52 +333,17 @@ public class Search extends JPanel implements Tool {
 		});
 	}
 
-	private void searchInMap(final File file, final String searched) {
-		try {
-			String blanks = "[\\s\u3000]++";
-			String mapContent = FileUtils.readFileToString(file, "UTF-8")
-					.replaceAll(blanks, " ");
-			if (mapContent.contains(searched)) {
-				VHMap map = new VHMap(file);
-				Iterator<VHEntry> iterator = map.iterator();
-				int index = -1;
-				while (searching && iterator.hasNext()) {
-					VHEntry entry = iterator.next();
-					index++;
-					String original = entry.getOriginalContent().replaceAll(
-							blanks, " ");
-					String translation = entry.getCurrentTranslation()
-							.replaceAll(blanks, " ");
-					if (original.contains(searched)
-							|| translation.contains(searched)) {
-						// overload minimization
-						Thread.sleep(100);
-						addResult(new Result(file, index));
-					} else {
-						// not this entry
-					}
-				}
-			} else {
-				// not in this map
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// do not care about sleep interruption
-		}
-	}
-
-	private static class Result {
-		private final File mapFile;
+	private static class Result<MapID> {
+		private final MapID mapId;
 		private final int entryIndex;
 
-		public Result(File mapFile, int entryIndex) {
-			this.mapFile = mapFile;
+		public Result(MapID mapId, int entryIndex) {
+			this.mapId = mapId;
 			this.entryIndex = entryIndex;
 		}
 
-		public File getMapFile() {
-			return mapFile;
+		public MapID getMapID() {
+			return mapId;
 		}
 
 		public int getEntryIndex() {

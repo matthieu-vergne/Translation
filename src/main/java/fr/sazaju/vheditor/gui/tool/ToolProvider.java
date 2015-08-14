@@ -1,14 +1,13 @@
 package fr.sazaju.vheditor.gui.tool;
 
-import java.io.File;
-import java.util.Collection;
+import fr.sazaju.vheditor.translation.TranslationProject;
 
-public interface ToolProvider {
+public interface ToolProvider<MapID> {
 
-	public Collection<File> getMapFiles();
+	public TranslationProject<MapID, ?> getProject();
 
-	public void loadMap(File mapFile);
+	public void loadMap(MapID mapId);
 
-	public void loadMapEntry(File mapFile, int entryIndex);
+	public void loadMapEntry(MapID mapId, int entryIndex);
 
 }

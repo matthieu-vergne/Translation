@@ -661,8 +661,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		public void mapSelected(MapID id);
 	}
 
-	public Collection<MapID> getFiles() {
-		return currentIDs;
+	public TranslationProject<MapID, ? extends TranslationMap<?>> getProject() {
+		return project;
 	}
 
 	/**

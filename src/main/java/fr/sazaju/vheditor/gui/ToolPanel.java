@@ -18,7 +18,7 @@ public class ToolPanel extends JPanel {
 		add(tabContainer);
 	}
 	
-	public void addTool(Tool tool) {
+	public void addTool(Tool<?> tool) {
 		String target = tool.getTitle();
 		for (int i = 0; i < tabContainer.getTabCount(); i++) {
 			String title = tabContainer.getTitleAt(i);

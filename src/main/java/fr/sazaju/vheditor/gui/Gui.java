@@ -16,7 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -44,6 +43,9 @@ import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.EntryPanel;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.translation.TranslationProject;
 import fr.sazaju.vheditor.util.ProjectLoader;
 
 @SuppressWarnings("serial")
@@ -78,33 +80,30 @@ public class Gui extends JFrame {
 						return new VHProject(directory);
 					}
 				});
-		final MapContentPanel<VHEntry, VHMap, EntryPanel> mapPanel = new MapContentPanel<>(
-				new EntryComponentFactory<VHEntry, EntryPanel>() {
+		final MapContentPanel<EntryPanel> mapPanel = new MapContentPanel<>(
+				new EntryComponentFactory<EntryPanel>() {
 
 					@Override
-					public EntryPanel createEntryComponent(VHEntry entry) {
-						return (EntryPanel) VHGuiBuilder.instantiateMapGui(entry);
+					public EntryPanel createEntryComponent(
+							TranslationEntry<?> entry) {
+						return (EntryPanel) VHGuiBuilder.instantiateMapGui((VHEntry) entry);
 					}
 				}, VHEntry.MARKED_AS_UNTRANSLATED);
 		configureListeners(listPanel, mapPanel);
 		ToolPanel toolPanel = new ToolPanel();
 
-		final ToolProvider provider = new ToolProvider() {
+		final ToolProvider<File> provider = new ToolProvider<File>() {
 
 			@Override
-			public Collection<File> getMapFiles() {
-				return listPanel.getFiles();
+			public TranslationProject<File, ?> getProject() {
+				return listPanel.getProject();
 			}
 
 			@Override
 			public void loadMap(File file) {
 				try {
-					mapPanel.setMap(new VHMap(file), file.toString());
-				} catch (EmptyMapException e) {
-					JOptionPane.showMessageDialog(Gui.this, "The map " + file
-							+ " is empty.", "Empty Map",
-							JOptionPane.WARNING_MESSAGE);
-				} catch (IOException e) {
+					mapPanel.setMap(getProject().getMap(file), file.toString());
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -113,13 +112,9 @@ public class Gui extends JFrame {
 			@Override
 			public void loadMapEntry(File file, int entryIndex) {
 				try {
-					mapPanel.setMap(new VHMap(file), file.toString(),
+					mapPanel.setMap(getProject().getMap(file), file.toString(),
 							entryIndex);
-				} catch (EmptyMapException e) {
-					JOptionPane.showMessageDialog(Gui.this, "The map " + file
-							+ " is empty.", "Empty Map",
-							JOptionPane.WARNING_MESSAGE);
-				} catch (IOException e) {
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(Gui.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -160,8 +155,8 @@ public class Gui extends JFrame {
 	}
 
 	private void configureTools(final ToolPanel toolPanel,
-			final ToolProvider provider) {
-		Search tool = new Search();
+			final ToolProvider<File> provider) {
+		Search<File> tool = new Search<>();
 		tool.setToolProvider(provider);
 		toolPanel.addTool(tool);
 	}
@@ -214,7 +209,7 @@ public class Gui extends JFrame {
 
 	private void configureListeners(
 			final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel,
-			final MapContentPanel<VHEntry, VHMap, ?> mapPanel) {
+			final MapContentPanel<?> mapPanel) {
 		addWindowListener(new WindowListener() {
 
 			@Override
@@ -278,22 +273,23 @@ public class Gui extends JFrame {
 			}
 		});
 
-		mapPanel.addListener(new MapContentPanel.MapSavedListener<VHMap>() {
+		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
 
 			@Override
-			public void mapSaved(final VHMap map) {
+			public void mapSaved(final TranslationMap<?> map) {
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
-						listPanel.updateMapSummary(map.getBaseFile(), true);
+						listPanel.updateMapSummary(((VHMap) map).getBaseFile(),
+								true);
 					}
 				});
 			}
 		});
 	}
 
-	private JPanel configureButtons(final MapContentPanel<?, ?, ?> mapPanel) {
+	private JPanel configureButtons(final MapContentPanel<?> mapPanel) {
 		ActionMap actions = getRootPane().getActionMap();
 		InputMap inputs = getRootPane().getInputMap(
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -443,7 +439,7 @@ public class Gui extends JFrame {
 		return buttonPanel;
 	}
 
-	private boolean isMapSafe(final MapContentPanel<?, ?, ?> mapContentPanel) {
+	private boolean isMapSafe(final MapContentPanel<?> mapContentPanel) {
 		boolean mapSafe = !mapContentPanel.isMapModified();
 		if (!mapSafe) {
 			int answer = JOptionPane.showOptionDialog(Gui.this,
