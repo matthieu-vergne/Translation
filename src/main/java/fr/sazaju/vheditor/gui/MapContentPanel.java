@@ -49,7 +49,7 @@ public class MapContentPanel extends JPanel {
 	private TranslationMap<?> map;
 	private final Field<Boolean> untranslatedField;
 	private boolean isMapModified = false;
-	private int lastFocusedEntry;
+	private int lastFocusedEntryIndex;
 	private final Collection<MapSavedListener> saveListeners = new HashSet<MapSavedListener>();
 	private final TranslationListener translationListener = new TranslationListener() {
 
@@ -132,7 +132,7 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public int getCurrentEntryIndex() {
-		return lastFocusedEntry;
+		return lastFocusedEntryIndex;
 	}
 
 	public void goToEntry(final int entryIndex) {
@@ -249,7 +249,7 @@ public class MapContentPanel extends JPanel {
 
 										@Override
 										public void focusGained(FocusEvent e) {
-											lastFocusedEntry = entryIndex;
+											lastFocusedEntryIndex = entryIndex;
 										}
 									});
 						}
