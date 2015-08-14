@@ -619,7 +619,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			if (!force && mapSummaries.get(id) != null) {
 				// nothing to load
 			} else {
-				logger.info("Analysing " + id + "...");
+				logger.finest("Summarizing " + id + "...");
 				MapSummary summary = new MapSummary();
 				TMap map = project.getMap(id);
 				summary.total = map.size();
@@ -630,9 +630,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 					summary.remaining += TranslationUtil
 							.isActuallyTranslated(entry) ? 0 : 1;
 				}
-
 				mapSummaries.put(id, summary);
-				logger.info("Map summarized: " + id);
+				logger.finest("Map summarized: " + summary);
 
 				for (MapSummaryListener<MapID> listener : mapSummaryListeners) {
 					listener.mapSummarized(id);
