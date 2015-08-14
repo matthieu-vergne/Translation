@@ -8,14 +8,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.swing.AbstractAction;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -88,61 +83,6 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 	}
 
 	private JToggleButton buildSearchButton(final JTextArea input) {
-		final ExecutorService executor = Executors.newSingleThreadExecutor();
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				JFrame frame = null;
-				while (frame == null) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					frame = (JFrame) SwingUtilities
-							.getWindowAncestor(Search.this);
-				}
-				frame.addWindowListener(new WindowListener() {
-
-					@Override
-					public void windowOpened(WindowEvent arg0) {
-						// do nothing
-					}
-
-					@Override
-					public void windowIconified(WindowEvent arg0) {
-						// do nothing
-					}
-
-					@Override
-					public void windowDeiconified(WindowEvent arg0) {
-						// do nothing
-					}
-
-					@Override
-					public void windowDeactivated(WindowEvent arg0) {
-						// do nothing
-					}
-
-					@Override
-					public void windowClosing(WindowEvent arg0) {
-						// do nothing
-					}
-
-					@Override
-					public void windowClosed(WindowEvent arg0) {
-						executor.shutdownNow();
-					}
-
-					@Override
-					public void windowActivated(WindowEvent arg0) {
-						// do nothing
-					}
-
-				});
-			}
-		});
 		final JToggleButton searchButton = new JToggleButton();
 		searchButton.setAction(new AbstractAction("Search") {
 
@@ -163,62 +103,48 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 					clearResults();
 					final String searched = input.getText().replaceAll(
 							"[\\s\u3000]++", " ");
-					TranslationProject<MapID, ?> project = provider
+					final TranslationProject<MapID, ?> project = provider
 							.getProject();
-					for (final MapID id : project) {
-						final TranslationMap<?> map = project.getMap(id);
-						executor.submit(new Runnable() {
+					SwingUtilities.invokeLater(new Runnable() {
 
-							@Override
-							public void run() {
-								if (!searching) {
-									// search stopped
-								} else {
-									try {
-										String blanks = "[\\s\u3000]++";
-										Iterator<? extends TranslationEntry<?>> iterator = map
-												.iterator();
-										int index = -1;
-										while (searching && iterator.hasNext()) {
-											TranslationEntry<?> entry = iterator
-													.next();
-											index++;
-											String original = entry
-													.getOriginalContent()
-													.replaceAll(blanks, " ");
-											String translation = entry
-													.getCurrentTranslation()
-													.replaceAll(blanks, " ");
-											if (original.contains(searched)
-													|| translation
-															.contains(searched)) {
-												// overload minimization
-												Thread.sleep(100);
-												addResult(new Result<MapID>(id,
-														index));
-											} else {
-												// not this entry
-											}
-										}
-									} catch (InterruptedException e) {
-										// do not care about sleep interruption
-									}
-								}
-							}
-
-						});
-					}
-					executor.submit(new Runnable() {
+						private final String blanks = "[\\s\u3000]++";
+						private final Iterator<MapID> projectIterator = project
+								.iterator();
+						private Iterator<? extends TranslationEntry<?>> mapIterator = null;
+						private MapID id;
+						private int index;
 
 						@Override
 						public void run() {
-							if (searchButton.isSelected()) {
+							if (!searching) {
+								// stopped
+							} else if (!projectIterator.hasNext()) {
+								// finished
 								searchButton.doClick();
+							} else if (mapIterator == null
+									|| !mapIterator.hasNext()) {
+								id = projectIterator.next();
+								TranslationMap<?> map = project.getMap(id);
+								mapIterator = map.iterator();
+								index = 0;
+								SwingUtilities.invokeLater(this);
 							} else {
-								// already unselected
+								TranslationEntry<?> entry = mapIterator.next();
+								String original = entry.getOriginalContent()
+										.replaceAll(blanks, " ");
+								String translation = entry
+										.getCurrentTranslation().replaceAll(
+												blanks, " ");
+								if (original.contains(searched)
+										|| translation.contains(searched)) {
+									addResult(new Result<MapID>(id, index));
+								} else {
+									// not this entry
+								}
+								index++;
+								SwingUtilities.invokeLater(this);
 							}
 						}
-
 					});
 				}
 			}
