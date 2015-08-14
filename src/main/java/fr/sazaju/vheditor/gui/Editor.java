@@ -263,8 +263,9 @@ public class Editor extends JFrame {
 								+ file + " is empty.", "Empty Map",
 								JOptionPane.WARNING_MESSAGE);
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Editor.this,
+								e.getMessage(), "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
 					// map unsafe
