@@ -33,17 +33,16 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
+import fr.sazaju.vheditor.gui.content.MapComponentFactory;
 import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
 import fr.sazaju.vheditor.parsing.vh.VHProject;
 import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder;
-import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.EntryPanel;
+import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.MapPanel;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
-import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationProject;
 import fr.sazaju.vheditor.util.ProjectLoader;
@@ -81,13 +80,13 @@ public class Editor extends JFrame {
 					}
 				});
 		final MapContentPanel mapPanel = new MapContentPanel(
-				new EntryComponentFactory<EntryPanel>() {
+				new MapComponentFactory<MapPanel>() {
 
 					@Override
-					public EntryPanel createEntryComponent(
-							TranslationEntry<?> entry) {
-						return (EntryPanel) VHGuiBuilder.instantiateMapGui((VHEntry) entry);
+					public MapPanel createMapComponent(TranslationMap<?> map) {
+						return (MapPanel) VHGuiBuilder.instantiateMapGui((VHMap) map);
 					}
+
 				}, VHEntry.MARKED_AS_UNTRANSLATED);
 		configureListeners(listPanel, mapPanel);
 		ToolPanel toolPanel = new ToolPanel();

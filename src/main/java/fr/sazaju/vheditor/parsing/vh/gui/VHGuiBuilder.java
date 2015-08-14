@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
+import fr.sazaju.vheditor.gui.content.MapComponentFactory.MapComponent;
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
@@ -34,75 +35,68 @@ public class VHGuiBuilder {
 
 	private static final Color UNUSED_COLOR = Color.MAGENTA;
 
-	public static Component instantiateMapGui(Layer layer) {
-		if (layer instanceof MapHeader || layer instanceof UnusedTransLine) {
-			return new JLabel(layer.getContent());
-		} else if (layer instanceof VHEntry) {
-			// use a specific panel to simplify the map browsing
-			JPanel panel = new EntryPanel();
-			panel.setOpaque(false);
-			panel.setLayout(new GridBagLayout());
-			GridBagConstraints constraints = new GridBagConstraints();
-			constraints.gridx = 0;
-			constraints.anchor = GridBagConstraints.LINE_START;
-			constraints.fill = GridBagConstraints.HORIZONTAL;
-			constraints.weightx = 1;
-			VHEntry mapEntry = (VHEntry) layer;
-			panel.add(instantiateEntryGui(mapEntry.get(0), mapEntry),
-					constraints);
-			panel.add(instantiateEntryGui(mapEntry.get(1), mapEntry),
-					constraints);
-			panel.add(instantiateEntryGui(mapEntry.get(2), mapEntry),
-					constraints);
-			panel.add(instantiateEntryGui(mapEntry.get(3), mapEntry),
-					constraints);
-			JTextArea original = new JTextArea(mapEntry.getOriginalContent());
-			original.setEditable(false);
-			panel.add(original, constraints);
-			panel.add(instantiateEntryGui(mapEntry.get(5), mapEntry),
-					constraints);
-			panel.add(new TranslationArea(mapEntry), constraints);
-			panel.add(instantiateEntryGui(mapEntry.get(7), mapEntry),
-					constraints);
-			return panel;
-		} else if (layer instanceof EntryLoop) {
-			JPanel panel = new JPanel();
-			panel.setOpaque(false);
-			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-			panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-			EntryLoop loop = (EntryLoop) layer;
-			for (VHEntry mapEntry : loop) {
-				panel.add(instantiateMapGui(mapEntry));
-			}
-			return panel;
-		} else if (layer instanceof VHMap) {
-			JPanel panel = new JPanel();
-			panel.setOpaque(false);
-			panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-			panel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-			VHMap map = (VHMap) layer;
-			panel.add(instantiateMapGui(map.get(0)));
-			panel.add(instantiateMapGui(map.get(1)));
+	public static Component instantiateMapGui(VHMap map) {
+		MapPanel panel = new MapPanel();
+		panel.setOpaque(false);
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		constraints.gridx = 0;
+		constraints.gridy = GridBagConstraints.RELATIVE;
 
-			Option<Suite> option = map.get(2);
-			if (option.isPresent()) {
-				Component unusedLine = instantiateMapGui(option.getOption()
-						.get(0));
-				unusedLine.setBackground(UNUSED_COLOR);
-				panel.add(unusedLine);
-				JPanel unusedPanel = (JPanel) instantiateMapGui(option
-						.getOption().get(1));
-				unusedPanel.setBackground(UNUSED_COLOR);
-				unusedPanel.setOpaque(true);
-				panel.add(unusedPanel);
-			} else {
-				// no unused part
-			}
-			return panel;
-		} else {
-			throw new IllegalArgumentException("Unmanaged Layer: "
-					+ layer.getClass());
+		MapHeader header = map.get(0);
+		JLabel headerLine = new JLabel(header.getContent());
+		panel.add(headerLine, constraints);
+
+		for (VHEntry mapEntry : (EntryLoop) map.get(1)) {
+			panel.add(instantiateEntryGui(mapEntry), constraints);
 		}
+
+		Option<Suite> option = map.get(2);
+		if (!option.isPresent()) {
+			// no unused entries
+		} else {
+			UnusedTransLine unusedHeader = option.getOption().get(0);
+			JLabel unusedLabel = new JLabel(unusedHeader.getContent());
+			unusedLabel.setOpaque(true);
+			unusedLabel.setBackground(UNUSED_COLOR);
+			panel.add(unusedLabel, constraints);
+
+			JPanel unusedPanel = new JPanel();
+			unusedPanel.setOpaque(true);
+			unusedPanel.setBackground(UNUSED_COLOR);
+			unusedPanel.setLayout(new BoxLayout(unusedPanel,
+					BoxLayout.PAGE_AXIS));
+			unusedPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+			for (VHEntry mapEntry : (EntryLoop) option.getOption().get(1)) {
+				unusedPanel.add(instantiateEntryGui(mapEntry));
+			}
+			panel.add(unusedPanel, constraints);
+		}
+		return panel;
+	}
+
+	private static Component instantiateEntryGui(VHEntry mapEntry) {
+		EntryPanel panel = new EntryPanel();
+		panel.setOpaque(false);
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		panel.add(instantiateEntryGui(mapEntry.get(0), mapEntry), constraints);
+		panel.add(instantiateEntryGui(mapEntry.get(1), mapEntry), constraints);
+		panel.add(instantiateEntryGui(mapEntry.get(2), mapEntry), constraints);
+		panel.add(instantiateEntryGui(mapEntry.get(3), mapEntry), constraints);
+		JTextArea original = new JTextArea(mapEntry.getOriginalContent());
+		original.setEditable(false);
+		panel.add(original, constraints);
+		panel.add(instantiateEntryGui(mapEntry.get(5), mapEntry), constraints);
+		panel.add(new TranslationArea(mapEntry), constraints);
+		panel.add(instantiateEntryGui(mapEntry.get(7), mapEntry), constraints);
+		return panel;
 	}
 
 	public static Component instantiateEntryGui(Layer layer,
@@ -165,6 +159,15 @@ public class VHGuiBuilder {
 		@SuppressWarnings("unchecked")
 		public TranslationTag<TranslationEntry<?>> getTranslationTag() {
 			return (TranslationTag<TranslationEntry<?>>) getComponent(1);
+		}
+	}
+
+	@SuppressWarnings("serial")
+	public static class MapPanel extends JPanel implements MapComponent {
+
+		@Override
+		public EntryComponent getEntryComponent(int index) {
+			return (EntryComponent) getComponent(index + 1);
 		}
 	}
 }
