@@ -644,6 +644,11 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	private static class MapSummary {
 		int total;
 		int remaining;
+
+		@Override
+		public String toString() {
+			return (total - remaining) + "/" + total;
+		}
 	}
 
 	public void addListener(MapListListener listener) {
