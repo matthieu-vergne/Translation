@@ -140,7 +140,8 @@ public class MapContentPanel extends JPanel {
 
 			@Override
 			public void run() {
-				int index = Math.min(Math.max(entryIndex, 0), map.size() - 1);
+				final int index = Math.min(Math.max(entryIndex, 0),
+						map.size() - 1);
 				if (index == 0) {
 					mapContentScroll.getVerticalScrollBar().setValue(0);
 				} else {
@@ -154,8 +155,15 @@ public class MapContentPanel extends JPanel {
 					}
 					mapContentArea.scrollRectToVisible(visible);
 				}
-				mapComponent.getEntryComponent(index).getTranslationComponent()
-						.requestFocusInWindow();
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						mapComponent.getEntryComponent(index)
+								.getTranslationComponent()
+								.requestFocusInWindow();
+					}
+				});
 			}
 		});
 	}
