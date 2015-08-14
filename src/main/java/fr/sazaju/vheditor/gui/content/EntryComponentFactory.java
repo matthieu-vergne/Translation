@@ -2,14 +2,14 @@ package fr.sazaju.vheditor.gui.content;
 
 import java.awt.Component;
 
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EnrichedComponent;
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 
-public interface EntryComponentFactory<EntryComponent extends Component & EnrichedComponent> {
+public interface EntryComponentFactory<ComposedComponent extends Component & EntryComponent> {
 
-	public EntryComponent createEntryComponent(TranslationEntry<?> entry);
+	public ComposedComponent createEntryComponent(TranslationEntry<?> entry);
 
-	public static interface EnrichedComponent {
+	public static interface EntryComponent {
 		public Component getTranslationComponent();
 	}
 }

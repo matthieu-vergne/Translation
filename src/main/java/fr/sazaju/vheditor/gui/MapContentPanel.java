@@ -12,20 +12,20 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EnrichedComponent;
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
+import fr.sazaju.vheditor.gui.content.MapComponentFactory;
+import fr.sazaju.vheditor.gui.content.MapComponentFactory.MapComponent;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
@@ -37,23 +37,38 @@ import fr.vergne.logging.LoggerConfiguration;
 @SuppressWarnings("serial")
 public class MapContentPanel extends JPanel {
 
+	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JPanel mapContentArea;
 	private final JPanel mapLoadingArea;
 	private final JScrollPane mapContentScroll;
 	private final JLabel mapTitleField;
-	private TranslationMap<?> map;
 	private final LoadingManager loading;
 	private final JLabel loadingLabel;
-	public Logger logger = LoggerConfiguration.getSimpleLogger();
-	private EntryComponentFactory<?> entryFactory;
-	private final List<EnrichedComponent> entryComponents = new LinkedList<>();
-	private boolean isMapModified = false;
-	private EnrichedComponent lastFocusedEntry;
+	private final MapComponentFactory<?> mapFactory;
+	private MapComponent mapComponent;
+	private TranslationMap<?> map;
 	private final Field<Boolean> untranslatedField;
+	private boolean isMapModified = false;
+	private int lastFocusedEntry;
+	private final Collection<MapSavedListener> saveListeners = new HashSet<MapSavedListener>();
+	private final TranslationListener translationListener = new TranslationListener() {
 
-	public MapContentPanel(EntryComponentFactory<?> entryFactory,
+		@Override
+		public void translationUpdated(String newTranslation) {
+			isMapModified = true;
+		}
+	};
+	private final FieldListener fieldListener = new FieldListener() {
+
+		@Override
+		public <T> void fieldUpdated(Field<T> field, T newValue) {
+			isMapModified = true;
+		}
+	};
+
+	public MapContentPanel(MapComponentFactory<?> mapFactory,
 			Field<Boolean> untranslatedField) {
-		this.entryFactory = entryFactory;
+		this.mapFactory = mapFactory;
 		this.untranslatedField = untranslatedField;
 
 		setBorder(new EtchedBorder());
@@ -103,8 +118,21 @@ public class MapContentPanel extends JPanel {
 		add(mapLoadingArea);
 	}
 
+	public MapContentPanel(final EntryComponentFactory<?> entryFactory,
+			final Field<Boolean> untranslatedField) {
+		this(new MapComponentFactory<SimpleMapComponent>() {
+
+			@Override
+			public SimpleMapComponent createMapComponent(TranslationMap<?> map) {
+				return new SimpleMapComponent(map, entryFactory,
+						untranslatedField);
+			}
+
+		}, untranslatedField);
+	}
+
 	public int getCurrentEntryIndex() {
-		return entryComponents.indexOf(lastFocusedEntry);
+		return lastFocusedEntry;
 	}
 
 	public void goToEntry(final int entryIndex) {
@@ -113,25 +141,21 @@ public class MapContentPanel extends JPanel {
 			@Override
 			public void run() {
 				int index = Math.min(Math.max(entryIndex, 0), map.size() - 1);
-				JScrollBar scroll = mapContentScroll.getVerticalScrollBar();
 				if (index == 0) {
-					scroll.setValue(0);
-					entryComponents.get(0).getTranslationComponent()
-							.requestFocusInWindow();
+					mapContentScroll.getVerticalScrollBar().setValue(0);
 				} else {
 					Rectangle visible = mapContentArea.getVisibleRect();
-					EnrichedComponent entryComponent = entryComponents
-							.get(index);
-					Component target = (Component) entryComponent;
+					Component target = (Component) mapComponent
+							.getEntryComponent(index);
 					visible.y = 0;
 					while (target != mapContentArea) {
 						visible.y += target.getBounds().y;
 						target = target.getParent();
 					}
 					mapContentArea.scrollRectToVisible(visible);
-					entryComponent.getTranslationComponent()
-							.requestFocusInWindow();
 				}
+				mapComponent.getEntryComponent(index).getTranslationComponent()
+						.requestFocusInWindow();
 			}
 		});
 	}
@@ -156,6 +180,26 @@ public class MapContentPanel extends JPanel {
 		}
 	}
 
+	// TODO separate tag-based and content-based
+	// TODO make tag-based unavailable if field not provided
+	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
+		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
+		Iterator<? extends TranslationEntry<?>> iterator = map.iterator();
+		int count = 0;
+		while (iterator.hasNext()) {
+			TranslationEntry<?> entry = iterator.next();
+			if (relyOnTags && entry.getMetadata().get(untranslatedField)
+					|| !relyOnTags
+					&& !TranslationUtil.isActuallyTranslated(entry)) {
+				untranslatedEntries.add(count);
+			} else {
+				// already translated
+			}
+			count++;
+		}
+		return untranslatedEntries;
+	}
+
 	public void setMap(TranslationMap<?> map, String name) {
 		setMap(map, name, 0);
 	}
@@ -167,38 +211,34 @@ public class MapContentPanel extends JPanel {
 		} else {
 			loadingLabel.setText("Loading map " + name + "...");
 			loading.start();
-			this.map = map;
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
 					synchronized (map) {
+						for (TranslationEntry<?> entry : map) {
+							entry.addTranslationListener(translationListener);
+							entry.getMetadata().addFieldListener(fieldListener);
+						}
+						if (MapContentPanel.this.map == null) {
+							// no listener to remove
+						} else {
+							for (TranslationEntry<?> entry : MapContentPanel.this.map) {
+								entry.removeTranslationListener(translationListener);
+								entry.getMetadata().removeFieldListener(
+										fieldListener);
+							}
+						}
+						MapContentPanel.this.map = map;
+
 						// TODO add map title (English label)
 						mapTitleField.setText(name);
-						mapContentArea.removeAll();
-						entryComponents.clear();
 
-						mapContentArea.setLayout(new GridLayout(map.size(), 1));
-						TranslationListener translationListener = new TranslationListener() {
-
-							@Override
-							public void translationUpdated(String newTranslation) {
-								isMapModified = true;
-							}
-						};
-						FieldListener fieldListener = new FieldListener() {
-
-							@Override
-							public <T> void fieldUpdated(Field<T> field,
-									T newValue) {
-								isMapModified = true;
-							}
-						};
-						for (TranslationEntry<?> entry : map) {
-							final EnrichedComponent entryComponent = entryFactory
-									.createEntryComponent(entry);
-							mapContentArea.add((Component) entryComponent);
-							entryComponents.add(entryComponent);
+						mapComponent = mapFactory.createMapComponent(map);
+						for (int index = 0; index < map.size(); index++) {
+							EntryComponent entryComponent = mapComponent
+									.getEntryComponent(index);
+							final int entryIndex = index;
 							entryComponent.getTranslationComponent()
 									.addFocusListener(new FocusListener() {
 
@@ -209,13 +249,13 @@ public class MapContentPanel extends JPanel {
 
 										@Override
 										public void focusGained(FocusEvent e) {
-											lastFocusedEntry = entryComponent;
+											lastFocusedEntry = entryIndex;
 										}
 									});
-
-							entry.addTranslationListener(translationListener);
-							entry.getMetadata().addFieldListener(fieldListener);
 						}
+
+						mapContentArea.removeAll();
+						mapContentArea.add((Component) mapComponent);
 
 						goToEntry(entryIndex);
 					}
@@ -235,17 +275,15 @@ public class MapContentPanel extends JPanel {
 		return map;
 	}
 
-	private static interface LoadingManager {
-		public void start();
-
-		public void stop();
+	public boolean isMapModified() {
+		return isMapModified;
 	}
 
 	public void save() {
 		logger.info("Saving map " + map + "...");
 		map.saveAll();
 		logger.info("Map saved.");
-		for (MapSavedListener listener : listeners) {
+		for (MapSavedListener listener : saveListeners) {
 			listener.mapSaved(map);
 		}
 	}
@@ -267,34 +305,30 @@ public class MapContentPanel extends JPanel {
 		}
 	}
 
-	// TODO separate tag-based and content-based
-	// TODO make tag-based unavailable if field not provided
-	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
-		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<? extends TranslationEntry<?>> iterator = map.iterator();
-		int count = 0;
-		while (iterator.hasNext()) {
-			TranslationEntry<?> entry = iterator.next();
-			if (relyOnTags && entry.getMetadata().get(untranslatedField)
-					|| !relyOnTags
-					&& !TranslationUtil.isActuallyTranslated(entry)) {
-				untranslatedEntries.add(count);
-			} else {
-				// already translated
-			}
-			count++;
-		}
-		return untranslatedEntries;
-	}
-
-	private final Collection<MapSavedListener> listeners = new HashSet<MapSavedListener>();
-
 	public void addListener(MapSavedListener listener) {
-		listeners.add(listener);
+		saveListeners.add(listener);
 	}
 
 	public void removeListener(MapSavedListener listener) {
-		listeners.remove(listener);
+		saveListeners.remove(listener);
+	}
+
+	private static class SimpleMapComponent extends JPanel implements
+			MapComponent {
+
+		public SimpleMapComponent(TranslationMap<?> map,
+				EntryComponentFactory<?> entryFactory,
+				Field<Boolean> untranslatedField) {
+			setLayout(new GridLayout(map.size(), 1));
+			for (TranslationEntry<?> entry : map) {
+				add(entryFactory.createEntryComponent(entry));
+			}
+		}
+
+		@Override
+		public EntryComponent getEntryComponent(int index) {
+			return (EntryComponent) getComponent(index);
+		}
 	}
 
 	public static interface MapSavedListener {
@@ -303,20 +337,9 @@ public class MapContentPanel extends JPanel {
 
 	}
 
-	public void setEntryComponentFactory(EntryComponentFactory<?> entryFactory) {
-		if (entryFactory == null) {
-			throw new IllegalArgumentException("No entry factory provided: "
-					+ entryFactory);
-		} else {
-			this.entryFactory = entryFactory;
-		}
-	}
+	private static interface LoadingManager {
+		public void start();
 
-	public EntryComponentFactory<?> getEntryComponentFactory() {
-		return entryFactory;
-	}
-
-	public boolean isMapModified() {
-		return isMapModified;
+		public void stop();
 	}
 }

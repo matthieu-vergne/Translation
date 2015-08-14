@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EnrichedComponent;
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
@@ -151,7 +151,7 @@ public class VHGuiBuilder {
 	}
 
 	@SuppressWarnings("serial")
-	public static class EntryPanel extends JPanel implements EnrichedComponent {
+	public static class EntryPanel extends JPanel implements EntryComponent {
 
 		@Override
 		public TranslationArea getTranslationComponent() {
