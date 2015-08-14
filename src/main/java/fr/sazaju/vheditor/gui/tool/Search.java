@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
@@ -101,16 +102,16 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 				} else {
 					input.setEnabled(false);
 					clearResults();
-					final String searched = input.getText().replaceAll(
-							"[\\s\u3000]++", " ");
+					final String blanks = "[\\s\u3000]++";
+					final String searched = input.getText().replaceAll(blanks,
+							" ");
 					final TranslationProject<MapID, ?> project = provider
 							.getProject();
+					final Iterator<MapID> projectIterator = project.iterator();
 					SwingUtilities.invokeLater(new Runnable() {
 
-						private final String blanks = "[\\s\u3000]++";
-						private final Iterator<MapID> projectIterator = project
-								.iterator();
-						private Iterator<? extends TranslationEntry<?>> mapIterator = null;
+						private Iterator<? extends TranslationEntry<?>> mapIterator = Collections
+								.<TranslationEntry<?>> emptyList().iterator();
 						private MapID id;
 						private int index;
 
@@ -121,8 +122,7 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 							} else if (!projectIterator.hasNext()) {
 								// finished
 								searchButton.doClick();
-							} else if (mapIterator == null
-									|| !mapIterator.hasNext()) {
+							} else if (!mapIterator.hasNext()) {
 								id = projectIterator.next();
 								TranslationMap<?> map = project.getMap(id);
 								mapIterator = map.iterator();
