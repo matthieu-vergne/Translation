@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -12,6 +14,7 @@ import javax.swing.JTextArea;
 
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
 import fr.sazaju.vheditor.gui.content.MapComponentFactory.MapComponent;
+import fr.sazaju.vheditor.gui.content.TranslationArea;
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
@@ -94,7 +97,10 @@ public class VHGuiBuilder {
 		original.setEditable(false);
 		panel.add(original, constraints);
 		panel.add(instantiateEntryGui(mapEntry.get(5), mapEntry), constraints);
-		panel.add(new TranslationArea(mapEntry), constraints);
+		Collection<Integer> limits = TranslationArea.retrieveLimits(mapEntry,
+				Arrays.asList(VHEntry.CHAR_LIMIT_NO_FACE,
+						VHEntry.CHAR_LIMIT_FACE));
+		panel.add(new TranslationArea(mapEntry, limits), constraints);
 		panel.add(instantiateEntryGui(mapEntry.get(7), mapEntry), constraints);
 		return panel;
 	}

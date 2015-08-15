@@ -1,4 +1,4 @@
-package fr.sazaju.vheditor.parsing.vh.gui;
+package fr.sazaju.vheditor.gui.content;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,10 +6,9 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
@@ -26,8 +25,8 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
-import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 
 @SuppressWarnings("serial")
 public class TranslationArea extends JTextArea {
@@ -36,30 +35,14 @@ public class TranslationArea extends JTextArea {
 	private static final String ACTION_REDO = "redo";
 	private final TranslationEntry<?> entry;
 	private final TreeSet<Integer> limits;
-	private static final List<Color> limitColors = Arrays.asList(Color.RED,
-			Color.LIGHT_GRAY);
+	private static final Color colorMin = Color.LIGHT_GRAY;
+	private static final Color colorMax = Color.RED;
 
-	public TranslationArea(TranslationEntry<?> entry) {
+	public TranslationArea(TranslationEntry<?> entry,
+			Collection<Integer> characterLimits) {
 		super(entry.getCurrentTranslation());
 		this.entry = entry;
-		limits = new TreeSet<Integer>(new Comparator<Integer>() {
-
-			@Override
-			public int compare(Integer i1, Integer i2) {
-				return i2.compareTo(i1);
-			}
-		}) {
-			@Override
-			public boolean add(Integer e) {
-				if (e == null) {
-					return true;
-				} else {
-					return super.add(e);
-				}
-			}
-		};
-		limits.add(entry.getMetadata().get(VHEntry.CHAR_LIMIT_NO_FACE));
-		limits.add(entry.getMetadata().get(VHEntry.CHAR_LIMIT_FACE));
+		this.limits = new TreeSet<Integer>(characterLimits);
 		setBorder(new EtchedBorder());
 		setFont(new Font("monospaced", Font.PLAIN, getFont().getSize()));
 
@@ -103,6 +86,19 @@ public class TranslationArea extends JTextArea {
 				ACTION_REDO);
 	}
 
+	public static Collection<Integer> retrieveLimits(TranslationEntry<?> entry,
+			Collection<Field<Integer>> limitFields) {
+		Collection<Integer> limits = new HashSet<Integer>();
+		for (Field<Integer> field : limitFields) {
+			limits.add(entry.getMetadata().get(field));
+		}
+		return limits;
+	}
+
+	public TranslationArea(TranslationEntry<?> entry) {
+		this(entry, Collections.<Integer> emptyList());
+	}
+
 	public void save() {
 		entry.setCurrentTranslation(getText());
 	}
@@ -120,13 +116,44 @@ public class TranslationArea extends JTextArea {
 		super.paintComponent(g);
 
 		int charWidth = g.getFontMetrics().charWidth('m');
-		Iterator<Integer> limitIterator = limits.iterator();
-		Iterator<Color> colorIterator = limitColors.iterator();
-		while (limitIterator.hasNext()) {
-			Integer limit = charWidth * limitIterator.next();
-			g.setColor(colorIterator.next());
-			g.drawLine(limit, 0, limit, getHeight());
+		if (limits.isEmpty()) {
+			// no limit to draw
+		} else if (limits.size() == 1) {
+			Integer charLimit = limits.first();
+			Integer pixelLimit = charWidth * charLimit;
+			g.setColor(colorMax);
+			g.drawLine(pixelLimit, 0, pixelLimit, getHeight());
+		} else {
+			Integer lowLimit = limits.first();
+			Integer highLimit = limits.last();
+			for (Integer charLimit : limits) {
+				Integer pixelLimit = charWidth * charLimit;
+				g.setColor(weightedColor(lowLimit, charLimit, highLimit));
+				g.drawLine(pixelLimit, 0, pixelLimit, getHeight());
+			}
 		}
+	}
+
+	private Color weightedColor(int min, int current, int max) {
+		int rMin = colorMin.getRed();
+		int gMin = colorMin.getGreen();
+		int bMin = colorMin.getBlue();
+
+		int rMax = colorMax.getRed();
+		int gMax = colorMax.getGreen();
+		int bMax = colorMax.getBlue();
+
+		double factor = (double) (current - min) / (max - min);
+
+		int r = average(rMin, rMax, factor);
+		int g = average(gMin, gMax, factor);
+		int b = average(bMin, bMax, factor);
+
+		return new Color(r, g, b);
+	}
+
+	private int average(int rMin, int rMax, double factor) {
+		return (int) ((1 - factor) * rMin + factor * rMax);
 	}
 
 	private static class DocumentEdit extends CompoundEdit {
