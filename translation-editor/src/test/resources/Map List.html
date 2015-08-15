@@ -1,0 +1,9779 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+<link href="Map%20List_fichiers/css.css" rel="stylesheet" type="text/css">
+<link media="all" href="Map%20List_fichiers/icons.css" rel="stylesheet"><script src="Map%20List_fichiers/track.js" defer="defer" async="" type="application/javascript"></script><script src="Map%20List_fichiers/mixpanel-2.js" async="" type="text/javascript"></script><script src="Map%20List_fichiers/bbPeA9Dl6wpSgQCGELaiZA.js" async="" type="text/javascript"></script><script src="Map%20List_fichiers/prum.js" async=""></script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"beacon-3.newrelic.com","errorBeacon":"bam.nr-data.net","licenseKey":"9dfe439095","applicationID":"8763","transactionName":"Il9dRhNbCVtVQhgXQgBTVkFOQwxcWR9EDF0W","queueTime":4,"applicationTime":1210,"ttGuid":"","agentToken":null,"agent":"js-agent.newrelic.com/nr-476.min.js","extra":""}</script>
+<script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"XA4HUkVbDwUD"};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),u=c.length,f=i(a,o,r),d=0;u>d;d++)c[d].apply(f,n);return f}function a(t,e){u[t]=s(t).concat(e)}function s(t){return u[t]||[]}function c(){return n(e)}var u={};return{on:a,emit:e,create:c,listeners:s,_events:u}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(u){try{r("ierr",[u,(new Date).getTime(),!0])}catch(f){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(4),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,window.onerror=e,NREUM.noticeError=n;try{throw new Error}catch(u){"stack"in u&&(t(5),t(3),"addEventListener"in window&&t(1),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(2),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:4,2:7,3:5,4:18,5:6,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],4:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:18,2:19,ee:"QJf3ax",gos:"7eSDFh"}],5:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:19,2:18,ee:"QJf3ax"}],6:[function(t,e){function n(t,e,n){var r=t[0];"string"==typeof r&&(r=new Function(r)),t[0]=o(r,"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:19,2:18,ee:"QJf3ax"}],7:[function(t,e){function n(){c.inPlace(this,d,"fn-")}function r(t,e){c.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}var i=t("ee").create(),a=t(1),s=t(2),c=s(i),u=s(a),f=window.XMLHttpRequest,d=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=i,window.XMLHttpRequest=function(t){var e=new f(t);try{i.emit("new-xhr",[],e),u.inPlace(e,["addEventListener","removeEventListener"],"-",function(t,e){return e}),e.addEventListener("readystatechange",n,!1)}catch(r){try{i.emit("internal-error",[r])}catch(o){}}return e},window.XMLHttpRequest.prototype=f.prototype,c.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),i.on("send-xhr-start",r),i.on("open-xhr-start",r)},{1:4,2:19,ee:"QJf3ax"}],8:[function(t){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,u="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,f=e(u);if(f&&(r.rxSize=f),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(n.cat=d.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r,this.startTime])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,u=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var u=e(o);u&&(r.txSize=u)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",[e])}catch(r){}}};for(var f=0;c>f;f++)n.addEventListener(s[f],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+u(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+u(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:9,3:7,4:4,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],9:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=p.info=NREUM.info;if(t&&t.agent&&t.licenseKey&&t.applicationID&&c&&c.body){p.proto="https"===d.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=c.createElement("script");e.src=p.proto+t.agent,c.body.appendChild(e)}}function r(){"complete"===c.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=window,c=s.document,u="addEventListener",f="attachEvent",d=(""+location).split("?")[0],p=e.exports={offset:i(),origin:d,features:{}};c[u]?(c[u]("DOMContentLoaded",o,!1),s[u]("load",n,!1)):(c[f]("onreadystatechange",r),s[f]("onload",n)),a("mark",["firstbyte",i()])},{handle:"D5DuLP"}],18:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],19:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,u;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){f([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return u=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,u],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,u(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,u="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,u?s+o:o,i,s,t))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){f([o,e,n,r])}}function u(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){f([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function f(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:18,ee:"QJf3ax"}]},{},["G9z0Bl",3,8]);</script>
+ 
+<script>
+  var _prum = [['id', '5398e4a7abe53da27d964be6'],
+               ['mark', 'firstbyte', (new Date()).getTime()]];
+  (function() {
+      var s = document.getElementsByTagName('script')[0]
+        , p = document.createElement('script');
+      p.async = 'async';
+      p.src = '//rum-static.pingdom.net/prum.min.js';
+      s.parentNode.insertBefore(p, s);
+  })();
+</script>
+ 
+<title>Map List | VH Translation Project | Assembla</title>
+<link href="https://www.assembla.com/assets/favicon-b10f68cc7833757755961f1b8c66bc88.ico" rel="shortcut icon" type="image/x-icon">
+<link href="https://www.assembla.com/assets/favicon-b10f68cc7833757755961f1b8c66bc88.ico" rel="icon" type="image/x-icon">
+<link href="https://www.assembla.com/assets/favicon-f936dde4afa063270017aa5da350ccc5.gif" rel="icon" type="image/gif">
+<!--[if lte IE 8]>
+      <link href="https://www.assembla.com/assets/ie/ie8-3d4b5e628f4c7baeb501d4a88c990075.css" media="all" rel="stylesheet" type="text/css" />
+      <script src="https://www.assembla.com/assets/excanvas.mod-6f82099baf4f264d311677a2600aabaa.js" type="text/javascript"></script>
+      <script src="https://www.assembla.com/assets/selectivizr-6b40e07342d30ca79ba6e0d08067e757.js" type="text/javascript"></script>
+    <![endif]-->
+<!--[if lte IE 9]>
+      <link href="https://www.assembla.com/assets/ie/ie9-c6f76c9df18df9fa0a906d1ee7df4a43.css" media="all" rel="stylesheet" type="text/css" />
+    <![endif]-->
+<meta content="authenticity_token" name="csrf-param">
+<meta content="uW5lO5x4guoHzQD5bpGDsR/JHv2b8dLcQ0mAhvVU0Hs=" name="csrf-token">
+<link href="Map%20List_fichiers/base_app_and_alerts-2cd47afa14fc4816b94ed32a29a472a2.css" media="all" rel="stylesheet" type="text/css">
+<link href="Map%20List_fichiers/base_app_and_alerts2-fa66d15f59b5eedfb53aa5647e9888e3.css" media="all" rel="stylesheet" type="text/css">
+<link href="Map%20List_fichiers/wiki_tool-84db8b3582644b5438549276ca7cc849.css" media="all" rel="stylesheet" type="text/css">
+<link href="Map%20List_fichiers/code-84db8b3582644b5438549276ca7cc849.css" media="all" rel="stylesheet" type="text/css">
+<link href="Map%20List_fichiers/snippet_tool-8c2fd1a4834a74503d0f0d48640f024e.css" media="all" rel="stylesheet" type="text/css">
+<style type="text/css" media="all" rel="stylesheet" id="branded_css">.side-col{width:17em;float:left;}.main-col{margin-right:0em;}.main-col-w{width:75%;float:right;}html>body .side-col{width:17em;float:left;margin-left:0;}html>body .main-col{margin-right:0em;}html>body .main-col-w{width:75%;float:right;}html>body #team-page .main-col{margin-right:0em;margin-left:1em;}</style>
+<link href="Map%20List_fichiers/print-174e5f82e174c76aec913bc32b7a6ae1.css" media="print" rel="stylesheet" type="text/css">
+<script>/* grunticon Stylesheet Loader | https://github.com/filamentgroup/grunticon | (c) 2012 Scott Jehl, Filament Group, Inc. | MIT license. */
+
+window.grunticon=function(e){if(e&&3===e.length){var t=window,n=!(!t.document.createElementNS||!t.document.createElementNS("http://www.w3.org/2000/svg","svg").createSVGRect||!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Image","1.1")||window.opera&&-1===navigator.userAgent.indexOf("Chrome")),o=function(o){var a=t.document.createElement("link"),r=t.document.getElementsByTagName("script")[0];a.rel="stylesheet",a.href=e[o&&n?0:o?1:2],a.media="only x",r.parentNode.insertBefore(a,r),setTimeout(function(){a.media="all"})},a=new t.Image;a.onerror=function(){o(!1)},a.onload=function(){o(1===a.width&&1===a.height)},a.src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="}};
+
+grunticon(["https://www.assembla.com/assets/svg/icons.data.svg-d3ed69e1bf84ffecdbc4eec7a0a9329d.css","https://www.assembla.com/assets/svg/icons.data.png-939f38cfbd20293f9d4dfbed3f292376.css","https://www.assembla.com/assets/svg/icons.fallback-41eccdaa8762d9d5b2e0d6752eb9d0ce.css"]);
+</script>
+<script type="text/javascript">
+      if (!Breakout) { var Breakout = {}; }
+          Breakout.space_wiki_name = "VH";
+          Breakout.space_id = "bVerx4pn0r4RKNacwqjQWU";
+        Breakout.space_new_record = false;
+        Breakout.user_id = "btTXnEEjKr44oEacwqjQYw";
+        Breakout.controller_name = "spaces/wiki"
+        Breakout.action_name = "show"
+      Breakout.notifications_enabled = 'true';
+        Breakout.enableTrackers = true;
+        Breakout.alertsPopup = true;
+        Breakout.dropboxKey = '7ahlrjbrxw3rhce';
+    </script>
+<script src="Map%20List_fichiers/jquery-1.js" type="text/javascript"></script>
+<script src="Map%20List_fichiers/prototype-06e405e9ae851e280c58b1294eddd4d4.js" type="text/javascript"></script>
+<script src="Map%20List_fichiers/wiki_tool-50eb0f32dde04a5aa6fe634f1eb0996d.js" type="text/javascript"></script>
+<script src="Map%20List_fichiers/code-0eca8e5296aeb922bad653fce8d962e3.js" type="text/javascript"></script>
+<script src="Map%20List_fichiers/pretty_code-7183a6bbc987891d1d0148399e5fcf94.js" type="text/javascript"></script>
+<!--[if lte IE 9]>
+      <script src="https://www.assembla.com/assets/packages/lte_ie9-bf332a7d26fb8017e7494fd078b66ef6.js" type="text/javascript"></script>
+    <![endif]-->
+ 
+<meta http-equiv="PRAGMA" content="NO-CACHE">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="Map%20List_fichiers/ga.js" async="" type="text/javascript"></script><style media="screen" type="text/css">.uv-icon{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:inline-block;cursor:pointer;position:relative;-webkit-transition:all 300ms;-moz-transition:all 300ms;-o-transition:all 300ms;transition:all 300ms;width:39px;height:39px;position:fixed;z-index:100002;opacity:0.8;-webkit-transition:opacity 100ms;-moz-transition:opacity 100ms;-o-transition:opacity 100ms;transition:opacity 100ms}.uv-icon.uv-bottom-right{bottom:10px;right:12px}.uv-icon.uv-top-right{top:10px;right:12px}.uv-icon.uv-bottom-left{bottom:10px;left:12px}.uv-icon.uv-top-left{top:10px;left:12px}.uv-icon.uv-is-selected{opacity:1}.uv-icon svg{width:39px;height:39px}.uv-popover{font-family:sans-serif;font-weight:100;font-size:13px;color:black;position:fixed;z-index:100001}.uv-popover-content{-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;background:white;position:relative;width:325px;height:325px;-webkit-transition:background 200ms;-moz-transition:background 200ms;-o-transition:background 200ms;transition:background 200ms}.uv-bottom .uv-popover-content{-webkit-box-shadow:rgba(0,0,0,0.3) 0 -10px 60px,rgba(0,0,0,0.1) 0 0 20px;-moz-box-shadow:rgba(0,0,0,0.3) 0 -10px 60px,rgba(0,0,0,0.1) 0 0 20px;box-shadow:rgba(0,0,0,0.3) 0 -10px 60px,rgba(0,0,0,0.1) 0 0 20px}.uv-top .uv-popover-content{-webkit-box-shadow:rgba(0,0,0,0.3) 0 10px 60px,rgba(0,0,0,0.1) 0 0 20px;-moz-box-shadow:rgba(0,0,0,0.3) 0 10px 60px,rgba(0,0,0,0.1) 0 0 20px;box-shadow:rgba(0,0,0,0.3) 0 10px 60px,rgba(0,0,0,0.1) 0 0 20px}.uv-left .uv-popover-content{-webkit-box-shadow:rgba(0,0,0,0.3) 10px 0 60px,rgba(0,0,0,0.1) 0 0 20px;-moz-box-shadow:rgba(0,0,0,0.3) 10px 0 60px,rgba(0,0,0,0.1) 0 0 20px;box-shadow:rgba(0,0,0,0.3) 10px 0 60px,rgba(0,0,0,0.1) 0 0 20px}.uv-right .uv-popover-content{-webkit-box-shadow:rgba(0,0,0,0.3) -10px 0 60px,rgba(0,0,0,0.1) 0 0 20px;-moz-box-shadow:rgba(0,0,0,0.3) -10px 0 60px,rgba(0,0,0,0.1) 0 0 20px;box-shadow:rgba(0,0,0,0.3) -10px 0 60px,rgba(0,0,0,0.1) 0 0 20px}.uv-ie8 .uv-popover-content{position:relative}.uv-ie8 .uv-popover-content .uv-popover-content-shadow{display:block;background:black;content:'';position:absolute;left:-15px;top:-15px;width:100%;height:100%;filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius=15,MakeShadow=true,ShadowOpacity=0.30);z-index:-1}.uv-popover-tail{border:9px solid transparent;width:0;z-index:10;position:absolute;-webkit-transition:border-top-color 200ms;-moz-transition:border-top-color 200ms;-o-transition:border-top-color 200ms;transition:border-top-color 200ms}.uv-top .uv-popover-tail{bottom:-20px;border-top:11px solid white}.uv-bottom .uv-popover-tail{top:-20px;border-bottom:11px solid white}.uv-left .uv-popover-tail{right:-20px;border-left:11px solid white}.uv-right .uv-popover-tail{left:-20px;border-right:11px solid white}.uv-popover-loading{background:white;-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;position:absolute;width:100%;height:100%;left:0;top:0}.uv-popover-loading-text{position:absolute;top:50%;margin-top:-0.5em;width:100%;text-align:center}.uv-popover-iframe-container{height:100%}.uv-popover-iframe{-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;overflow:hidden}.uv-is-hidden{display:none}.uv-is-invisible{display:block !important;visibility:hidden !important}.uv-is-transitioning{display:block !important}.uv-no-transition{-moz-transition:none !important;-webkit-transition:none !important;-o-transition:color 0 ease-in !important;transition:none !important}.uv-fade{opacity:1;-webkit-transition:opacity 200ms ease-out;-moz-transition:opacity 200ms ease-out;-o-transition:opacity 200ms ease-out;transition:opacity 200ms ease-out}.uv-fade.uv-is-hidden{opacity:0}.uv-scale-top,.uv-scale-top-left,.uv-scale-top-right,.uv-scale-bottom,.uv-scale-bottom-left,.uv-scale-bottom-right,.uv-scale-right,.uv-scale-right-top,.uv-scale-right-bottom,.uv-scale-left,.uv-scale-left-top,.uv-scale-left-bottom,.uv-slide-top,.uv-slide-bottom,.uv-slide-left,.uv-slide-right{opacity:1;-webkit-transition:all 80ms ease-out;-moz-transition:all 80ms ease-out;-o-transition:all 80ms ease-out;transition:all 80ms ease-out}.uv-scale-top.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(-15%);-moz-transform:scale(0.8) translateY(-15%);-ms-transform:scale(0.8) translateY(-15%);-o-transform:scale(0.8) translateY(-15%);transform:scale(0.8) translateY(-15%)}.uv-scale-top-left.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(-15%) translateX(-10%);-moz-transform:scale(0.8) translateY(-15%) translateX(-10%);-ms-transform:scale(0.8) translateY(-15%) translateX(-10%);-o-transform:scale(0.8) translateY(-15%) translateX(-10%);transform:scale(0.8) translateY(-15%) translateX(-10%)}.uv-scale-top-right.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(-15%) translateX(10%);-moz-transform:scale(0.8) translateY(-15%) translateX(10%);-ms-transform:scale(0.8) translateY(-15%) translateX(10%);-o-transform:scale(0.8) translateY(-15%) translateX(10%);transform:scale(0.8) translateY(-15%) translateX(10%)}.uv-scale-bottom.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(15%);-moz-transform:scale(0.8) translateY(15%);-ms-transform:scale(0.8) translateY(15%);-o-transform:scale(0.8) translateY(15%);transform:scale(0.8) translateY(15%)}.uv-scale-bottom-left.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(15%) translateX(-10%);-moz-transform:scale(0.8) translateY(15%) translateX(-10%);-ms-transform:scale(0.8) translateY(15%) translateX(-10%);-o-transform:scale(0.8) translateY(15%) translateX(-10%);transform:scale(0.8) translateY(15%) translateX(-10%)}.uv-scale-bottom-right.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateY(15%) translateX(10%);-moz-transform:scale(0.8) translateY(15%) translateX(10%);-ms-transform:scale(0.8) translateY(15%) translateX(10%);-o-transform:scale(0.8) translateY(15%) translateX(10%);transform:scale(0.8) translateY(15%) translateX(10%)}.uv-scale-right.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(15%);-moz-transform:scale(0.8) translateX(15%);-ms-transform:scale(0.8) translateX(15%);-o-transform:scale(0.8) translateX(15%);transform:scale(0.8) translateX(15%)}.uv-scale-right-top.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(15%) translateY(-10%);-moz-transform:scale(0.8) translateX(15%) translateY(-10%);-ms-transform:scale(0.8) translateX(15%) translateY(-10%);-o-transform:scale(0.8) translateX(15%) translateY(-10%);transform:scale(0.8) translateX(15%) translateY(-10%)}.uv-scale-right-bottom.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(15%) translateY(10%);-moz-transform:scale(0.8) translateX(15%) translateY(10%);-ms-transform:scale(0.8) translateX(15%) translateY(10%);-o-transform:scale(0.8) translateX(15%) translateY(10%);transform:scale(0.8) translateX(15%) translateY(10%)}.uv-scale-left.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(-15%);-moz-transform:scale(0.8) translateX(-15%);-ms-transform:scale(0.8) translateX(-15%);-o-transform:scale(0.8) translateX(-15%);transform:scale(0.8) translateX(-15%)}.uv-scale-left-top.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(-15%) translateY(-10%);-moz-transform:scale(0.8) translateX(-15%) translateY(-10%);-ms-transform:scale(0.8) translateX(-15%) translateY(-10%);-o-transform:scale(0.8) translateX(-15%) translateY(-10%);transform:scale(0.8) translateX(-15%) translateY(-10%)}.uv-scale-left-bottom.uv-is-hidden{opacity:0;-webkit-transform:scale(0.8) translateX(-15%) translateY(10%);-moz-transform:scale(0.8) translateX(-15%) translateY(10%);-ms-transform:scale(0.8) translateX(-15%) translateY(10%);-o-transform:scale(0.8) translateX(-15%) translateY(10%);transform:scale(0.8) translateX(-15%) translateY(10%)}.uv-slide-top.uv-is-hidden{-webkit-transform:translateY(-100%);-moz-transform:translateY(-100%);-ms-transform:translateY(-100%);-o-transform:translateY(-100%);transform:translateY(-100%)}.uv-slide-bottom.uv-is-hidden{-webkit-transform:translateY(100%);-moz-transform:translateY(100%);-ms-transform:translateY(100%);-o-transform:translateY(100%);transform:translateY(100%)}.uv-slide-left.uv-is-hidden{-webkit-transform:translateX(-100%);-moz-transform:translateX(-100%);-ms-transform:translateX(-100%);-o-transform:translateX(-100%);transform:translateX(-100%)}.uv-slide-right.uv-is-hidden{-webkit-transform:translateX(100%);-moz-transform:translateX(100%);-ms-transform:translateX(100%);-o-transform:translateX(100%);transform:translateX(100%)}
+</style></head>
+<body class="locale_en " data-locale="en"><ul class="messenger-empty messenger messenger-fixed messenger-on-bottom messenger-on-right messenger-theme-flat"></ul>
+<div class="outer ">
+<!--[if IE 6]>
+        <div class="browser-ie6" style="display: none;"><div>
+      <![endif]-->
+<div class="b-wrapper ">
+<a name="pagetop"></a>
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-2641193-1']);
+    _gaq.push(['_setDomainName', 'assembla.com']);
+    _gaq.push(['_setCustomVar', 1, 'Logged', 'true', 1]);
+    
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+    })();
+    
+  </script>
+ 
+<script type="text/javascript">
+  UserVoice=window.UserVoice || [];
+  (function() {
+    var uv=document.createElement('script');
+    uv.type='text/javascript';
+    uv.async=true;
+    uv.src='//widget.uservoice.com/bbPeA9Dl6wpSgQCGELaiZA.js';
+    var s=document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(uv,s)
+  })();
+
+  // Set colors
+  UserVoice.push(['set', {
+    accent_color: '#448dd6',
+    trigger_color: 'white',
+    trigger_background_color: 'rgba(46, 49, 51, 0.6)'
+  }]);
+
+  // Identify the user and pass traits
+  UserVoice.push(['identify', {
+    email: 'sazaju@gmail.com',
+    created_at: '1389208568',
+    account: {
+      plan: 'null',
+      monthly_rate: null
+    }
+  }]);
+
+  UserVoice.push(['autoprompt', {}]);
+</script>
+ 
+<div style="display:none">
+<a href="#content">Skip to contents</a>
+</div>
+<div class="app-nav">
+<div class="app-nav-right">
+<div class="user-notifications-wrapper">
+<div class="user-notifications">
+<div class="notification-badge">
+<a href="#" id="notifications-count">0</a>
+</div>
+</div>
+<div class="js-dropdown user-notifications-dropdown notificationsDropdown">
+<div class="notificationsDropdown-container">
+<div style="display: none;" class="dropdown-header">
+You have <span class="counter">0</span> product updates
+<div class="o-floatR">
+<a href="https://www.assembla.com/updates">View all updates</a> <a href="https://www.assembla.com/updates/mark_all_as_read" class="mark-all-link cta small color-gray hidden" data-method="put" data-remote="true" id="updates-mark-all-link" rel="nofollow">Clear All</a>
+</div>
+</div>
+<ul style="display: none;" id="updates-list" class="list list--dividers" data-remote-url="/updates/notification_center"></ul>
+<div class="dropdown-header">
+You have <span class="counter">0</span> mentions
+<div class="o-floatR">
+<a href="https://www.assembla.com/user/mentions" class="nowrap o-floatL">View all mentions</a> <a href="https://www.assembla.com/user/mentions/mark_all" class="mark-all-link cta small color-gray hidden" data-method="put" data-remote="true" id="mentions-mark-all-link" rel="nofollow">Clear All</a>
+</div>
+</div>
+<ul style="display: none;" id="mentions-list" class="list list--dividers" data-remote-url="/user/mentions" newest-mention="0" unread-mentions="0">
+</ul>
+<div style="display: none;" class="dropdown-header hidden">
+You have <span class="counter">0</span> alerts
+<div class="o-floatR">
+<a href="https://www.assembla.com/user/notifications/mark_all_as_read" class="mark-all-link cta small color-gray hidden" data-method="put" data-remote="true" id="notifications-mark-all-link" rel="nofollow">Clear All</a>
+</div>
+</div>
+<ul style="display: none;" id="notifications-list" class="list list--dividers" data-remote-url="/user/notifications">
+</ul>
+</div>
+</div>
+</div> 
+<div class="user-options-nav">
+<div class="user-options" id="user-options">
+<div class="dropdown-wraper">
+<a class="dropdown-link" href="#">
+<span class="user-pic"><img alt="User picture" src="Map%20List_fichiers/1391225093.png"></span>
+<span class="user-name nowrap">Sazaju HITOKAGE</span>
+</a>
+</div>
+<div id="user-links">
+<ul>
+<li><a href="https://www.assembla.com/">Start Page</a></li>
+<li><a href="https://www.assembla.com/user/edit">Profile</a></li>
+<li><a href="https://www.assembla.com/account">Account</a></li>
+<li><a href="http://status.assembla.com/" target="_blank">System Status</a></li>
+<li><a href="https://www.assembla.com/logout">Logout</a></li>
+</ul>
+</div> 
+</div> 
+</div>
+</div>
+<div class="app-nav-left">
+<div class="top-bar-space-nav">
+ 
+<span class="assembla-home" id="home-link">
+<a href="https://www.assembla.com/">Assembla</a>
+</span>
+<span class="nav-bar-separator" id="first-separator"></span>
+<span class=" my-start" id="my-start">
+<a href="https://www.assembla.com/">My Start</a>
+</span>
+ 
+<span class="nav-bar-separator" id="second-separator"></span>
+ 
+<span class="selected" id="master-title">
+<a href="https://www.assembla.com/spaces/show/VH" title="VH Translation">VH Translation</a>
+</span>
+ 
+ 
+</div>
+</div>
+</div>
+<div id="header-w">
+<div id="header" class="_">
+<div id="header-links">
+<div class="top-space">
+<span id="space-role">Free/Public Project<span class="ml-5">Member</span></span>
+</div>
+</div>
+<div id="logo">
+<div id="space-customlogo" class="space-customlogo-sideborder">
+<h1 class="header-w clear-float float-left">
+<span>VH Translation</span>
+</h1>
+</div>
+</div>
+<div class="cut">&nbsp;</div>
+</div> 
+</div> 
+<div id="main-menu-w">
+<div class="s-col-12"><ul style="overflow: visible;" id="main-menu"><li class="tab" id="add-resource"><a href="#" class="drop-init" id="resource-menu">+</a><div class="more_tabs_menu" id="add-menu"><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/tickets/new?dropdown_menu=1" class="icon-add-ticket"><span>New Ticket</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/messages/new?dropdown_menu=2" class="icon-add-message"><span>New Message</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/wiki/new?dropdown_menu=4" class="icon-add-wiki"><span>New Wiki Page</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/team?dropdown_menu=5" class="icon-add-user"><span>Add Team Members</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/documents/new?dropdown_menu=6" class="icon-add-documents"><span>Upload File</span></a></div></div></li><li class="tab fixed current"><a href="https://www.assembla.com/spaces/VH/wiki" class="icon-wiki"><span>Wiki</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/support/tickets" class="icon-support"><span>Support</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/team" class="icon-team"><span>Team</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/stream" class="icon-stream"><span>Stream</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/documents" class="icon-documents"><span>Files</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/messages" class="icon-messages"><span>Messages</span></a></li><li class="tab"><a href="https://www.assembla.com/spaces/VH/tickets" class="icon-ticket"><span>Tickets</span></a></li><li class="tab"><a href="https://www.assembla.com/code/VH/subversion/nodes" class="icon-source-svn"><span>VH Translation</span></a></li><li id="more-tab" style="display: none;"><a href="#" id="main-more-menu">more</a><div class="more_tabs_menu" id="more-menu" style="display: none;"><div class="more_tabs_menu_item"></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/wiki" class="icon-wiki"><span>Wiki</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/support/tickets" class="icon-support"><span>Support</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/team" class="icon-team"><span>Team</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/stream" class="icon-stream"><span>Stream</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/documents" class="icon-documents"><span>Files</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/messages" class="icon-messages"><span>Messages</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/spaces/VH/tickets" class="icon-ticket"><span>Tickets</span></a></div><div class="more_tabs_menu_item"><a href="https://www.assembla.com/code/VH/subversion/nodes" class="icon-source-svn"><span>VH Translation</span></a></div></div></li><li class="search-field"> <form accept-charset="UTF-8" action="/spaces/VH/search" autocomplete="off" id="search-form" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" value="✓" type="hidden"></div>
+<input id="object_scope_top_right" name="object_scope" value="40" type="hidden">
+<input class="main-search mentionable" data-autocomplete-url="/spaces/VH/user_completions_list" data-value="Search" id="q" maxlength="141" name="q" size="15" value="Search" type="text">
+</form>
+<div class="s-hint float-right mr-5 search-hint">
+<span class="s-icon s-icon-info"></span>
+<div class="s-hint-container s-hint-container-left s-large"><div class="s-arrow"></div>
+<strong>Available Commands:</strong>
+<br>
+<em>#number</em> to see the ticket(s)
+<br>
+<em>@user</em> to access user reports
+<br>
+Invite a user by writing his email address or login
+<br>
+You can use quotes " " to search for the exact words
+</div>
+</div>
+</li></ul></div>
+</div> 
+<!--[if IE 7]>
+         <link href="https://www.assembla.com/assets/ie/sections/wiki_content_space-ie7-4060b13a28387215127c4ce64574cba1.css" media="screen" rel="stylesheet" type="text/css" />
+      <![endif]-->
+<div id="content" class="wiki-tool">
+<div class="l-sidebar-left clearfix">
+<div class="tool-header">
+<div class="cta-buttons">
+<a href="https://www.assembla.com/spaces/VH/wiki/new?parent_id=dxt_aSvv8r4QqUacwqEsg8" class="cta medium right color-green">Create new page</a>
+<div id="action-group" class="menu-off">
+<button type="button" id="action-button" class="cta medium color-gray dropdown-toggle" data-toggle="dropdown">
+Page Actions
+<span class="caret"></span>
+</button>
+<ul class="action-menu dropdown" role="menu">
+<li class="menu-icon edit-page"><a href="https://www.assembla.com/spaces/VH/wiki/Map_List/edit">Edit Page</a></li>
+<li class="menu-icon page-history"><a href="https://www.assembla.com/spaces/VH/wiki/Map_List/history">Page History</a></li>
+</ul>
+</div>
+</div>
+<h2 class="tool-name"><a href="https://www.assembla.com/spaces/VH/wiki">Wiki</a></h2>
+<a href="http://helpdesk.assembla.com/customer/portal/articles/1588237-wiki-tool-user-guide" class="quick-help bold-link ab-click" data-ab-test="quick_help_button" target="_blank">Quick Help</a>
+</div>
+<div id="left-sidebar" class="s-sidebar">
+<div id="page-list">
+<ul id="page-types">
+<li class="first selected">
+<a href="https://www.assembla.com/spaces/VH/wiki">Public</a>
+</li>
+<li class="">
+<a href="https://www.assembla.com/spaces/VH/wiki?option=private">Private</a>
+</li>
+<li class="">
+<a href="https://www.assembla.com/spaces/VH/wiki?option=archived">Archived</a>
+</li>
+</ul>
+<ul id="wiki-page-tree" class="system-link content-links">
+<li id="dY0Dx-rMqr4RYaacwqjQYw" nodrag="true">
+<img class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag04" href="https://www.assembla.com/spaces/VH/wiki/Home">Home</a>
+<ul id="tree_ul_0">
+<li id="aVcZcOGIWr4PxEacwqjQYw" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag4" href="https://www.assembla.com/spaces/VH/wiki/RPGMaker_Trans">RPGMaker Trans</a>
+</li>
+<li id="c8mzLqxJyr4PoeacwqjQYw" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag84" href="https://www.assembla.com/spaces/VH/wiki/How_to_apply_csv_file">How to apply csv file</a>
+</li>
+<li id="b-tRxIwdyr4RHiacwqjQWU" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag4" href="https://www.assembla.com/spaces/VH/wiki/Character_Codes">Character Codes</a>
+</li>
+<li id="b8XJTOvvmr4O9ZacwqEsg8" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag8498" href="https://www.assembla.com/spaces/VH/wiki/Editing">Editing</a>
+</li>
+<li id="dNgUNMvvmr4QlOacwqEsg8" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag48" href="https://www.assembla.com/spaces/VH/wiki/SVN_Basics">SVN Basics</a>
+</li>
+</ul>
+</li>
+<li id="dq3OqiGISr4QZZacwqjQYw" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag34" href="https://www.assembla.com/spaces/VH/wiki/Frequently_Asked_Questions">Frequently Asked Questions</a>
+</li>
+<li id="adqJMUsmqr4PcmacwqEsg8" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag48" href="https://www.assembla.com/spaces/VH/wiki/Error_Reporting">Error Reporting</a>
+</li>
+<li id="dxt_aSvv8r4QqUacwqEsg8" nodrag="true">
+<img class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_minus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag848" href="https://www.assembla.com/spaces/VH/wiki/Reference">Reference</a>
+<ul style="display: block;" id="tree_ul_1">
+<li id="dZp-X-vv8r4QqUacwqEsg8" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag848" href="https://www.assembla.com/spaces/VH/wiki/Names">Names</a>
+</li>
+<li id="cSftF8wuur4OUBacwqEsg8" nodrag="true">
+<img class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a class="current" id="nodeATag848" href="https://www.assembla.com/spaces/VH/wiki/Map_List">Map List</a>
+<ul id="tree_ul_2">
+<li id="ckDi2MKRar4RNdacwqjQXA" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag24" href="https://www.assembla.com/spaces/VH/wiki/MapTree">MapTree</a>
+</li>
+</ul>
+</li>
+<li id="dfgvqAW2Or4Rq2acwqEsg8" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag2428" href="https://www.assembla.com/spaces/VH/wiki/Style_Guide">Style Guide</a>
+</li>
+</ul>
+</li>
+<li id="aA7mFcweer4Ot7acwqjQWU" nodrag="true">
+<img style="visibility: hidden;" class="treeExpandedState" src="Map%20List_fichiers/dhtmlgoodies_plus.gif"><img src="Map%20List_fichiers/current.gif" class="draggable"><a id="nodeATag747" href="https://www.assembla.com/spaces/VH/wiki/Translator_Hints">Translator Hints</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="content-body scale-with-grid s-content ml-280">
+<div class="view-options">
+<a href="https://www.assembla.com/spaces/VH/wiki/Map_List/print" class="standard-icon print" data-popup="{}" title="Print this page"> </a>
+<a href="https://www.assembla.com/spaces/VH/wiki/Map_List.pdf?to_pdf=true" class="standard-icon pdf" data-popup="{}" title="Print to PDF"> </a>
+</div>
+<h1>Map List</h1>
+<div class="version-info meta-info">
+Version 63, last updated by <a href="https://www.assembla.com/profile/Mederic64" tabindex="-1" target="_blank" title="Show Profile">Mederic64</a> at 2014-07-13
+</div>
+<div class="user-rich-text user-link" id="wiki-content-body">
+<p>While translating the game, you may find several uses for being able 
+to quickly find a specific map within the Map Editor. A good example is 
+if you're trying to translate all of the events for a given quest and 
+know where they are placed, but can't find the relevant text-strings to 
+patch. The lists below will help you in such occasions.</p><h3 id="mapid_(ascending_by_numerical_order)">
+<a class="wiki_link" title="MapID" href="https://www.assembla.com/wiki/show/VH/MapID">MapID</a> (Ascending by Numerical Order)</h3><p></p><table><tbody>
+<tr>
+<td><a class="wiki_link" title="MapID" href="https://www.assembla.com/wiki/show/VH/MapID">MapID</a></td>
+<td>Japanese Label</td>
+<td>English Description</td>
+<td>a.k.a <br>
+</td>
+<td>Revision</td>
+</tr>
+<tr>
+<td><p>0001</p></td>
+<td>野盗の巣穴への道<br>
+</td>
+<td>Bandit's Cave -- </td>
+<td>Road to Bandit's cave <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0002</td>
+<td>冒険者組合<br>
+</td>
+<td>Hot Spring Town -- Adventurers' Guild -- Lobby</td>
+<td>Adventurers' Guild</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0003</td>
+<td>温泉街<br>
+</td>
+<td>Hot Spring Town -- Town Main</td>
+<td>Hot Spring Town<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0004</td>
+<td>温泉街の宿屋<br>
+</td>
+<td>Hot Spring Town -- Inn -- L1 -- Main</td>
+<td>Hot Spring Town Inn<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0005</td>
+<td>守備隊宿舎 外壁通路<br>
+</td>
+<td>Hot Spring Town -- Inside the Wall +++ Guard Barracks -- Main +++ Apartments</td>
+<td>Wall Path / Guard Barracks</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0006</td>
+<td>宿屋主人部屋<br>
+</td>
+<td>Hot Spring Town -- Inn -- L1 -- Bedroom 1</td>
+<td>Innkeeper's Room<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0007</td>
+<td>地下牢<br>
+</td>
+<td>Hot Spring Town -- Prison</td>
+<td>Prison</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0008</td>
+<td>巣穴隠し通路<br>
+</td>
+<td>Bandits' Cave -- </td>
+<td>Cave Hidden Path<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0009</td>
+<td>酒場<br>
+</td>
+<td>Hot Spring Town -- Pub -- Inside</td>
+<td>Pub</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0010</td>
+<td>巣穴宝物庫<br>
+</td>
+<td>Bandits' Cave -- Treasury</td>
+<td>Cave - Treasury <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0011</td>
+<td>巣穴寝床<br>
+</td>
+<td>Bandits' Cave -- Barracks/Dorm</td>
+<td>Cave - Barracks</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0012</td>
+<td>宿屋3F<br>
+</td>
+<td>Hot Spring Town -- Inn -- L3</td>
+<td>Inn - L3</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0013</td>
+<td>宿屋2F</td>
+<td>Hot Spring Town -- Inn -- 2F -- Main</td>
+<td>Inn - L2 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0014</td>
+<td>巣穴通路<br>
+</td>
+<td>Bandits' Cave -- Hallway</td>
+<td>Cave - Hallway <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0015</td>
+<td>巣穴牢<br>
+</td>
+<td>Bandits' Cave -- Slave Room (?)</td>
+<td>Cave - Jail<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0016</td>
+<td>賢智のグルハスタ<br>
+</td>
+<td>Grihastha</td>
+<td>Grihastha <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0017</td>
+<td>外国人居留地<br>
+</td>
+<td>Grihastha&nbsp;-- Northeast Sector</td>
+<td>Foreigner's Sector<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0018</td>
+<td>宿屋主人部屋<br>
+</td>
+<td>Hot Spring Town -- Inn -- L1 -- Bedroom 2</td>
+<td>Innkeeper's Room</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0019</td>
+<td>-<br>
+</td>
+<td>-</td>
+<td>Character Selection<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0020</td>
+<td>温泉 ドキッ男だらけ<br>
+</td>
+<td>Hot Spring Town -- Public&nbsp;Hot Spring&nbsp;-- Men's Day</td>
+<td>Hot Spring - Full of Men <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0021</td>
+<td>温泉街の西<br>
+</td>
+<td>Wild&nbsp;-- Outside&nbsp;Hot Spring Town&nbsp;-- Western Path</td>
+<td>Hot Spring Town West Side<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0022</td>
+<td>番台<br>
+</td>
+<td>Hot Spring Town -- Public&nbsp;Hot Spring&nbsp;-- Lobby</td>
+<td>Lobby<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0023</td>
+<td>温泉<br>
+</td>
+<td>Hot Spring Town -- Public&nbsp;Hot Spring&nbsp;-- Mixed Day</td>
+<td>Hot Spring<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0024</td>
+<td>温泉 乱交<br>
+</td>
+<td>Hot Spring Town -- Public&nbsp;Hot Spring&nbsp;-- Goblins' Day</td>
+<td>Hot Spring - Orgy<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0025</td>
+<td>温泉街の西2<br>
+</td>
+<td>Wild -- Outside Minotaurs' Cave</td>
+<td>Hot Spring Town West Side 2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0026</td>
+<td>ミノタウロスの洞窟<br>
+</td>
+<td>Minotaurs' Cave -- Main</td>
+<td>Minotaurs' Cave</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0027</td>
+<td>小部屋1<br>
+</td>
+<td>Minotaurs' Cave -- Victims</td>
+<td>Cubicle 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0028</td>
+<td>小部屋2<br>
+</td>
+<td>Minotaurs' Cave -- Breeding Cell</td>
+<td>Cubicle 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0029</td>
+<td>地下部屋<br>
+</td>
+<td>Minotaurs' Cave -- Slime Trap</td>
+<td>Basement<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0030</td>
+<td>ゴブリン退治（街の北の岩場）<br>
+</td>
+<td>Hot Spring Town -- Goblin Extermination Mission</td>
+<td>North Rocky Area<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0031</td>
+<td>&nbsp;ゴブリン敗北1<br>
+</td>
+<td>Hot Spring Town -- Goblin Extermination Mission -- Loss Event 1</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0032</td>
+<td>ミノ部屋<br>
+</td>
+<td>Minotaurs' Cave -- Minotaur Battle</td>
+<td>Minotaurs' Room<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0033</td>
+<td>ミノ部屋敗北<br>
+</td>
+<td>Minotaurs' Cave -- Minotaur Battle -- Loss Event</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0034</td>
+<td>温泉街の東<br>
+</td>
+<td>Hot Spring Town East</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0035</td>
+<td>闇市地下<br>
+</td>
+<td>Spirit Shop</td>
+<td>Black Market<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0036</td>
+<td>民家<br>
+</td>
+<td>Hot Spring Town -- Inside Houses</td>
+<td>Dwelling<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0037</td>
+<td>街～関所2<br>
+</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 2</td>
+<td>Town～Checkpoint<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0038</td>
+<td>戦闘作成練習1<br>
+</td>
+<td>Debug Fight Test (?)</td>
+<td>Debug Fight Test 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0039</td>
+<td>戦闘作成練習1敗北</td>
+<td>Debug Fight Test (?) -- Loss Event (?)</td>
+<td>Debug Fight Test 1 Defeat Event<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0040</td>
+<td>戦闘作成練習2</td>
+<td>Debug Fight Test (?)</td>
+<td>Debug Fight Test 2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0041</td>
+<td>戦闘作成練習3</td>
+<td>Debug Fight Test (?)</td>
+<td>Debug Fight Test 3<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0042</td>
+<td>公衆トイレ<br>
+</td>
+<td>Hot Spring Town -- Public Toilets</td>
+<td>Public Restroom<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0043</td>
+<td>庶民の家<br>
+</td>
+<td>Grihastha -- Inside Houses 1 +++ Inside Businesses 1</td>
+<td>House of Working Classes<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0044</td>
+<td>貧民の家<br>
+</td>
+<td>Grihastha -- Inside Houses 2 +++ Inside Businesses 2</td>
+<td>House of Poverties<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0045</td>
+<td>武器屋<br>
+</td>
+<td>Grihastha -- (?) Shop (?)</td>
+<td>Weapon Shop<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0046</td>
+<td>倉庫<br>
+</td>
+<td>Grihastha -- NE Sector -- Inside</td>
+<td>Storage<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0047</td>
+<td>売春宿<br>
+</td>
+<td>Grihastha -- Brothel</td>
+<td>Brothel</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0048</td>
+<td>阿片窟<br>
+</td>
+<td>Grihastha -- Opium Den</td>
+<td>Orphiam Cave <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0049</td>
+<td>宿屋<br>
+</td>
+<td>Grihastha -- Inn</td>
+<td>Inn <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0050</td>
+<td>冒険者ギルド<br>
+</td>
+<td>Grihastha -- Adventurers' Guild +++ Party Character Select Room</td>
+<td>Adventurers' Guild</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0051</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>- <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0052</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0053</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0054</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0055</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0056</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0057</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0058</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0059</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0060</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0061</td>
+<td>領主邸<br>
+</td>
+<td>Grihastha Mansion -- L1 -- Main</td>
+<td>Manor House <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0062</td>
+<td>使用人部屋<br>
+</td>
+<td>Grihastha Mansion -- L1 --</td>
+<td>Servant's Room<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0063</td>
+<td>ハーレム大浴場<br>
+</td>
+<td>Grihastha Mansion -- Harem (?)</td>
+<td>Harem Bath<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0064</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0065</td>
+<td>紅ユリの館 外観<br>
+</td>
+<td>Crimson Lily's House -- Yard 2</td>
+<td>Bloody Liliy's Mansion Exterior<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0066</td>
+<td>紅ユリの館 内部</td>
+<td>Crimson Lily's House -- Interior</td>
+<td>Bloody Liliy's Mansion </td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0067</td>
+<td>カイン邸<br>
+</td>
+<td>Cain's Home<br>
+</td>
+<td>Cain's Home <br>
+</td>
+<td>130210<br>
+</td>
+</tr>
+<tr>
+<td>0068</td>
+<td>西奥洞窟 - オーク城<br>
+</td>
+<td>Wild --</td>
+<td>Western Cave - Orc Castle<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0069</td>
+<td>西奥洞窟 - オーク城2</td>
+<td>Wild --</td>
+<td>Western Cave - Orc Castle 2 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0070</td>
+<td>魔法学園セーレス<br>
+</td>
+<td>Celes -- West</td>
+<td>Ceres Socery Institution<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0071</td>
+<td>学院街 東<br>
+</td>
+<td>Celes -- Pier</td>
+<td>Institution East<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0072</td>
+<td>学院街 北<br>
+</td>
+<td>Magic Academy -- North</td>
+<td>Institution North<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0073</td>
+<td>オーク城正門<br>
+</td>
+<td>Wild -- Outside Orc Pub (?)</td>
+<td>Orc Castle Main Gate<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0074</td>
+<td>オーク城入場口<br>
+</td>
+<td>Orc Pub (?)</td>
+<td>Orc Castle Entrance<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0075</td>
+<td>武器庫方面<br>
+</td>
+<td>Wild --</td>
+<td> Armoury District<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0076</td>
+<td>居住区3民家<br>
+</td>
+<td>Capital -- Inside Houses above Club</td>
+<td>Dwelling - Residential Area 3<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0077</td>
+<td>地下実験室<br>
+</td>
+<td>Hot Spring Town&nbsp;-- Mel's (?) House -- Basement 4</td>
+<td>Mel's House - Basement</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0078</td>
+<td>ダメージ床テスト<br>
+</td>
+<td>Damage Test</td>
+<td>Damage Floor Test <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0079</td>
+<td>名無しマップ(Unrecognizable map)<br>
+</td>
+<td>World Map -- SW Sector</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0080</td>
+<td>温泉街の南西</td>
+<td>Wild -- Goblin Cave -- Western Path</td>
+<td>Hot Spring Town South West<br>
+</td>
+<td><p>130210</p></td>
+</tr>
+<tr>
+<td>0081</td>
+<td>南西の洞窟<br>
+</td>
+<td>Wild -- Outside Goblin Cave</td>
+<td>Southwestern Cave<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0082</td>
+<td>南西の川岸<br>
+</td>
+<td>Wild --</td>
+<td>Southwestern Riverside<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0083</td>
+<td>南西の草原1<br>
+</td>
+<td>Wild --</td>
+<td>Southwestern Field 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0084</td>
+<td>洞窟1F</td>
+<td>Goblin Cave -- L1</td>
+<td>Goblin Cave - L1</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0085</td>
+<td>洞窟2F</td>
+<td>Goblin Cave -- L2</td>
+<td>Goblin Cave - L2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0086</td>
+<td>洞窟3F</td>
+<td>Goblin Cave -- L3</td>
+<td>Goblin Cave - L3</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0087</td>
+<td>東の家1F<br>
+</td>
+<td>Cefilia's House -- L1</td>
+<td>Cefilia's House - L1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0088</td>
+<td>東の家1F(Event)<br>
+</td>
+<td>Cefilia's House -- L1 -- Event</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0089</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0090</td>
+<td>東の家2F</td>
+<td>Cefilia's House -- L2</td>
+<td>Cefilia's House - L2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0091</td>
+<td>東の家B1F</td>
+<td>Cefilia's House -- Basement</td>
+<td>Cefilia's House - Basement</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0092</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0093</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0094</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0095</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0096</td>
+<td>ななこの家<br>
+</td>
+<td>Nanako's House -- Main 1</td>
+<td>Nanako's House</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0097</td>
+<td>ななこの家・地下</td>
+<td>Nanako's House -- Basement</td>
+<td>Nanako's House - Basement</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0098</td>
+<td>ななこの家・購入前 (ガーベラ宅)<br>
+</td>
+<td>Nanako's House -- Main 2</td>
+<td><span class="st">Gerbera's House<br></span></td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0099</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0101</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0102</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0103</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0104</td>
+<td>空家(イベント)<br>
+</td>
+<td>Capital -- Murderer 2</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0105</td>
+<td>空家<br>
+</td>
+<td>Capital -- Murderer 1</td>
+<td>Vacant House<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0106</td>
+<td>路地<br>
+</td>
+<td>Capital -- Alley -- Investigation</td>
+<td>Alley<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0107</td>
+<td>温泉宿の風呂<br>
+</td>
+<td>Hot Spring Town -- Inn --&nbsp;Hot Spring&nbsp;-- Night Event</td>
+<td>Inn - Bath<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0108</td>
+<td>宿屋2F 借金<br>
+</td>
+<td>Hot Spring Town -- Inn -- L2 -- Player's Room</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0109</td>
+<td>街⇔魔女の家1<br>
+</td>
+<td>Wild -- Witch's Shack -- Southern Path</td>
+<td>Witch's Shack⇔Town 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0110</td>
+<td>街⇔魔女の家2<br>
+</td>
+<td>Wild -- Outside Witch's Shack</td>
+<td>Witch's Shack⇔Town 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0111</td>
+<td>魔女の家</td>
+<td>Witch's Shack -- L1</td>
+<td>Witch's Shack<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0112</td>
+<td>魔女の家 地下<br>
+</td>
+<td>Witch's Shack -- Basement 1</td>
+<td>Witch's Shack - Basement</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0113</td>
+<td>民家地下2<br>
+</td>
+<td>Hot Spring Town -- Siblings' Basement</td>
+<td>Siblings' Basement 2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0114</td>
+<td>地下実験場2</td>
+<td>Hot Spring Town -- Mel's (?) House -- Basement 2</td>
+<td>Mel's House - Basement 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0115</td>
+<td>地下実験場</td>
+<td>Hot Spring Town -- Mel's (?) House -- Basement 1</td>
+<td>Mel's House - Basement<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0116</td>
+<td>主人公の選択<br>
+</td>
+<td>Character Select -- Default</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0117</td>
+<td>主人公の選択・裏<br>
+</td>
+<td>Character Select -- <a class="wiki_link" title="FatalMix" href="https://www.assembla.com/wiki/show/VH/FatalMix">FatalMix</a> Ashley</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0118</td>
+<td>東の森1<br>
+</td>
+<td>Wild -- Eastern&nbsp;Hot Spring Town&nbsp;Forest</td>
+<td>East Forest <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0119</td>
+<td>居住区1<br>
+</td>
+<td>Capital -- Outside Govt. Building +++ Outside Nemes' House</td>
+<td>Residential Area 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0120</td>
+<td>都(Empty map)<br>
+</td>
+<td>Capital - Empty</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0121</td>
+<td>都 正門<br>
+</td>
+<td>Capital -- Main Thoroughfare</td>
+<td>Capital Main Gate<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0122</td>
+<td>スラム街<br>
+</td>
+<td>Capital -- Slums</td>
+<td>Slums<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0123</td>
+<td>奴隷市場<br>
+</td>
+<td>Slave Market -- Main</td>
+<td>Slave Market<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0124</td>
+<td>奴隷市場 ななこの場合<br>
+</td>
+<td>Slave Market -- Nanako Sale</td>
+<td>Slave Market<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0125</td>
+<td>奴隷ED<br>
+</td>
+<td>Slave Market -- Nanako Toilet Slave</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0126</td>
+<td>悪徳金融<br>
+</td>
+<td>Hot Spring Town -- Demon Loan Shark</td>
+<td>Demon Loan Shark</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0127</td>
+<td>酒場の裏<br>
+</td>
+<td>Hot Spring Town -- Pub -- Storehouse Rape Event</td>
+<td>Pub Back Yard <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0128</td>
+<td>下水道1<br>
+</td>
+<td>Capital -- Sewer 1</td>
+<td>Sewer 1</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0129</td>
+<td>下水道2</td>
+<td>Capital -- Sewer 2</td>
+<td>Sewer 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0130</td>
+<td>下水道3<br>
+</td>
+<td>Capital -- Sewer -- Giant Slime Battle</td>
+<td>Sewer 3</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0131</td>
+<td>役所<br>
+</td>
+<td>Capital -- Govt. Building -- L1</td>
+<td>Govt. Office </td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0132</td>
+<td>冒険者組合<br>
+</td>
+<td>Capital -- Adventurers' Guild -- Lobby</td>
+<td>Adventurers' Guild</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0133</td>
+<td>居住区3<br>
+</td>
+<td>Capital -- Outside Club +++ Outside Sewer</td>
+<td>Residential Area 3 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0134</td>
+<td>下水道 敗北<br>
+</td>
+<td>Capital -- Sewer -- Giant Slime Battle -- Loss Event</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0135</td>
+<td>診療所<br>
+</td>
+<td>Capital -- Clinic</td>
+<td>Clinic</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0136</td>
+<td>都の宿屋<br>
+</td>
+<td>Capital -- Inn -- L1</td>
+<td>Capital Inn</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0137</td>
+<td>都宿屋2F</td>
+<td>Capital -- Inn -- L2</td>
+<td>Capital Inn L2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0138</td>
+<td>都宿屋2F Gameover<br>
+</td>
+<td>Capital -- Inn -- L2 -- Player's Room</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0139</td>
+<td>スラム酒場<br>
+</td>
+<td>Capital -- Slums -- Pub</td>
+<td>Pub - Slum<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0140</td>
+<td>地底の街<br>
+</td>
+<td>Underground City -- Main</td>
+<td>Underground City</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0141</td>
+<td>地下洞窟<br>
+</td>
+<td>Underground City -- Portal Cave -- Main</td>
+<td>Underground Cave</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0142</td>
+<td>地底の宿屋<br>
+</td>
+<td>Underground Inn</td>
+<td>Underground Inn<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0143</td>
+<td>地下洞窟2</td>
+<td>Underground City -- Portal Cave -- Garden (?)</td>
+<td>Underground Cave 2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0144</td>
+<td>オークキャッスル<br>
+</td>
+<td>Orc Castle -- Main (?)</td>
+<td>Orc Castle</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0145</td>
+<td>地底の民家<br>
+</td>
+<td>Underground City -- Inside</td>
+<td>Underground Dwelling<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0146</td>
+<td>馬列車内<br>
+</td>
+<td>Horse Train -- Main</td>
+<td>Horse Train<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0147</td>
+<td>地下<br>
+</td>
+<td>Basement</td>
+<td>Basement<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0148</td>
+<td>教会<br>
+</td>
+<td>Capital -- Slums -- Church</td>
+<td>Church</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0149</td>
+<td>玉座<br>
+</td>
+<td>Orc Castle -- Throne Room 2</td>
+<td>Throne<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0150</td>
+<td>王の部屋<br>
+</td>
+<td>Orc Castle -- King's (?) Bedchamber (?)</td>
+<td>King's Bedchamber</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0151</td>
+<td>湾岸都市セーレス<br>
+</td>
+<td>Celes -- Bay Town</td>
+<td>Bay Town Ceres</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0152</td>
+<td>セーレス施設内部<br>
+</td>
+<td>Celes -- Inside 1</td>
+<td>Ceres Inside<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0153</td>
+<td>メニュー<br>
+</td>
+<td>Diary -- Page 1</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0154</td>
+<td>ランキング<br>
+</td>
+<td>Guild Rank List -- Start</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0155</td>
+<td>ランキング20<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/20">#20</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0156</td>
+<td>ランキング19<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/19">#19</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0157</td>
+<td>ランキング18<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/18">#18</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0158</td>
+<td>ランキング17<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/17">#17</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0159</td>
+<td>ランキング16<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/16">#16</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0160</td>
+<td>ランキング15<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/15">#15</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0161</td>
+<td>ランキング14<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/14">#14</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0162</td>
+<td>ランキング13<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/13">#13</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0163</td>
+<td>ランキング11<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/11">#11</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0164</td>
+<td>ランキング10<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/10">#10</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0165</td>
+<td>ランキング9<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/09">#09</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0166</td>
+<td>ランキング8<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/08">#08</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0167</td>
+<td>ランキング7<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/07">#07</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0168</td>
+<td>ランキング6<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/06">#06</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0169</td>
+<td>ランキング5<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/05">#05</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0170</td>
+<td>ランキング4<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/04">#04</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0171</td>
+<td>ランキング3<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/03">#03</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0172</td>
+<td>ランキング2<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/02">#02</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0173</td>
+<td>ランキング1<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/01">#01</a>
+</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0174</td>
+<td>世界ランキング<br>
+</td>
+<td>World Ranking List</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0175</td>
+<td>子消しの森<br>
+</td>
+<td>Wild -- Witch's Shack -- Western Glade</td>
+<td>Forest of Abandoned Child<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0176</td>
+<td>公開調教用ステージ<br>
+</td>
+<td>Debug Sex Stage</td>
+<td>Public Sex Training Stage<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0177</td>
+<td>街～関所3<br>
+</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 3</td>
+<td>Town～Checkpoint 3<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0178</td>
+<td>街～関所</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 1 +++ Outside Cefilia's House</td>
+<td>Town～Checkpoint</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0179</td>
+<td>休憩所<br>
+</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;Rest House</td>
+<td>Rest House<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0180</td>
+<td>ミノタウロス祭り<br>
+</td>
+<td>Debug Fight Test 2</td>
+<td>Minotaurs Fest<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0181</td>
+<td>休憩所内部<br>
+</td>
+<td>Hot Spring Town Rest House -- Inside</td>
+<td>Inside - Rest House <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0182</td>
+<td>街～関所4</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 4</td>
+<td>Town～Checkpoint 4 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0183</td>
+<td>街～関所5</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 5</td>
+<td>Town～Checkpoint 5 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0184</td>
+<td>東の街西門</td>
+<td>Wild -- Outside (?) -- Western Gate</td>
+<td>Western Gate - Delvanka <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0185</td>
+<td>デバッグルーム<br>
+</td>
+<td>Debug Map 1</td>
+<td>Debug Room<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0186</td>
+<td>東の温泉宿屋<br>
+</td>
+<td>Bathing Inn -- Outside</td>
+<td>East Hot Spring Inn<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0187</td>
+<td>金峰楼</td>
+<td>Bathing Inn -- Inside</td>
+<td>Kin-hou-rou</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0188</td>
+<td>イベントテンプレ置き場<br>
+</td>
+<td>Event Templates</td>
+<td>Event Templates</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0189</td>
+<td>地下 元牢屋病院<br>
+</td>
+<td>Hot Spring Town -- Adventurers' Guild -- Infirmary</td>
+<td>Jail Hospital<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0190</td>
+<td>ゲームオーバー<br>
+</td>
+<td>Empty</td>
+<td>- <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0191</td>
+<td>メニュー2<br>
+</td>
+<td>Diary -- Page 2</td>
+<td>-<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0192</td>
+<td>地下隠し通路1<br>
+</td>
+<td>Hot Spring Town -- Prison -- Secret Path 1</td>
+<td>Underground Hidden Path 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0193</td>
+<td>地下隠し通路2</td>
+<td>Hot Spring Town -- Prison -- Secret Path 2</td>
+<td>Underground Hidden Path 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0194</td>
+<td>もっと西の森1<br>
+</td>
+<td>Wild -- Western Forest --</td>
+<td>Forest - Far West 1<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0195</td>
+<td>もっと西の森2</td>
+<td>Wild -- Western Forest --</td>
+<td>Forest - Far West 2</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0196</td>
+<td>もっと西の森3</td>
+<td>Wild -- Western Forest -- Riverbend</td>
+<td>Forest - Far West 3 <br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0197</td>
+<td>金峰楼(裏)<br>
+</td>
+<td>Bathing Inn -- Back Yard</td>
+<td>Backyard - Kin-Hou-Rou<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0198</td>
+<td>役所2F<br>
+</td>
+<td>Capital -- Govt. Building -- L2 A</td>
+<td>Govt. Office L2<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0199</td>
+<td>戦闘デバッグ用<br>
+</td>
+<td>Debug Fight Test 1</td>
+<td>Debug Battle Test</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0200</td>
+<td>テストの部屋<br>
+</td>
+<td>Boob Rank</td>
+<td>Testing Room<br>
+</td>
+<td>130210</td>
+</tr>
+<tr>
+<td>0201</td>
+<td>ある魔法少女？の家<br>
+</td>
+<td>Capital -- Slums -- Magical Girl Egg House</td>
+<td>Magical Girl? 's House<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0202</td>
+<td>居住区2<br>
+</td>
+<td>Capital -- NW -- Outside Sara's House +++ Outside Pierre's House</td>
+<td>Residential Area<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0203</td>
+<td>VHクラン<br>
+</td>
+<td>Capital -- NW -- Sara's House -- Entrance Hall</td>
+<td>VH Clan<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0204</td>
+<td>VHクラン 2階<br>
+</td>
+<td>Capital -- NW -- Sara's House -- L2</td>
+<td>VH Clan L2<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0205</td>
+<td>VHクラン 右<br>
+</td>
+<td>Capital -- NW -- Sara's House -- Dining Hall and Bedrooms</td>
+<td>VH Clan East<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0206</td>
+<td>下水道酒場<br>
+</td>
+<td>Capital -- Club 1</td>
+<td>Sewer Pub <br>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0207</td>
+<td>紅ユリの館<br>
+</td>
+<td>Capital -- Crimson Lily's House --</td>
+<td>Bloody Lily's Mansion<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0208</td>
+<td>紅ユリの館地下<br>
+</td>
+<td>Capital -- Crimson Lily's House -- Dungeons</td>
+<td>Bloody Lily's Masion Basement<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0209</td>
+<td>お風呂<br>
+</td>
+<td>Capital -- Crimson Lily's House --</td>
+<td>Bath<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0210</td>
+<td>紅ユリの館正門<br>
+</td>
+<td>Capital -- Crimson Lily's House -- Yard 1</td>
+<td>Bloody Lily's Mansion Main Gate<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0211</td>
+<td>宿屋2F<br>
+</td>
+<td>Hot Spring Town -- Inn -- L2 -- Henry's (?) Room</td>
+<td>Inn L2<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0212</td>
+<td>アシュリー部屋<br>
+</td>
+<td>Hot Spring Town -- Inn -- L3</td>
+<td>Ashley's Room<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0213</td>
+<td>アシュリー部屋 戦闘<br>
+</td>
+<td>Bandits' Cave -- Ashley's Room 2</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0214</td>
+<td>アシュリー部屋 敗北<br>
+</td>
+<td>Bandits' Cave -- Ashley's Room 3</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0215</td>
+<td>地下実験場3<br>
+</td>
+<td>Hot Spring Town -- Mel's (?) House -- Basement 3</td>
+<td>Mel's House - Basement 3</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0216</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0217</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0218</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0219</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0220</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0221</td>
+<td>温泉街の北<br>
+</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Northern Path 1</td>
+<td>Hot Spring Town North<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0222</td>
+<td>北の山1<br>
+</td>
+<td>Mountain Path 1</td>
+<td>North Mountain 1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0223</td>
+<td>ゴブリン平常時(街の北の岩場)<br>
+</td>
+<td>Mountain Rest Area</td>
+<td>North Rocky Area</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0224</td>
+<td>北の山3<br>
+</td>
+<td>Mountain Path 3</td>
+<td>North Mountain 3</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0225</td>
+<td>北の山4<br>
+</td>
+<td>Mountain Path 4</td>
+<td>North Mountain 4</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0226</td>
+<td>北の山5<br>
+</td>
+<td>Mountain Path 5 +++ Outside Mountain Guardhouse</td>
+<td>North Mountain 5 <br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0227</td>
+<td>北の山5 裏<br>
+</td>
+<td>Mountain River --</td>
+<td>North Mountain 5 Back<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0228</td>
+<td>北の山 渓流</td>
+<td>Mountain --</td>
+<td>North Mountain Torrent<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0229</td>
+<td>北の山 湿地帯<br>
+</td>
+<td>Mountain Path -- Outside Tomb</td>
+<td>North Mountain Marshy Area<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0230</td>
+<td>北の山 廃墟<br>
+</td>
+<td>Mountain Tomb</td>
+<td>North Mountain Devastation</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0231</td>
+<td>洞窟4F<br>
+</td>
+<td>Goblin Cave -- L4 -- Bridge/Long Staircase</td>
+<td>Goblin Cave L4</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0232</td>
+<td>洞窟5F</td>
+<td>Goblin Cave -- L5 -- Goblin Queen Battle</td>
+<td>Goblin Cave L5</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0233</td>
+<td>巣穴奥1<br>
+</td>
+<td>Bandits' Cave --</td>
+<td>Cave - Deeper 1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0234</td>
+<td>巣穴奥2<br>
+</td>
+<td>Bandits' Cave --</td>
+<td>Cave - Deeper 2 <br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0235</td>
+<td>巣穴奥3<br>
+</td>
+<td>Bandits' Cave --</td>
+<td>Cave - Deeper 3</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0236</td>
+<td>馬列車街道<br>
+</td>
+<td><br></td>
+<td>Horse Train Road<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0237</td>
+<td>街道2<br>
+</td>
+<td><br></td>
+<td>Road 2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0238</td>
+<td>馬車<br>
+</td>
+<td><br></td>
+<td>Horse Wagon<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0239</td>
+<td>娼館(山)<br>
+</td>
+<td>Outside Loli Brothel</td>
+<td>Brothel - Mountain<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0240</td>
+<td>娼館(山：1F)<br>
+</td>
+<td>Loli Brothel -- L1</td>
+<td>Brothel - Mountain L1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0241</td>
+<td>娼館(街)<br>
+</td>
+<td>Capital -- Outside Brothel</td>
+<td>Brothel - Capital<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0242</td>
+<td>娼館(街：1F)<br>
+</td>
+<td>Capital -- Brothel -- L1</td>
+<td>Brothel - Capital L1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0243</td>
+<td>娼館(山：2F)</td>
+<td>Loli Brothel -- L2</td>
+<td>Brothel - Mountain L2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0244</td>
+<td>娼館(街：2F)</td>
+<td>Capital -- Brothel -- L2</td>
+<td>Brothel - Capital L2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0245</td>
+<td>教会通路<br>
+</td>
+<td>Capital -- Slums -- Prison (?)</td>
+<td>Path Church </td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0246</td>
+<td>馬列車屋根 </td>
+<td>Horse Train -- Roofs</td>
+<td>Horse Train Roofs</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0247</td>
+<td>馬列車 個室<br>
+</td>
+<td>Horse Train -- Guards/Loot</td>
+<td>Horse Train Compartment<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0248</td>
+<td>馬小屋<br>
+</td>
+<td>Horse Train -- Stowaway Ending</td>
+<td>Stable<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0249</td>
+<td>性なる教会<br>
+</td>
+<td>Capital -- Slums -- Church Cellar</td>
+<td>Erotic Church<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0250</td>
+<td>故郷：内装(故郷：民家)<br>
+</td>
+<td>Hometown -- Inside Houses</td>
+<td>Homeland - Dwelling<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0251</td>
+<td>馬列車の駅<br>
+</td>
+<td>Capital -- Inside Horse Train Station</td>
+<td>Horse Train Station</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0252</td>
+<td>王都の街道<br>
+</td>
+<td>Capital -- Outside Main Gate</td>
+<td>Capital Avenue</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0253</td>
+<td>都の街道 西<br>
+</td>
+<td>Wild -- Capital Surrounding -- West 2</td>
+<td>Western Road to Capital<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0254</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0255</td>
+<td>王都への道 東側<br>
+</td>
+<td>Wild -- Capital Surrounding -- East 1</td>
+<td>Eastern Road to Capital </td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0256</td>
+<td>ボロ小屋<br>
+</td>
+<td>Capital -- Slums -- Ramshackle</td>
+<td>Ramshackle<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0257</td>
+<td>スラム路地<br>
+</td>
+<td>Capital -- Slums -- Church Orphanage -- Outside</td>
+<td>Slums Alley </td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0258</td>
+<td>孤児院？<br>
+</td>
+<td>Capital -- Church Orphanage -- Inside</td>
+<td>Orphanage?</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0259</td>
+<td>下水道<br>
+</td>
+<td>Capital -- Beneath Hostel</td>
+<td>Sewer<br>
+</td>
+<td>
+<span>130</span>211</td>
+</tr>
+<tr>
+<td>0260</td>
+<td>崩落洞窟1<br>
+</td>
+<td>Mountain Cave --</td>
+<td>Collapsed Cave 1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0261</td>
+<td>崩落洞窟2</td>
+<td>Mountain Cave --</td>
+<td>Collapsed Cave 2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0262</td>
+<td>崩落洞窟3</td>
+<td>Mountain Cave --</td>
+<td>Collapsed Cave 3<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0263</td>
+<td>崩落洞窟3の2</td>
+<td>Mountain Cave --</td>
+<td>Collapsed Cave 3-2<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0264</td>
+<td>崩落洞窟 ボス戦<br>
+</td>
+<td>Mountain Cave --</td>
+<td>Collapsed Cave Boss Battle<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0265</td>
+<td>ARPG補充用<br>
+</td>
+<td>ARPG Test</td>
+<td>ARPG Supply<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0266</td>
+<td>魔法戦闘テスト<br>
+</td>
+<td>Debug Fight Test 3</td>
+<td>Magic Battle Test<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0267</td>
+<td>隠れ家<br>
+</td>
+<td>Capital Forest Cave</td>
+<td>Refuge<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0268</td>
+<td>峡谷の集落<br>
+</td>
+<td>Wild -- Outside (?) Cave</td>
+<td>Canyonsville<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0269</td>
+<td>役所2階<br>
+</td>
+<td>Capital -- Govt. Building -- L2 B</td>
+<td>Govt. Office L2<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0270</td>
+<td>路地<br>
+</td>
+<td>Capital -- Alley 1 -- Hinano 1</td>
+<td>Alley<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0271</td>
+<td>路地</td>
+<td>Capital -- Alley 1 -- Hinano 2</td>
+<td>Alley</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0272</td>
+<td>南西の荒野1<br>
+</td>
+<td>Wild --</td>
+<td>Wild - Southwest 1<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0273</td>
+<td>モンスター置き場<br>
+</td>
+<td>Monster Templates</td>
+<td>Monster Templates</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0274</td>
+<td>東の広場<br>
+</td>
+<td>Capital -- Street Cafe</td>
+<td>East Square<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0275</td>
+<td>陽のバルカッサ<br>
+</td>
+<td>Barqahasa -- Town Main</td>
+<td>Barqahasa</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0276</td>
+<td>バルカッサ：民家<br>
+</td>
+<td>Barqahasa -- Inside Houses +++ Pub/Inn (?)</td>
+<td>Barqahasa&nbsp;- Dwelling<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0277</td>
+<td>故郷<br>
+</td>
+<td>Hometown -- Main</td>
+<td>Homeland<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0278</td>
+<td>牧場小屋<br>
+</td>
+<td>Garuhasuta/Grihastha -- Barn (?) 1</td>
+<td>Farmhouse<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0279</td>
+<td>カジノ<br>
+</td>
+<td>Barqahasa -- Casino --</td>
+<td>Casino<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0280</td>
+<td>南西の小島<br>
+</td>
+<td>Wild --</td>
+<td>Southwest Island<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0281</td>
+<td>キャラメイク(ななこの記憶)<br>
+</td>
+<td>Nanako's Childhood -- Stat Development</td>
+<td>Nanako's Memory<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0282</td>
+<td>南西の荒野2</td>
+<td>Wild -- Outside Grihasta -- Southern Path</td>
+<td>Wild - Southwest 2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0283</td>
+<td>牧場小屋<br>
+</td>
+<td>Grihastha - Barn (?) 2</td>
+<td>Farmhouse<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0284</td>
+<td>ラヴァート隠れ家<br>
+</td>
+<td><br></td>
+<td>Lavato's Hide-out<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0285</td>
+<td>ギルド病院<br>
+</td>
+<td>Capital -- Adventurers' Guild -- Infirmary</td>
+<td>Guild's Hospital<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0286</td>
+<td>北の山 渓流岸<br>
+</td>
+<td>Mountain River End</td>
+<td>North Mt. - Torrent </td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0287</td>
+<td>温泉街の南<br>
+</td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Southern Path +++ Outside Horse Train Station</td>
+<td>Hot Spring Town South<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0288</td>
+<td>詰め所</td>
+<td><br></td>
+<td>Base Camp<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0289</td>
+<td>体験版MAPコピー用<br>
+</td>
+<td>Empty</td>
+<td>Map Ev. Template for RM2K Trial Ver. </td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0290</td>
+<td>西の森奥地<br>
+</td>
+<td>Wild -- Western River --</td>
+<td>Western Forest - Deeper<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0291</td>
+<td>地図<br>
+</td>
+<td>World Map -- Full</td>
+<td>World Map<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0292</td>
+<td>カジノ<br>
+</td>
+<td>Barqahasa -- Casino --</td>
+<td>Casino</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0293</td>
+<td>魔女の家 地下2<br>
+</td>
+<td>Witch's Shack -- Basement 2</td>
+<td>Witch's Shack - Basement 2</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0294</td>
+<td>工業区下<br>
+</td>
+<td>Capital -- Outside Smithy</td>
+<td>Industrial Sector<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0295</td>
+<td>工房<br>
+</td>
+<td>Capital -- Smithy</td>
+<td>Smithy<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0296</td>
+<td>路地裏<br>
+</td>
+<td>Capital -- Beneath Bridge</td>
+<td>Off-Street <br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0297</td>
+<td>鉱山のアイゼン<br>
+</td>
+<td>Capital -- Mercs' HQ (?) -- L1</td>
+<td>Eisen<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0298</td>
+<td>鍛冶師街<br>
+</td>
+<td>Eisen --</td>
+<td>Blacksmith Sector<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0299</td>
+<td>アイゼン 居住区<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Eisen Residential Area<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0300</td>
+<td>鉱夫居住区<br>
+</td>
+<td><br></td>
+<td>Miner's Residence<br>
+</td>
+<td>130211</td>
+</tr>
+<tr>
+<td>0301</td>
+<td>冒険者組合 決戦<br>
+</td>
+<td>Hot Spring Town -- Adventurers' Guild -- Gathering</td>
+<td>Adventurer's Guild Final Battle<br>
+</td>
+<td>1300212</td>
+</tr>
+<tr>
+<td>0302</td>
+<td>アイゼン温泉<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Eisen Hot Spring<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0303</td>
+<td>合成屋<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Alchemy Shop<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0304</td>
+<td>アイゼン 店内<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Eisen Shop<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0305</td>
+<td>冒険者ギルド<br>
+</td>
+<td>Eisen&nbsp;-- Adventurers' Guild +++</td>
+<td>Adventurers' Guild </td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0306</td>
+<td>秘密の地下室<br>
+</td>
+<td><br></td>
+<td>Secret Base<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0307</td>
+<td>通路<br>
+</td>
+<td>Eisen&nbsp;-- Mine --</td>
+<td>Hallway<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0308</td>
+<td>アイゼン山道<br>
+</td>
+<td>Eisen&nbsp;-- South Gate</td>
+<td>Eisen Mt. Path<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0309</td>
+<td>鍛冶屋個室<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Blacksmith Single Booth <br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0310</td>
+<td>ギルド作業場 倉庫<br>
+</td>
+<td>Eisen&nbsp;--</td>
+<td>Guild's Workshop - Storage<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0311</td>
+<td>鍛冶ギルド<br>
+</td>
+<td>Eisen -- Guild -- L1</td>
+<td>Blacksmith Guild<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0312</td>
+<td>鍛冶ギルド2F<br>
+</td>
+<td>Eisen -- Guild -- L2</td>
+<td>Blacksmith Guild L2<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0313</td>
+<td>酒場<br>
+</td>
+<td>Eisen&nbsp;-- Pubs (?)</td>
+<td>Pub<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0314</td>
+<td>酒場 鉱山下<br>
+</td>
+<td>Eisen -- Pub</td>
+<td>Pub Under the Mine<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0315</td>
+<td>鉱夫民家<br>
+</td>
+<td>Eisen -- Houses</td>
+<td>Miner's Dwelling<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0316</td>
+<td>西の森の奥地 北<br>
+</td>
+<td>Empty</td>
+<td>Western Forest Deeper North<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0317</td>
+<td>西の森の奥地 洞穴1<br>
+</td>
+<td>Wild -- Western Forest -- Portal Stone</td>
+<td>Western Forest Deeper Cave 1<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0318</td>
+<td>西の森の奥地 東<br>
+</td>
+<td>Empty</td>
+<td>Western Forest Deeper East</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0319</td>
+<td>西の森の奥地 洞穴2</td>
+<td>Waterfall Cave --</td>
+<td>Western Forest Deeper Cave 2</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0320</td>
+<td>怪しいよろず屋<br>
+</td>
+<td>Capital -- Slums -- Sleazy Hostel</td>
+<td>Suspicious Merchant<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0321</td>
+<td>警備隊本部<br>
+</td>
+<td>Barqahasa -- (?) -- L1 +++ (?) Guild</td>
+<td>Guards Main Bldg.</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0322</td>
+<td>地下室<br>
+</td>
+<td>Barqahasa -- Casino -- Cells</td>
+<td>Basement<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0323</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0324</td>
+<td>警備隊本部2F<br>
+</td>
+<td>Barqahasa -- (?) -- L2</td>
+<td>Guards Main Bldg. L2<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0325</td>
+<td>警備隊 宿舎<br>
+</td>
+<td>Barqahasa &nbsp;-- Barracks</td>
+<td>Guards Dormitory<br>
+</td>
+<td>130212</td>
+</tr>
+<tr>
+<td>0326</td>
+<td>西の森奥地 洞穴3<br>
+</td>
+<td>Waterfall Cave --</td>
+<td>Western Forest Deeper Cave 3<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0327</td>
+<td>西の森奥地洞穴5</td>
+<td>Waterfall Cave --</td>
+<td>Western Forest Deeper Cave 5</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0328</td>
+<td>西の森奥地洞穴4</td>
+<td>Waterfall Cave --</td>
+<td>Western Forest Deeper Cave 4</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0329</td>
+<td>北の山3 決戦<br>
+</td>
+<td>Mountain Path 3 +++ Adventurers</td>
+<td>North Mt. Final Battle<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0330</td>
+<td>闘技場賭博<br>
+</td>
+<td>Capital -- Slums -- Fight Club</td>
+<td>Fighting Gambling Den<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0331</td>
+<td>悪徳金融スラム支店<br>
+</td>
+<td>Capital -- Demon Loan Shark</td>
+<td>Demon Loan Shark at Slums<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0332</td>
+<td>ランキング完結<br>
+</td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/1">#1</a> (Post Massacre)</td>
+<td>-<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0333</td>
+<td>メニュー3<br>
+</td>
+<td>Diary -- Page 3</td>
+<td>-<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0334</td>
+<td>宿屋主人部屋<br>
+</td>
+<td>Hot Spring Town -- Inn -- L1 -- Bedroom 3</td>
+<td>Innkeeper's Room</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0335</td>
+<td>汎用戦闘マップ<br>
+</td>
+<td>Capital -- Public Battle 1</td>
+<td>Public Battle</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0336</td>
+<td>死人の村<br>
+</td>
+<td>Dead Village -- Main</td>
+<td>Dead Village</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0337</td>
+<td>朽ちた家屋1<br>
+</td>
+<td>Dead Village -- Mansion</td>
+<td>Abandoned House 1<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0338</td>
+<td>朽ちた家屋2</td>
+<td>Dead Village -- Inside Houses</td>
+<td>Abandoned House 2</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0339</td>
+<td>お屋敷の中庭<br>
+</td>
+<td><p>Dead Village -- Garden encounter</p></td>
+<td>Garden Encounter</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0340</td>
+<td>辺境への山道<br>
+</td>
+<td>Mountain Tunnel -- Rest area</td>
+<td>Road to Frontier<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0341</td>
+<td>お店<br>
+</td>
+<td>Hot Spring Town -- Ruinous House.</td>
+<td>Shop<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0342</td>
+<td>西の森奥地 洞穴6<br>
+</td>
+<td>Western River -- (?)</td>
+<td>Western Forest Deeper Cave 6<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0343</td>
+<td>地下の邸宅<br>
+</td>
+<td>Dead Village -- Bedchamber</td>
+<td>Underground Mansion<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0344</td>
+<td>-<br>
+</td>
+<td>Empty</td>
+<td>-<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0345</td>
+<td>地下洞窟</td>
+<td>Dead Village -- Underground Cavern</td>
+<td>Underground Cave<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0346</td>
+<td>地下牢1<br>
+</td>
+<td>Dead Village -- Secret Lair -- Entrance 1</td>
+<td>Dungeon 1</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0347</td>
+<td>地下牢2<br>
+</td>
+<td>Dead Village -- Secret Lair -- Cells</td>
+<td>Dungeon 2<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0348</td>
+<td>VS魔法少女<br>
+</td>
+<td>Dead Village -- Secret Lair -- Melisande VS Michiru</td>
+<td>Battle VS Magical Girl<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0349</td>
+<td>小島 船着場<br>
+</td>
+<td>Kojima -- Inside Horse Train Station</td>
+<td>Island Harbour<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0350</td>
+<td>小島 本島<br>
+</td>
+<td>Kojima -- South</td>
+<td>Island Main<br>
+</td>
+<td>130215</td>
+</tr>
+<tr>
+<td>0351</td>
+<td>冒険者組合<br>
+</td>
+<td>Kojima -- South -- Inn -- Adventurers' Guild (?)</td>
+<td>Adventurers' Guild</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0352</td>
+<td>冒険の宿<br>
+</td>
+<td>Kojima -- South -- Inn -- Lobby</td>
+<td>Guild's Inn<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0353</td>
+<td>冒険の宿 2F<br>
+</td>
+<td>Kojima -- South -- Inn -- Bedrooms</td>
+<td>Guild's Inn L2<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0354</td>
+<td>小島 北<br>
+</td>
+<td>Kojima -- Central</td>
+<td>Island North<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0355</td>
+<td>セレナ別荘<br>
+</td>
+<td>Kojima -- North +++ Outside Serena's Mansion</td>
+<td>Serena's Villa<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0356</td>
+<td>小島 孤児院<br>
+</td>
+<td>Kojima -- Orphanage (?)</td>
+<td>Island Orphanage<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0357</td>
+<td>小島 施設内<br>
+</td>
+<td>Kojima -- Inside Houses</td>
+<td>Island Facility<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0358</td>
+<td>小島への道<br>
+</td>
+<td>Wild -- Outside Kojima (?) -- East Path</td>
+<td>Road to Island<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0359</td>
+<td>妖精の森 広場<br>
+</td>
+<td>Wild -- Western Forest -- Outside Shack</td>
+<td>Fairy's Forest Square<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0360</td>
+<td>妖精の森 奥地<br>
+</td>
+<td>Wild -- Western Forest --</td>
+<td>Fairy's Forest Deeper<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0361</td>
+<td>小島への道 南へ<br>
+</td>
+<td>Wild -- Beach Path 1</td>
+<td>Road to Island South<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0362</td>
+<td>妖精の森 入り口<br>
+</td>
+<td>Wild -- Western Forest --</td>
+<td>Fairy's Forest Entrance<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0363</td>
+<td>妖精の森 水場<br>
+</td>
+<td>Wild -- Western Forest --</td>
+<td>Fairy's Forest Pool<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0364</td>
+<td>街道 小島へ<br>
+</td>
+<td>Bridge to Capital -- West End</td>
+<td>Road to Island</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0365</td>
+<td>小島 鉱山<br>
+</td>
+<td>Kojima --</td>
+<td>Island Mine<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0366</td>
+<td>小島の洞窟<br>
+</td>
+<td>Kojima --</td>
+<td>Island's Cave<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0367</td>
+<td>都の街道 小島<br>
+</td>
+<td>Wild -- Capital Surrounding -- West 3</td>
+<td>Capital Ave. to Island<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0368</td>
+<td>海賊アジト 地下通路<br>
+</td>
+<td><br></td>
+<td>Pirates' Base Hallway <br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0369</td>
+<td>海賊アジト 小屋<br>
+</td>
+<td><br></td>
+<td>Pirates' Shack<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0370</td>
+<td>海賊アジト 島<br>
+</td>
+<td>(?) -- Outside Shack</td>
+<td>Pirates' Island<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0371</td>
+<td>海賊船<br>
+</td>
+<td>(?) -- Outside Ship</td>
+<td>Pirate Ship<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0372</td>
+<td>海賊船 内部1<br>
+</td>
+<td>(?) Ship --</td>
+<td>Pirate Ship Inside 1<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0373</td>
+<td>海賊船 内部2</td>
+<td>(?) Ship --</td>
+<td>Pirate Ship Inside 2</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0374</td>
+<td>海賊船 対決<br>
+</td>
+<td>(?) Ship --</td>
+<td>Pirate Ship Battle<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0375</td>
+<td>玉座<br>
+</td>
+<td>Orc Castle -- Throne Room 1</td>
+<td>Throne<br>
+</td>
+<td>130217</td>
+</tr>
+<tr>
+<td>0376</td>
+<td>オークの国<br>
+</td>
+<td>Orc Kingdom -- City -- Main</td>
+<td>Orc Kingdom</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0377</td>
+<td>王国内部<br>
+</td>
+<td>Orc Kingdom -- City -- Inside 1</td>
+<td>Inside of Kingdom<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0378</td>
+<td>城内<br>
+</td>
+<td>Orc Kingdom -- City -- Inside 2</td>
+<td>Castle<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0379</td>
+<td>城内部屋<br>
+</td>
+<td>Orc Kingdom -- City -- Inside 3</td>
+<td>Castle Room<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0380</td>
+<td>通路<br>
+</td>
+<td>Orc Kingdom -- Castle -- Long Hall</td>
+<td>Hallway<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0381</td>
+<td>王の部屋<br>
+</td>
+<td>Orc Kingdom -- King's (?) Bedchamber (?)</td>
+<td>King's Room<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0382</td>
+<td>紅ユリ館<br>
+</td>
+<td>Capital -- Crimson Lily's House -- Entrance Hall</td>
+<td>Bloody Lily's Mansion<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0383</td>
+<td>留置所<br>
+</td>
+<td>Capital -- Outside Prison</td>
+<td>Prison<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0384</td>
+<td>下水道2-2<br>
+</td>
+<td>Capital -- Sewer 3</td>
+<td>Sewer 2-2<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0385</td>
+<td>下水道2-3</td>
+<td>Capital -- Sewer 4</td>
+<td>Sewer 2-3</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0386</td>
+<td>下水道2-4</td>
+<td>Capital -- Sewer 5</td>
+<td>Sewer 2-4</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0387</td>
+<td>留置所地下1<br>
+</td>
+<td>Capital -- Prison 1</td>
+<td>Prison Underground 1<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0388</td>
+<td>留置所地下2</td>
+<td>Capital -- Prison 2</td>
+<td>Prison Underground 2</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0389</td>
+<td>居住区2民家<br>
+</td>
+<td>Capital -- NW -- Inside Houses</td>
+<td>Residential Area 2 Dwelling<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0390</td>
+<td>ペットショップ<br>
+</td>
+<td>Capital -- Pierre's Business</td>
+<td>Pet Shop<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0391<br>
+</td>
+<td>城門<br>
+</td>
+<td><br></td>
+<td>Castle Gate<br>
+</td>
+<td>130221<br>
+</td>
+</tr>
+<tr>
+<td>0392<br>
+</td>
+<td>城西側<br>
+</td>
+<td>&nbsp;</td>
+<td>Castle West<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0393<br>
+</td>
+<td>広場<br>
+</td>
+<td>&nbsp;</td>
+<td>Square<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0394<br>
+</td>
+<td>居住区画<br>
+</td>
+<td>&nbsp;</td>
+<td>Residential Area<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0395<br>
+</td>
+<td>居住内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Resident Inside</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0396<br>
+</td>
+<td>大型居住区内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Large Resident Inside<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0397<br>
+</td>
+<td>長居住区内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Lengthy Resident Inside<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0398<br>
+</td>
+<td>屋上<br>
+</td>
+<td>&nbsp;</td>
+<td>Roof<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0399<br>
+</td>
+<td>水族園<br>
+</td>
+<td>&nbsp;</td>
+<td>Aquarium<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0400<br>
+</td>
+<td>農場<br>
+</td>
+<td>&nbsp;</td>
+<td>Farm<br>
+</td>
+<td>130221</td>
+</tr>
+<tr>
+<td>0401<br>
+</td>
+<td>保育園<br>
+</td>
+<td>&nbsp;</td>
+<td>Kindergarten<br>
+</td>
+<td>130224 <br>
+</td>
+</tr>
+<tr>
+<td>0402<br>
+</td>
+<td>奴隷市場への道1<br>
+</td>
+<td>&nbsp;</td>
+<td>Road to Slave Market 1<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0403</td>
+<td>奴隷市場への道2</td>
+<td>&nbsp;</td>
+<td>Road to Slave Market 2<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0404</td>
+<td>奴隷市場への道3</td>
+<td>&nbsp;</td>
+<td>Road to Slave Market 3<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0405</td>
+<td>王都 東の森入口<br>
+</td>
+<td>&nbsp;</td>
+<td>Capital East Forest Entrance</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0406</td>
+<td>王都 東の森1<br>
+</td>
+<td>&nbsp;</td>
+<td>Capital East Forest 1</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0407</td>
+<td>王都 東の森2</td>
+<td>&nbsp;</td>
+<td>Capital East Forest 2</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0408</td>
+<td>王都 東の森3</td>
+<td>&nbsp;</td>
+<td>Capital East Forest 3</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0409</td>
+<td>王都 東の森4</td>
+<td>&nbsp;</td>
+<td>Capital East Forest 4 <br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0410</td>
+<td>北の山 滝つぼ<br>
+</td>
+<td>&nbsp;</td>
+<td>North Mountain Waterfall</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0411</td>
+<td>北の山 滝つぼ2</td>
+<td>&nbsp;</td>
+<td>North Mountain Waterfall 2<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0412</td>
+<td>北の山<br>
+</td>
+<td>&nbsp;</td>
+<td>North Mountain</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0413</td>
+<td>もっと西の森4<br>
+</td>
+<td>&nbsp;</td>
+<td>Western Forest Deeper 4<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0414</td>
+<td>闘技場 入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Coliseum Entrance<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0415</td>
+<td>闘技場 内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Coliseum Inside <br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0416</td>
+<td>闘技場<br>
+</td>
+<td>&nbsp;</td>
+<td>Coliseum<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0417</td>
+<td>グリーの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Gree's House<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0418</td>
+<td>宿屋風呂<br>
+</td>
+<td>&nbsp;</td>
+<td>Inn's Bath<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0419</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0420</td>
+<td>商業地区<br>
+</td>
+<td>&nbsp;</td>
+<td>Industorial Area <br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0421</td>
+<td>騎士団銀行<br>
+</td>
+<td>&nbsp;</td>
+<td>Chivalric Bank<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0422</td>
+<td>銀行業務室<br>
+</td>
+<td>&nbsp;</td>
+<td>Bank Office<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0423</td>
+<td>地下金庫<br>
+</td>
+<td>&nbsp;</td>
+<td>Cash Office Basement<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0424</td>
+<td>セレナ別荘 ロビー<br>
+</td>
+<td>&nbsp;</td>
+<td>Serena's Villa Rounge<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0425</td>
+<td>セレナ別荘 内部1<br>
+</td>
+<td>&nbsp;</td>
+<td>Serena's Villa Inside<br>
+</td>
+<td>130224</td>
+</tr>
+<tr>
+<td>0426</td>
+<td>セレナ別荘通路<br>
+</td>
+<td>&nbsp;</td>
+<td>Serena's Villa Hallway<br>
+</td>
+<td>130226<br>
+</td>
+</tr>
+<tr>
+<td>0427</td>
+<td>セレナ別荘 2階<br>
+</td>
+<td>&nbsp;</td>
+<td>Serena's Villa L2<br>
+</td>
+<td>130226<br>
+</td>
+</tr>
+<tr>
+<td>0428</td>
+<td>狭間の世界</td>
+<td>&nbsp;</td>
+<td>Between the World<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0429</td>
+<td>都の街道 小島への橋<br>
+</td>
+<td>&nbsp;</td>
+<td>Road to Capital Island's Bridge<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0430</td>
+<td>城東側<br>
+</td>
+<td>&nbsp;</td>
+<td>Castle East<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0431</td>
+<td>地下魔法陣<br>
+</td>
+<td>&nbsp;</td>
+<td>Underground Portal<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0432</td>
+<td>けものの辺境地<br>
+</td>
+<td>&nbsp;</td>
+<td>Monsters' Frontier<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0433</td>
+<td>小島<br>
+</td>
+<td>&nbsp;</td>
+<td>Island<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0434</td>
+<td>ななこの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Nanako's House<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0435</td>
+<td>玉座<br>
+</td>
+<td>&nbsp;</td>
+<td>Throne<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0436</td>
+<td>オーク城通路2<br>
+</td>
+<td>&nbsp;</td>
+<td>Orc Castle Hallway 2<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0437</td>
+<td>城東側<br>
+</td>
+<td>&nbsp;</td>
+<td>Castle East<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0438</td>
+<td>武具ギルド倉庫<br>
+</td>
+<td>&nbsp;</td>
+<td>Arms Guild Storage<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0439</td>
+<td>道具ギルド倉庫<br>
+</td>
+<td>&nbsp;</td>
+<td>Item Guild Storage<br>
+</td>
+<td>130226</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>0440</td>
+<td>道具ギルド<br>
+</td>
+<td>&nbsp;</td>
+<td>Item Guild<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0441</td>
+<td>倉庫<br>
+</td>
+<td>&nbsp;</td>
+<td>Storage<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0442</td>
+<td>道具ギルド2階<br>
+</td>
+<td>&nbsp;</td>
+<td>Item Guild L2<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0443</td>
+<td>調教部屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Training Room<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0444</td>
+<td>リンの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Rin's House<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0445</td>
+<td>アシュリーの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Ashley's House<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0446</td>
+<td>武具ギルド<br>
+</td>
+<td>&nbsp;</td>
+<td>Arms Guild <br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0447</td>
+<td>武具ギルド2階<br>
+</td>
+<td>&nbsp;</td>
+<td>Arms Guild L2<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0448</td>
+<td>お店小部屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Shop Cubicle<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0449</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0450</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0451</td>
+<td>居住区<br>
+</td>
+<td>&nbsp;</td>
+<td>Residential Area<br>
+</td>
+<td>130226<br>
+</td>
+</tr>
+<tr>
+<td>0452</td>
+<td>民家<br>
+</td>
+<td>&nbsp;</td>
+<td>Dwelling<br>
+</td>
+<td>130226 <br>
+</td>
+</tr>
+<tr>
+<td>0453</td>
+<td>滝壺洞窟入口<br>
+</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave Entrance<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0454</td>
+<td>滝壺洞窟1<br>
+</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 1<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0455</td>
+<td>滝壺洞窟2</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 2<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0456</td>
+<td>滝壺洞窟3</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 3<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0457</td>
+<td>滝壺洞窟4</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 4<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0458</td>
+<td>滝壺洞窟5</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 5<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0459</td>
+<td>滝壺洞窟6</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 6<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0460</td>
+<td>滝壺洞窟7</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 7<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0461</td>
+<td>滝壺洞窟8</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 8<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0462</td>
+<td>滝壺洞窟9</td>
+<td>&nbsp;</td>
+<td>Waterfall Cave 9<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0463</td>
+<td>西の森奥地 休憩地点</td>
+<td>&nbsp;</td>
+<td>Western Forest Deeper Resting Point<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0464</td>
+<td>王宮の寝所<br>
+</td>
+<td>&nbsp;</td>
+<td>Castle Bedroom<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0465</td>
+<td>裏路地<br>
+</td>
+<td>&nbsp;</td>
+<td>Backstreet</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0466</td>
+<td>居住区4<br>
+</td>
+<td>&nbsp;</td>
+<td>Residential Area 4<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0467</td>
+<td>居住区5</td>
+<td>&nbsp;</td>
+<td>Residential Area 5<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0468</td>
+<td>図書館通り<br>
+</td>
+<td>&nbsp;</td>
+<td>Library Avenue<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0469</td>
+<td>貴族区画<br>
+</td>
+<td>&nbsp;</td>
+<td>Noble District<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0470</td>
+<td>戦闘軍詰所<br>
+</td>
+<td>&nbsp;</td>
+<td>Army Camp<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0471</td>
+<td>水道局<br>
+</td>
+<td>&nbsp;</td>
+<td><span class="st">Waterworks Bureau</span></td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0472</td>
+<td>中流貴族区画<br>
+</td>
+<td>&nbsp;</td>
+<td>Middle-Class Noble District</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0473</td>
+<td>城門前<br>
+</td>
+<td>&nbsp;</td>
+<td>Castle Gate<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0474</td>
+<td>テオドールの邸宅<br>
+</td>
+<td>&nbsp;</td>
+<td>Theodore's Mansion<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0475</td>
+<td>複合遊興施設<br>
+</td>
+<td>&nbsp;</td>
+<td>Multi-Amusement Depo<br>
+</td>
+<td>130226</td>
+</tr>
+<tr>
+<td>0476<br>
+</td>
+<td>テオ邸宅 内部1<br>
+</td>
+<td>&nbsp;</td>
+<td>Theodore's Mansion Inside 1 <br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0477</td>
+<td>スラム裏門<br>
+</td>
+<td>&nbsp;</td>
+<td>Slums Back Gate<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0478</td>
+<td>王都への道 西側<br>
+</td>
+<td>&nbsp;</td>
+<td>Road to Capital West<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0479</td>
+<td>廃墟の街<br>
+</td>
+<td>&nbsp;</td>
+<td>City of Ruins<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0480</td>
+<td>盗賊の牢屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Bandits' Prison<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0481</td>
+<td>橋の南出口<br>
+</td>
+<td>&nbsp;</td>
+<td>Bridge South Exit<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0482</td>
+<td>沙漠入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Desert Starting Point<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0483</td>
+<td>小屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Shack<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0484</td>
+<td>商隊護衛<br>
+</td>
+<td>&nbsp;</td>
+<td>Merchants Escort Mission</td>
+<td>130227</td>
+<td><br></td>
+</tr>
+<tr>
+<td>0485</td>
+<td>商隊列車<br>
+</td>
+<td>&nbsp;</td>
+<td>Merchants Train<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0486</td>
+<td>ななこルート1</td>
+<td>&nbsp;</td>
+<td>Nanako Route 1<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0487</td>
+<td>ななこルート2</td>
+<td>&nbsp;</td>
+<td>Nanako Route 2<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0488</td>
+<td>ななこルート3</td>
+<td>&nbsp;</td>
+<td>Nanako Route 3<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0489</td>
+<td>ななこルート4</td>
+<td>&nbsp;</td>
+<td>Nanako Route 4<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0490</td>
+<td>エリカルート1<br>
+</td>
+<td>&nbsp;</td>
+<td>Erika Route 1<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0491</td>
+<td>エリカルート2</td>
+<td>&nbsp;</td>
+<td>Erika Route 2<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0492</td>
+<td>エリカルート3</td>
+<td>&nbsp;</td>
+<td>Erika Route 3<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0493<br>
+</td>
+<td>最終防衛ライン<br>
+</td>
+<td>&nbsp;</td>
+<td>Final Defensive Position<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0494</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0495</td>
+<td>御者室<br>
+</td>
+<td>&nbsp;</td>
+<td>Driver's Room<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0496</td>
+<td>温泉街の西(テスト)<br>
+</td>
+<td>&nbsp;</td>
+<td>Hot Spring Town West(Test)<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0497</td>
+<td>傭兵団詰め所1F<br>
+</td>
+<td>&nbsp;</td>
+<td>Soldiers' Camp L1<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0498</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>&nbsp;-</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0499</td>
+<td>役所2階<br>
+</td>
+<td>&nbsp;</td>
+<td>Gov't Building L2<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0500</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130227</td>
+</tr>
+<tr>
+<td>0501<br>
+</td>
+<td>北の山4<br>
+</td>
+<td>&nbsp;</td>
+<td>North Mountain 4<br>
+</td>
+<td>130308<br>
+</td>
+</tr>
+<tr>
+<td>0502<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0503<br>
+</td>
+<td>膣<br>
+</td>
+<td>&nbsp;</td>
+<td>Vagina<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0504<br>
+</td>
+<td>子宮<br>
+</td>
+<td>&nbsp;</td>
+<td>Womb<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0505<br>
+</td>
+<td>卵巣 左<br>
+</td>
+<td>&nbsp;</td>
+<td>Ovary Left<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0506<br>
+</td>
+<td>卵巣 右<br>
+</td>
+<td>&nbsp;</td>
+<td>Ovary Right<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0507<br>
+</td>
+<td>令嬢邸<br>
+</td>
+<td>&nbsp;</td>
+<td>Nemes' Mansion<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0508<br>
+</td>
+<td>淫魔回廊<br>
+</td>
+<td>&nbsp;</td>
+<td>Succubus Realm<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0509<br>
+</td>
+<td>新温泉街(実験用)<br>
+</td>
+<td>&nbsp;</td>
+<td>New Hot Spring Town (Experimental)<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0510<br>
+</td>
+<td>新番台<br>
+</td>
+<td>&nbsp;</td>
+<td>New Lobby<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0511<br>
+</td>
+<td>新温泉(通常)<br>
+</td>
+<td>&nbsp;</td>
+<td>New Hot Spring (Normal)</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0512<br>
+</td>
+<td>酒場の裏(戦闘)<br>
+</td>
+<td>&nbsp;</td>
+<td>Backyard -Pub (Battle)<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0513<br>
+</td>
+<td>闘技場<br>
+</td>
+<td>&nbsp;</td>
+<td>Coliseum</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0514<br>
+</td>
+<td>SPマッチ<br>
+</td>
+<td>&nbsp;</td>
+<td>Special Match<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0515<br>
+</td>
+<td>デルヴァンカ<br>
+</td>
+<td>&nbsp;</td>
+<td>Delvanka<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0516</td>
+<td>宿屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Inn<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0517</td>
+<td>宿屋2F<br>
+</td>
+<td>&nbsp;</td>
+<td>Inn L2<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0518</td>
+<td>宿屋地下<br>
+</td>
+<td>&nbsp;</td>
+<td>Inn Basement<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0519</td>
+<td>旧魔法学校校舎跡<br>
+</td>
+<td>&nbsp;</td>
+<td>Socery Instistution Former Site </td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0520</td>
+<td>旧魔法学校内部</td>
+<td>&nbsp;</td>
+<td>Former Socery Instistution Inside<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0521</td>
+<td>デルヴァンカ商業区<br>
+</td>
+<td>&nbsp;</td>
+<td>Delvanka Industorial District<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0522</td>
+<td>商業区内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Industorial District Inside<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0523</td>
+<td>デルヴァンカ酒場<br>
+</td>
+<td>&nbsp;</td>
+<td>Delvanka Pub<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0524</td>
+<td>居住区内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Residential Area Inside<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0525</td>
+<td>居住区内部2</td>
+<td>&nbsp;</td>
+<td>Residential Area Inside 2<br>
+</td>
+<td>130308</td>
+</tr>
+<tr>
+<td>0526</td>
+<td>デルヴァンカ港<br>
+</td>
+<td>&nbsp;</td>
+<td>Delvanka Harbor<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0527<br>
+</td>
+<td>オーク帝国牢屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Orc Kingdom Prison<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0528<br>
+</td>
+<td>ななこの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Nanako's House<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0529<br>
+</td>
+<td>ベーカリー<br>
+</td>
+<td>&nbsp;</td>
+<td>Bakery<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0530<br>
+</td>
+<td>アルバムモード<br>
+</td>
+<td>&nbsp;</td>
+<td>Scene Flashback Room <br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0531</td>
+<td>グローリーホール屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Gloryhole House<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0532</td>
+<td>デルヴァンカ港北<br>
+</td>
+<td>&nbsp;</td>
+<td>Delvanka Harbor North<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0533</td>
+<td>雪原<br>
+</td>
+<td>&nbsp;</td>
+<td>Snow Field<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0534</td>
+<td>淫魔回廊 産声の間<br>
+</td>
+<td>&nbsp;</td>
+<td>Succubus Realm Birthing Room<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0535</td>
+<td>跡地<br>
+</td>
+<td>&nbsp;</td>
+<td>Landslide Scars<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0536</td>
+<td>小島の洞窟奥1<br>
+</td>
+<td>&nbsp;</td>
+<td>Kojima Cave Inside 1<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0537</td>
+<td>小島の洞窟奥2</td>
+<td>&nbsp;</td>
+<td>Kojima Cave Inside 2</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0538</td>
+<td>小島の洞窟奥3</td>
+<td>&nbsp;</td>
+<td>Kojima Cave Inside 3</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0539</td>
+<td>小島の洞窟奥4</td>
+<td>&nbsp;</td>
+<td>Kojima Cave Inside 4 </td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0540</td>
+<td>秘密の水牢<br>
+</td>
+<td>&nbsp;</td>
+<td>Secret Water Chamber<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0541</td>
+<td>アイゼン・中央区<br>
+</td>
+<td>&nbsp;</td>
+<td>Eisen Central Area<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0542</td>
+<td>アイゼン内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Eisen Inside<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0543</td>
+<td>鍛冶ギルドB1F<br>
+</td>
+<td>&nbsp;</td>
+<td>Blacksmith Guild B1<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0544</td>
+<td>シュルグラヌ村<br>
+</td>
+<td>&nbsp;</td>
+<td>Surglane Village<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0545</td>
+<td>ポルノショップ<br>
+</td>
+<td>&nbsp;</td>
+<td>Porn Shop<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0546 <br>
+</td>
+<td>パーティルーム<br>
+</td>
+<td>&nbsp;</td>
+<td>Sex Banquet<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0547<br>
+</td>
+<td>ロッカールーム/入浴ルーム<br>
+</td>
+<td>&nbsp;</td>
+<td>Closet / Bathroom<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0548<br>
+</td>
+<td>モンスタールーム/VIPルーム<br>
+</td>
+<td>&nbsp;</td>
+<td>Monster Room / VIP Room<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0549<br>
+</td>
+<td>おっさん村の森<br>
+</td>
+<td>&nbsp;</td>
+<td>Old Men's Forest<br>
+</td>
+<td>130313</td>
+</tr>
+<tr>
+<td>0550<br>
+</td>
+<td>おっさんだらけの村<br>
+</td>
+<td>&nbsp;</td>
+<td>Old Men's Village<br>
+</td>
+<td>130313<br>
+</td>
+</tr>
+<tr>
+<td>0551<br>
+</td>
+<td>おっさん村:小屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Old Men's Shack<br>
+</td>
+<td>130317<br>
+</td>
+</tr>
+<tr>
+<td>0552</td>
+<td>おっさん村:集会場<br>
+</td>
+<td>&nbsp;</td>
+<td>Assembly House<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0553</td>
+<td>おっさん村:地下水脈</td>
+<td>&nbsp;</td>
+<td>Old Men's Vein<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0554</td>
+<td>おっさん村:洞穴<br>
+</td>
+<td>&nbsp;</td>
+<td>Old Men's Cave<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0555</td>
+<td>制作中マップまとめ<br>
+</td>
+<td>&nbsp;</td>
+<td>WIP MAP/Event<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0556</td>
+<td>酒場の裏<br>
+</td>
+<td>&nbsp;</td>
+<td>Pub Backyard<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0557</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0558</td>
+<td>砂漠<br>
+</td>
+<td>&nbsp;</td>
+<td>Desert<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0559</td>
+<td>貴族屋敷<br>
+</td>
+<td>&nbsp;</td>
+<td>Noble's Mansion<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0560</td>
+<td>貴族屋敷<br>
+</td>
+<td>&nbsp;</td>
+<td>Noble's Mansion<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0561</td>
+<td>休憩所<br>
+</td>
+<td>&nbsp;</td>
+<td>Rest House<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0562</td>
+<td>商業区裏路地<br>
+</td>
+<td>&nbsp;</td>
+<td>Industrial Dist. Backstreet<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0563</td>
+<td>洋館内部<br>
+</td>
+<td>&nbsp;</td>
+<td>Mansion Inside<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0564</td>
+<td>不気味な洋館<br>
+</td>
+<td>&nbsp;</td>
+<td>Spooky Mansion<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0565</td>
+<td>洋館地下室<br>
+</td>
+<td>&nbsp;</td>
+<td>Mansion Basement<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0566</td>
+<td>地下世界入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Under World Entrance<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0567</td>
+<td>グリーの家<br>
+</td>
+<td>&nbsp;</td>
+<td>Gree's House<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0568</td>
+<td>鍛冶ギルドB2F<br>
+</td>
+<td>&nbsp;</td>
+<td>Blacksmith Guild B2<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0569</td>
+<td>鍛冶ギルドB3～5F<br>
+</td>
+<td>&nbsp;</td>
+<td>Blacksmith Guild B3～5<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0570</td>
+<td>アイゼン途中の道<br>
+</td>
+<td>&nbsp;</td>
+<td>Road to Eisen<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0571</td>
+<td>テント<br>
+</td>
+<td>&nbsp;</td>
+<td>Pavilion</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0572</td>
+<td>バトルフィールド<br>
+</td>
+<td>&nbsp;</td>
+<td>Battle Field<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0573</td>
+<td>そよ風の高原１</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 1</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0574</td>
+<td>そよ風の高原２</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 2</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0575</td>
+<td>そよ風の高原３</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 3</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0576</td>
+<td>そよ風の高原４</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 4 </td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0577</td>
+<td>そよ風の高原５</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 5</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0578</td>
+<td>そよ風の高原６</td>
+<td>&nbsp;</td>
+<td>Plateau of Zephyr 6<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0579</td>
+<td>飛竜の谷 入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Valley of Wyvern<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0580</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0581</td>
+<td>グルハスタ湿原 北<br>
+</td>
+<td>&nbsp;</td>
+<td>Grihastha Marsh North<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0582</td>
+<td>グルハスタ湿原 南</td>
+<td>&nbsp;</td>
+<td>Grihastha Marsh South<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0583</td>
+<td>大湖沼 中央<br>
+</td>
+<td>&nbsp;</td>
+<td>Big Muddy Lake Central<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0584</td>
+<td>大湖沼 西</td>
+<td>&nbsp;</td>
+<td>Big Muddy Lake West<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0585</td>
+<td>大湖沼 北西</td>
+<td>&nbsp;</td>
+<td>Big Muddy Lake Northwest<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0586</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0587</td>
+<td>北の山 湿地帯2<br>
+</td>
+<td>&nbsp;</td>
+<td>North Mountain Swampland<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0588</td>
+<td>高原の洞穴</td>
+<td>&nbsp;</td>
+<td>Plateau Cave<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0589</td>
+<td>泊まりの祠<br>
+</td>
+<td>&nbsp;</td>
+<td>Shrine of Repose<br>
+</td>
+<td>130317</td>
+</tr>
+<tr>
+<td>0590<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416<br>
+</td>
+</tr>
+<tr>
+<td>0591<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0592<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0593<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0594<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0595<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0596<br>
+</td>
+<td>教会通路⇔ﾊﾟｰﾃｨﾙｰﾑ</td>
+<td>&nbsp;</td>
+<td>Church⇔Sex Banquet<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0597<br>
+</td>
+<td>VIPルーム地下<br>
+</td>
+<td>&nbsp;</td>
+<td>VIP Room Basement<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0598<br>
+</td>
+<td>船着場<br>
+</td>
+<td>&nbsp;</td>
+<td>Harbor<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0599<br>
+</td>
+<td>酒場<br>
+</td>
+<td>&nbsp;</td>
+<td>Pub<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0600<br>
+</td>
+<td>アイテムショップ<br>
+</td>
+<td>&nbsp;</td>
+<td>Item Shop<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0601<br>
+</td>
+<td>大衆浴場<br>
+</td>
+<td>&nbsp;</td>
+<td>Public Bath<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0602<br>
+</td>
+<td>沙漠<br>
+</td>
+<td>&nbsp;</td>
+<td>Desert<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0603<br>
+</td>
+<td>バルカッサ 入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Barqahasa Entrance<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0604<br>
+</td>
+<td>瞑想の館<br>
+</td>
+<td>&nbsp;</td>
+<td>Meditation House<br>
+</td>
+<td>130416</td>
+</tr>
+<tr>
+<td>0605</td>
+<td>精神の間<br>
+</td>
+<td>&nbsp;</td>
+<td>World of Consciousness<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0606</td>
+<td>妖精の里<br>
+</td>
+<td>&nbsp;</td>
+<td>Fairy's Village<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0607</td>
+<td>妖精の森 迷いの十字路<br>
+</td>
+<td>&nbsp;</td>
+<td>Endless Crossroad<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0608</td>
+<td>妖精の森 南入り口</td>
+<td>&nbsp;</td>
+<td>Fairy's Forest South Entrance<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0609</td>
+<td>湾岸都市へ続く橋<br>
+</td>
+<td>&nbsp;</td>
+<td>Bridge to Bay Town<br>
+</td>
+<td>130615</td>
+</tr>
+<tr>
+<td>0610</td>
+<td>湾岸都市 入り口<br>
+</td>
+<td>&nbsp;</td>
+<td>Bay Town Entrance</td>
+<td>130615<br>
+</td>
+</tr>
+<tr>
+<td>0611<br>
+</td>
+<td>水泳テスト<br>
+</td>
+<td>&nbsp;</td>
+<td>Test : Swiming<br>
+</td>
+<td>130830 <br>
+</td>
+</tr>
+<tr>
+<td>0612<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0613<br>
+</td>
+<td>-<br>
+</td>
+<td>&nbsp;</td>
+<td>-<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0614<br>
+</td>
+<td>麓の町<br>
+</td>
+<td><br></td>
+<td>Foothills Town<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0615</td>
+<td>MAP0615(Not named yet)<br>
+</td>
+<td><br></td>
+<td>***Not named yet***<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0616<br>
+</td>
+<td>MAP0616(Not named yet)<br>
+</td>
+<td><br></td>
+<td>***Not named yet***<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0617<br>
+</td>
+<td>麓の診療所<br>
+</td>
+<td><br></td>
+<td>Foothills Clinic<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0618<br>
+</td>
+<td>宿屋3F<br>
+</td>
+<td><br></td>
+<td>Inn L3<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0619<br>
+</td>
+<td>ケイブ２<br>
+</td>
+<td><br></td>
+<td>Cave 2<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0620<br>
+</td>
+<td>領主の館<br>
+</td>
+<td><br></td>
+<td>Manor House</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0621<br>
+</td>
+<td>小島 鉱山内部<br>
+</td>
+<td><br></td>
+<td>Kojima Mine Inside<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0622<br>
+</td>
+<td>麓の石牢</td>
+<td>&nbsp;</td>
+<td>Foothills Cave Prison<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0623</td>
+<td>役所<br>
+</td>
+<td>&nbsp;</td>
+<td>Gov't Office<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0624</td>
+<td>冒険者組合<br>
+</td>
+<td>&nbsp;</td>
+<td>Adventurer's Guild <br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0625</td>
+<td>麓の学校<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills School<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0626</td>
+<td>酒場<br>
+</td>
+<td>&nbsp;</td>
+<td>Bar <br>
+</td>
+<td>130830</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>0627</td>
+<td>鍛冶場<br>
+</td>
+<td>&nbsp;</td>
+<td>Blacksmith<br>
+</td>
+<td>130830</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>0628</td>
+<td>先生の部屋<br>
+</td>
+<td>&nbsp;</td>
+<td>Faculty Room <br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0629</td>
+<td>麓の図書館<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills Library </td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0630<br>
+</td>
+<td>麓の町外れ<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills Outskirts </td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0631<br>
+</td>
+<td>麓の森<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills Forest </td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0632<br>
+</td>
+<td>麓の森２<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills Forest 2</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0633<br>
+</td>
+<td>ケイブ<br>
+</td>
+<td>&nbsp;</td>
+<td>Cave<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0634<br>
+</td>
+<td>華の町リーパ<br>
+</td>
+<td>&nbsp;</td>
+<td>Flower Town Reaper<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0635<br>
+</td>
+<td>宿屋2F<br>
+</td>
+<td>&nbsp;</td>
+<td>Inn L2<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0636<br>
+</td>
+<td>麓の森３<br>
+</td>
+<td>&nbsp;</td>
+<td>Foothills Forest 3<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0637<br>
+</td>
+<td>エイアの家（外）<br>
+</td>
+<td>&nbsp;</td>
+<td>Eia's House (OUT) <br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0638<br>
+</td>
+<td>エイアの家（内）<br>
+</td>
+<td>&nbsp;</td>
+<td>Eia's House (IN)<br>
+</td>
+<td>130830</td>
+</tr>
+<tr>
+<td>0639<br>
+</td>
+<td>アトリエ街<br>
+</td>
+<td>&nbsp;</td>
+<td><span class="st">Atelier District<br></span></td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0640<br>
+</td>
+<td>商店街</td>
+<td>&nbsp;</td>
+<td>Shopping District<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0641<br>
+</td>
+<td>リーパ・施設内部１</td>
+<td>&nbsp;</td>
+<td>Reaper's Facility 1<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0642<br>
+</td>
+<td>リーパ・施設内部２</td>
+<td>&nbsp;</td>
+<td>Reaper's Facility 2</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0643<br>
+</td>
+<td>リーパ・施設内部３</td>
+<td>&nbsp;</td>
+<td>Reaper's Facility 3</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0644<br>
+</td>
+<td>妖精の森 水場２<br>
+</td>
+<td>&nbsp;</td>
+<td>Fairy's Forest Pool 2<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0645</td>
+<td>妖精の森 水場３</td>
+<td>&nbsp;</td>
+<td>Fairy's Forest Pool 3</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0646<br>
+</td>
+<td>妖精の森 秘境<br>
+</td>
+<td>&nbsp;</td>
+<td>Fairy's Forest Hidden<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0647<br>
+</td>
+<td>小屋の中<br>
+</td>
+<td>&nbsp;</td>
+<td>Shack Inside<br>
+</td>
+<td>130905</td>
+</tr>
+<tr>
+<td>0648</td>
+<td></td>
+<td></td>
+<td>Bay Town Ceres - Inside houses</td>
+<td></td>
+</tr>
+<tr>
+<td>0652</td>
+<td></td>
+<td></td>
+<td>Bay Town Ceres</td>
+<td></td>
+</tr>
+<tr>
+<td>0653</td>
+<td></td>
+<td></td>
+<td>Horse Train Quest</td>
+<td></td>
+</tr>
+<tr>
+<td>0654</td>
+<td></td>
+<td></td>
+<td>Horse Train Guards</td>
+<td></td>
+</tr>
+<tr>
+<td>0662</td>
+<td></td>
+<td></td>
+<td>Horse Train with Serena</td>
+<td></td>
+</tr>
+<tr>
+<td>0663</td>
+<td></td>
+<td></td>
+<td>Horse Train with Serena</td>
+<td></td>
+</tr>
+<tr>
+<td>0669</td>
+<td></td>
+<td></td>
+<td>Nana dialogues</td>
+<td></td>
+</tr>
+<tr>
+<td>0672</td>
+<td></td>
+<td></td>
+<td>Nana H-scenes</td>
+<td></td>
+</tr>
+<tr>
+<td>0676</td>
+<td></td>
+<td></td>
+<td>Gotta flee</td>
+<td></td>
+</tr>
+<tr>
+<td>0677</td>
+<td></td>
+<td></td>
+<td>Got captured</td>
+<td></td>
+</tr>
+<tr>
+<td>0683</td>
+<td></td>
+<td></td>
+<td>Hell? Demon dialogues</td>
+<td></td>
+</tr>
+<tr>
+<td>0684</td>
+<td></td>
+<td></td>
+<td>Hell? Demon dialogues</td>
+<td></td>
+</tr>
+<tr>
+<td>0685</td>
+<td></td>
+<td></td>
+<td>Debug Map - Travel</td>
+<td></td>
+</tr>
+<tr>
+<td>0686</td>
+<td></td>
+<td></td>
+<td>Debug Map</td>
+<td></td>
+</tr>
+</tbody></table><p>&nbsp;</p><h3 id="mapid_(editor_maptree_order)">
+<a class="wiki_link" title="MapID" href="https://www.assembla.com/wiki/show/VH/MapID">MapID</a> (Editor <a class="wiki_link" title="MapTree" href="https://www.assembla.com/wiki/show/VH/MapTree">MapTree</a> Order)</h3><p></p><table><tbody>
+<tr>
+<td><a class="wiki_link" title="MapID" href="https://www.assembla.com/wiki/show/VH/MapID">MapID</a></td>
+<td>Japanese Label</td>
+<td>English Description</td>
+<td>Revision</td>
+</tr>
+<tr>
+<td>0019</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0116</td>
+<td><br></td>
+<td>Character Select (Default)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0117</td>
+<td><br></td>
+<td>Character Select (Ashley)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0281</td>
+<td><br></td>
+<td>Nanako's Childhood (Stat Development)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0101</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0153</td>
+<td><br></td>
+<td>Diary -- Page 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0191</td>
+<td><br></td>
+<td>Diary -- Page 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0333</td>
+<td><br></td>
+<td>Diary -- Page 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0154</td>
+<td><br></td>
+<td>Guild Rank List -- Start</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0155</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/20">#20</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0156</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/19">#19</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0157</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/18">#18</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0158</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/17">#17</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0159</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/16">#16</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0160</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/15">#15</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0161</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/14">#14</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0162</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/13">#13</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0163</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/11">#11</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0164</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/10">#10</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0165</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/09">#09</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0166</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/08">#08</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0167</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/07">#07</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0168</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/06">#06</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0169</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/05">#05</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0170</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/04">#04</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0171</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/03">#03</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0172</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/02">#02</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0173</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/01">#01</a>
+</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0332</td>
+<td><br></td>
+<td>G.R.L. -- Nanako <a href="https://www.assembla.com/spaces/VH/tickets/01">#01</a> (Post Massacre)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0174</td>
+<td><br></td>
+<td>World Ranking</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0190</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0146</td>
+<td><br></td>
+<td>Horse Train -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0246</td>
+<td><br></td>
+<td>Horse Train -- Roofs</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0247</td>
+<td><br></td>
+<td>Horse Train -- Guards/Loot</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0248</td>
+<td><br></td>
+<td>Horse Train -- Stowaway Ending</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0484</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0485</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0486</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0487</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0488</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0489</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0490</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0491</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0492</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0494</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0493</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0495</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0003</td>
+<td><br></td>
+<td>Hot Spring Town -- Town Main (New)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0002</td>
+<td><br></td>
+<td>Hot Spring Town -- Adventurers' Guild -- Lobby</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0189</td>
+<td><br></td>
+<td>Hot Spring Town -- Adventurers' Guild -- Infirmary</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0301</td>
+<td><br></td>
+<td>Hot Spring Town -- Adventurers' Guild -- Gathering</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0005</td>
+<td><br></td>
+<td>Hot Spring Town -- Inside the Wall +++&nbsp;Guards' Barracks +++ Apartments</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0007</td>
+<td><br></td>
+<td>Hot Spring Town -- Prison</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0192</td>
+<td><br></td>
+<td>Hot Spring Town -- Prison -- Secret Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0193</td>
+<td><br></td>
+<td>Hot Spring Town -- Prison -- Secret Path 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0004</td>
+<td><br></td>
+<td>Hot Spring Town -- Inn -- L1 -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0013</td>
+<td><br></td>
+<td>Hot Spring Town -- Inn -- L2 -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0108</td>
+<td><br></td>
+<td>Hot Spring Town -- Inn -- L2 -- Player's Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0211</td>
+<td><br></td>
+<td>Hot Spring Town -- Inn -- L2 -- Henry's Room (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0012</td>
+<td><br></td>
+<td>Hot Spring Town -- Inn -- L3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0006</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Inn -- L1 -- Bedroom 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0018</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Inn -- L1 -- Bedroom 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0334</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Inn -- L1 -- Bedroom 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0107</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Inn -- L1 --&nbsp;Hot Spring&nbsp;-- Night Scene</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0036</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0113</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Siblings' Basement</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0115</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;--&nbsp;Mel's (?)&nbsp;House -- Basement 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0114</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Mel's (?) House -- Basement 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0215</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Mel's (?) House -- Basement 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0077</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Mel's (?) House -- Basement 4</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0216</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0217</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0218</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0219</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0220</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0009</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Pub -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0127</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Pub -- Storehouse Rape Scene</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0556</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Pub -- Leaving Drunk (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0042</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public Toilets</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0022</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Lobby</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0023</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Mixed Day</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0024</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Goblins' Day</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0020</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Men's Day</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0126</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Demon Loan Shark</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0341</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;&nbsp;-- Ruinous House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0448</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Repaired House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0540</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Beneath the Well</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0021</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring&nbsp;-- Western Path</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0025</td>
+<td><br></td>
+<td>Wild -- Outside Minotaurs' Cave</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0026</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0027</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Victims</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0028</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Breeding Cell</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0029</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Slime Trap</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0032</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Minotaur Battle</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0033</td>
+<td><br></td>
+<td>Minotaurs' Cave -- Minotaur Battle -- Loss Event</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0109</td>
+<td><br></td>
+<td>Wild -- Witch's Shack -- Southern Path</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0110</td>
+<td><br></td>
+<td>Wild -- Outside Witch's Shack</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0111</td>
+<td><br></td>
+<td>Witch's Shack -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0112</td>
+<td><br></td>
+<td>Witch's Shack -- Basement 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0293</td>
+<td><br></td>
+<td>Witch's Shack -- Basement 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0175</td>
+<td><br></td>
+<td>Wild -- Witch's Shack -- Western Glade</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0194</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0195</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0196</td>
+<td><br></td>
+<td>Wild -- Western Forest -- River-bend</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0413</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0290</td>
+<td><br></td>
+<td>Wild -- Western River --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0316</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0317</td>
+<td><br></td>
+<td>Wild -- Western Forest -- Portal Stone</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0319</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0326</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0463</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0328</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0327</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0342</td>
+<td><br></td>
+<td>Western River (?) --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0453</td>
+<td><br></td>
+<td>Outside Waterfall Cave 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0454</td>
+<td><br></td>
+<td>Outside Waterfall Cave 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0455</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0456(A)</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0456(B)</td>
+<td><br></td>
+<td>Waterfall Cave -- Cell/Infirmary</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0458</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0459</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0460</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0461</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0462</td>
+<td><br></td>
+<td>Waterfall Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0318</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0080</td>
+<td><br></td>
+<td>Wild -- Goblin Cave -- Western Path</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0081</td>
+<td><br></td>
+<td>Wild -- Outside Goblin Cave</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0084</td>
+<td><br></td>
+<td>Goblin Cave -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0085</td>
+<td><br></td>
+<td>Goblin Cave -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0086</td>
+<td><br></td>
+<td>Goblin Cave -- L3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0231</td>
+<td><br></td>
+<td>Goblin Cave -- L4 -- Bridge/Long Staircase</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0232</td>
+<td><br></td>
+<td>Goblin Cave -- L5 -- Goblin Queen Battle</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0443</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Training Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0434</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Nanako's Home</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0444</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Rin's Home</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0445</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Ashley's Home</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0441</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Duel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0451</td>
+<td><br></td>
+<td>Goblin Cave -- Town --&nbsp;Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0452</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Inside Shops +++ Portals</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0435</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- Throne Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0464</td>
+<td><br></td>
+<td>Goblin Cave -- Town -- King's Bedchamber</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0082</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0280</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0083</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0272</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0282</td>
+<td><br></td>
+<td>Wild --&nbsp;Grihastha&nbsp;-- Southern Path</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0034</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0087</td>
+<td><br></td>
+<td>Cefilia's House -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0090</td>
+<td><br></td>
+<td>Cefilia's House -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0091</td>
+<td><br></td>
+<td>Cefilia's House -- Basement</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0088</td>
+<td><br></td>
+<td>Cefilia's House -- L1 -- Event</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0089</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0092</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0093</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0094</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0095</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0178</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 1&nbsp;++ Outside Cefilia's House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0037</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0177</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0179</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;Rest House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0181</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;Rest House -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0182</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 4</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0118</td>
+<td><br></td>
+<td>Wild -- Eastern&nbsp;Hot Spring Town&nbsp;Forest 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0183</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Eastern Path 5</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0184</td>
+<td><br></td>
+<td>Wild -- Outside (?) -- Western Gate</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0186</td>
+<td><br></td>
+<td>Bathing Inn -- Outside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0187</td>
+<td><br></td>
+<td>Bathing Inn -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0197</td>
+<td><br></td>
+<td>Bathing Inn -- Back Yard</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0221</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Northern Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0222</td>
+<td><br></td>
+<td>Mountain Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0412</td>
+<td><br></td>
+<td>Mountain Path 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0224</td>
+<td><br></td>
+<td>Mountain Path 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0329</td>
+<td><br></td>
+<td>Mountain Path 3 +++ Adventurers</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0228</td>
+<td><br></td>
+<td>Mountain --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0286</td>
+<td><br></td>
+<td>Mountain River End</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0229</td>
+<td><br></td>
+<td>Mountain Path -- Outside Tomb</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0230</td>
+<td><br></td>
+<td>Mountain Tomb</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0410</td>
+<td><br></td>
+<td>Mountain River -- Waterfall</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0411</td>
+<td><br></td>
+<td>Mountain River --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0225</td>
+<td><br></td>
+<td>Mountain Path 4</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0501</td>
+<td><br></td>
+<td>Mountain Path 4 +++ Adventurers</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0288</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0226</td>
+<td><br></td>
+<td>Mountain Path 5 +++ Outside Mountain Guardhouse</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0227</td>
+<td><br></td>
+<td>Mountain River --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0260</td>
+<td><br></td>
+<td>Mountain Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0261</td>
+<td><br></td>
+<td>Mountain Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0262</td>
+<td><br></td>
+<td>Mountain Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0263</td>
+<td><br></td>
+<td>Mountain Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0264</td>
+<td><br></td>
+<td>Mountain Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0030</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Goblin Extermination Mission</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0031</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Goblin Extermination Mission -- Loss&nbsp;Event 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0449</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Goblin Extermination Mission -- Loss Event 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0450</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Goblin Extermination Mission -- Loss Event 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0223</td>
+<td><br></td>
+<td>Mountain Rest Area</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0268</td>
+<td><br></td>
+<td>Wild -- Outside (?) Cave</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0340</td>
+<td><br></td>
+<td>Mountain Tunnel -- Rest Area</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0308</td>
+<td><br></td>
+<td>Eisen&nbsp;-- South Gate</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0287</td>
+<td><br></td>
+<td>Wild -- Outside&nbsp;Hot Spring Town&nbsp;-- Southern Path +++ Outside Horse Train Station</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0481</td>
+<td><br></td>
+<td>Southern&nbsp;Guardhouse -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0482</td>
+<td><br></td>
+<td>Southern Desert --&nbsp;Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0557</td>
+<td><br></td>
+<td>Southern Desert --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0558</td>
+<td><br></td>
+<td>Southern Desert --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0001</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0008</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0010</td>
+<td><br></td>
+<td>Bandits' Cave -- Treasury</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0014</td>
+<td><br></td>
+<td>Bandits' Cave -- Hallway</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0212</td>
+<td><br></td>
+<td>Bandits' Cave -- Ashley's Room 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0213</td>
+<td><br></td>
+<td>Bandits' Cave -- Ashley's Room 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0214</td>
+<td><br></td>
+<td>Bandits' Cave -- Ashley's Room 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0015</td>
+<td><br></td>
+<td>Bandits' Cave -- Slave Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0480</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0011</td>
+<td><br></td>
+<td>Bandits' Cave -- Barracks/Dorm</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0233</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0234</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0235</td>
+<td><br></td>
+<td>Bandits' Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0236</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0237</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0238</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0120</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0121</td>
+<td><br></td>
+<td>Capital -- Main Thoroughfare</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0132</td>
+<td><br></td>
+<td>Capital -- Adventurers' Guild -- Lobby</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0285</td>
+<td><br></td>
+<td>Capital -- Adventurers' Guild -- Infirmary</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0136</td>
+<td><br></td>
+<td>Capital -- Inn -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0137</td>
+<td><br></td>
+<td>Capital -- Inn -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0138</td>
+<td><br></td>
+<td>Capital -- Inn -- Morning</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0135</td>
+<td><br></td>
+<td>Capital -- Clinic</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0465</td>
+<td><br></td>
+<td>Capital -- Outside Guild +++ Outside Clinic</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0335</td>
+<td><br></td>
+<td>Capital -- Public Battle 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0251</td>
+<td><br></td>
+<td>Capital -- Inside Horse Train Station</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0468</td>
+<td><br></td>
+<td>Capital -- Outside Business District</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0274</td>
+<td><br></td>
+<td>Capital -- Street Cafe</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0294</td>
+<td><br></td>
+<td>Capital -- Outside Smithy</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0295</td>
+<td><br></td>
+<td>Capital -- Smithy</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0383</td>
+<td><br></td>
+<td>Capital -- Outside Prison</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0387</td>
+<td><br></td>
+<td>Capital -- Prison 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0388</td>
+<td><br></td>
+<td>Capital -- Prison 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0419</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0119</td>
+<td><br></td>
+<td>Capital -- Outside Govt. Building +++ Outside Nemes' House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0131</td>
+<td><br></td>
+<td>Capital -- Govt. Building -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0198</td>
+<td><br></td>
+<td>Capital -- Govt. Building -- L2 A</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0269</td>
+<td><br></td>
+<td>Capital -- Govt. Building -- L2 B</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0499</td>
+<td><br></td>
+<td>Capital -- Govt. Building -- Night (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0106</td>
+<td><br></td>
+<td>Capital -- Alley 1 -- Investigation</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0270</td>
+<td><br></td>
+<td>Capital -- Alley 1 -- Hinano 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0271</td>
+<td><br></td>
+<td>Capital -- Alley 1 -- Hinano 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0535</td>
+<td><br></td>
+<td>Capital -- Alley 1 --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0105</td>
+<td><br></td>
+<td>Capital -- Murderer 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0104</td>
+<td><br></td>
+<td>Capital -- Murderer 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0507</td>
+<td><br></td>
+<td>Capital -- Nemes' House 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0508</td>
+<td><br></td>
+<td>Capital -- Nemes' House 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0534</td>
+<td><br></td>
+<td>Capital -- Nemes' House 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0202</td>
+<td><br></td>
+<td>Capital -- NW -- Outside Sara's House +++ Outside Pierre's House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0203</td>
+<td><br></td>
+<td>Capital -- NW -- Sara's House -- Entrance Hall</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0205</td>
+<td><br></td>
+<td>Capital -- NW -- Sara's House -- Dining Hall and Bedrooms</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0204</td>
+<td><br></td>
+<td>Capital -- NW -- Sara's House -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0389</td>
+<td><br></td>
+<td>Capital -- NW -- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0390</td>
+<td><br></td>
+<td>Capital -- Pierre's Business</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0133</td>
+<td><br></td>
+<td>Capital -- Outside Club +++ Outside Sewer</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0128</td>
+<td><br></td>
+<td>Capital -- Sewer 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0129</td>
+<td><br></td>
+<td>Capital -- Sewer 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0384</td>
+<td><br></td>
+<td>Capital -- Sewer 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0385</td>
+<td><br></td>
+<td>Capital -- Sewer 4</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0386</td>
+<td><br></td>
+<td>Capital -- Sewer 5</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0130</td>
+<td><br></td>
+<td>Capital -- Sewer -- Giant Slime Battle</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0134</td>
+<td><br></td>
+<td>Capital -- Sewer -- Giant Slime Battle -- Loss Event</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0206</td>
+<td><br></td>
+<td>Capital -- Club 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0207</td>
+<td><br></td>
+<td>Capital -- Crimson Lily's House --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0208</td>
+<td><br></td>
+<td>Capital --&nbsp;Crimson Lily's House&nbsp;-- Dungeons</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0209</td>
+<td><br></td>
+<td>Capital -- Crimson Lily's House --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0382</td>
+<td><br></td>
+<td>Capital --&nbsp;Crimson Lily's House&nbsp;-- Entrance Hall</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0210</td>
+<td><br></td>
+<td>Capital --&nbsp;Crimson Lily's House&nbsp;-- Yard 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0065</td>
+<td><br></td>
+<td>Capital --&nbsp;Crimson Lily's House&nbsp;-- Yard 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0066</td>
+<td><br></td>
+<td>Capital -- Crimson Lily's House --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0076</td>
+<td><br></td>
+<td>Capital -- Inside Houses Above Club</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0544</td>
+<td><br></td>
+<td>Capital -- </td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0466</td>
+<td><br></td>
+<td>Capital -- Outside Bakery</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0529</td>
+<td><br></td>
+<td>Capital -- Bakery</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0467</td>
+<td><br></td>
+<td>Capital -- Bridge</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0296</td>
+<td><br></td>
+<td>Capital -- Beneath Bridge</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0297</td>
+<td><br></td>
+<td>Capital -- Mercs' HQ (?) -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0498</td>
+<td><br></td>
+<td>Capital --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0122</td>
+<td><br></td>
+<td>Capital -- Slums</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0139</td>
+<td><br></td>
+<td>Capital -- Slums -- Pub</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0148</td>
+<td><br></td>
+<td>Capital -- Slums -- Church</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0245</td>
+<td><br></td>
+<td>Capital -- Slums -- Prison (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0257</td>
+<td><br></td>
+<td>Capital -- Slums -- Church Orphanage -- Outside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0258</td>
+<td><br></td>
+<td>Capital -- Church Orphanage -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0320</td>
+<td><br></td>
+<td>Capital -- Slums -- Sleazy Hostel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0259</td>
+<td><br></td>
+<td>Capital -- Beneath Hostel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0330</td>
+<td><br></td>
+<td>Capital -- Slums -- Fight Club</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0331</td>
+<td><br></td>
+<td>Capital -- Demon Loan Shark</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0249</td>
+<td><br></td>
+<td>Capital -- Slums -- Church Cellar</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0256</td>
+<td><br></td>
+<td>Capital -- Slums --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0201</td>
+<td><br></td>
+<td>Capital -- Slums -- Magical Girl Egg House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0477</td>
+<td><br></td>
+<td>Capital -- Outside Slums Gate</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0531</td>
+<td><br></td>
+<td>Capital -- Slums -- Glory Holes</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0545</td>
+<td><br></td>
+<td>Capital -- Slums -- Porno Shop</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0546</td>
+<td><br></td>
+<td>Capital -- Porno Shop -- Party Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0547</td>
+<td><br></td>
+<td>Capital -- Porno Shop --&nbsp;Locker Room +++&nbsp;Hot Spring&nbsp;</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0548</td>
+<td><br></td>
+<td>Capital -- Porno Shop -- Monster Room/VIP Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0420</td>
+<td><br></td>
+<td>Capital -- Business District</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0421</td>
+<td><br></td>
+<td>Capital -- Business District -- Bank -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0422</td>
+<td><br></td>
+<td>Capital -- Bank -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0423</td>
+<td><br></td>
+<td>Capital -- Bank -- Vaults</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0446</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0447</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0438</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0440</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0442</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild&nbsp;-- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0439</td>
+<td><br></td>
+<td>Capital -- Business District -- (?) Guild</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0469</td>
+<td><br></td>
+<td>Capital -- Nobles' District 1 -- South</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0470</td>
+<td><br></td>
+<td>Capital -- Nobles' District 1 -- SE</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0471</td>
+<td><br></td>
+<td>Capital -- Nobles' District 1 -- SW</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0473</td>
+<td><br></td>
+<td>Capital -- Nobles' District 2 -- Central</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0472</td>
+<td><br></td>
+<td>Capital -- Nobles' District 1 -- Central</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0475</td>
+<td><br></td>
+<td>Capital -- Nobles' District 1 -- Hotel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0474</td>
+<td><br></td>
+<td>Capital -- Nobles' District 2 -- Theodore's House -- Outside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0476</td>
+<td><br></td>
+<td>Capital -- Nobles' District 2 -- Theo's House -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0414</td>
+<td><br></td>
+<td><p>Capital -- Outside Coliseum</p></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0415</td>
+<td><br></td>
+<td>Capital -- Coliseum -- Lobby</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0416</td>
+<td><br></td>
+<td>Capital -- Coliseum -- Audience</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0513</td>
+<td><br></td>
+<td>Capital -- Coliseum -- Battle</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0514</td>
+<td><br></td>
+<td>Capital -- Coliseum -- Battle 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0252</td>
+<td><br></td>
+<td>Capital -- Outside Main Gate</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0478</td>
+<td><br></td>
+<td>Wild -- Capital Surrounding -- West&nbsp;1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0253</td>
+<td><br></td>
+<td>Wild -- Capital Surrounding -- West 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0367</td>
+<td><br></td>
+<td>Wild -- Capital Surrounding -- West 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0429</td>
+<td><br></td>
+<td>Bridge to Capital -- Main Bridge</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0364</td>
+<td><br></td>
+<td>Bridge to Capital -- West End</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0358</td>
+<td><br></td>
+<td>Wild -- Outside Kojima (?) -- East Path</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0361</td>
+<td><br></td>
+<td>Wild -- Beach Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0255</td>
+<td><br></td>
+<td>Wild -- Capital Surrounding -- East 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0405</td>
+<td><br></td>
+<td>Wild -- Outside Capital Forest</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0406</td>
+<td><br></td>
+<td>Wild -- Capital Forest 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0407</td>
+<td><br></td>
+<td>Wild -- Capital Forest 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0408</td>
+<td><br></td>
+<td>Wild -- Capital Forest 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0267</td>
+<td><br></td>
+<td>Capital Forest Cave</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0409</td>
+<td><br></td>
+<td>Capital Forest -- Dragon's Nest</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0254</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0433</td>
+<td><br></td>
+<td>Kojima</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0350</td>
+<td><br></td>
+<td>Kojima -- South</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0351</td>
+<td><br></td>
+<td>Kojima -- South Inn -- Adventurers' Guild (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0352</td>
+<td><br></td>
+<td>Kojima -- South Inn -- Lobby</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0353</td>
+<td><br></td>
+<td>Kojima -- South Inn -- Bedrooms</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0354</td>
+<td><br></td>
+<td>Kojima -- Central</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0355</td>
+<td><br></td>
+<td>Kojima -- North +++ Outside Serena's House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0424</td>
+<td><br></td>
+<td>Kojima -- Serena's House -- L1 -- Entrance Hall</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0425</td>
+<td><br></td>
+<td>Kojima -- Serena's House -- L1 -- Rooms</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0426</td>
+<td><br></td>
+<td>Kojima -- Serena's House -- L1 -- Hallways</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0427</td>
+<td><br></td>
+<td>Kojima -- Serena's House -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0356</td>
+<td><br></td>
+<td>Kojima -- Orphanage (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0357</td>
+<td><br></td>
+<td>Kojima -- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0349</td>
+<td><br></td>
+<td>Kojima -- Inside Horse Train Station</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0365</td>
+<td><br></td>
+<td>Kojima --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0366</td>
+<td><br></td>
+<td>Kojima --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0362</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0359</td>
+<td><br></td>
+<td>Wild -- Western Forest -- Outside Shack</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0363</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0360</td>
+<td><br></td>
+<td>Wild -- Western Forest --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0428</td>
+<td><br></td>
+<td>Wild -- Western Mountain (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0016</td>
+<td><br></td>
+<td>Garuhasuta</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0017</td>
+<td><br></td>
+<td>Garuhasuta -- NE Sector</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0061</td>
+<td><br></td>
+<td>Garuhasuta Mansion&nbsp;-- L1 -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0062</td>
+<td><br></td>
+<td>Garuhasuta Mansion -- L1 --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0063</td>
+<td><br></td>
+<td>Garuhasuta Mansion -- L2 -- Harem (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0060</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0064</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0043</td>
+<td><br></td>
+<td>Garuhasuta -- Inside Houses 1 +++ Inside Businesses 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0044</td>
+<td><br></td>
+<td>Garuhasuta -- Inside Houses 2 +++ Inside Businesses 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0049</td>
+<td><br></td>
+<td>Garuhasuta -- Inn (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0045</td>
+<td><br></td>
+<td>Garuhasuta -- (?) Shop (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0050</td>
+<td><br></td>
+<td>Garuhasuta -- Adventurers' Guild +++ Party Character Select Room</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0046</td>
+<td><br></td>
+<td>Garuhasuta -- NE Sector -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0047</td>
+<td><br></td>
+<td>Garuhasuta -- Brothel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0048</td>
+<td><br></td>
+<td>? -- !</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0278</td>
+<td><br></td>
+<td>Garuhasuta -- Barn (?) 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0283</td>
+<td><br></td>
+<td>Garuhasuta -- Barn (?) 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0368</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0369</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0370</td>
+<td><br></td>
+<td>(?) -- Outside Shack</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0371</td>
+<td><br></td>
+<td>(?) -- Outside Ship</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0372</td>
+<td><br></td>
+<td>(?) Ship --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0373</td>
+<td><br></td>
+<td>(?) Ship --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0374</td>
+<td><br></td>
+<td>(?) Ship --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0284</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0051</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0052</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0053</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0054</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0055</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0056</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0057</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0058</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0059</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0297</td>
+<td><br></td>
+<td>Eisen&nbsp;-- Central</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0299</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0303</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0307</td>
+<td><br></td>
+<td>Eisen&nbsp;&nbsp;-- Mine --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0313</td>
+<td><br></td>
+<td>Eisen&nbsp;&nbsp;-- Pubs (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0305</td>
+<td><br></td>
+<td>Eisen&nbsp;-- Adventurers' Guild +++</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0298</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0309</td>
+<td><br></td>
+<td>Eisen&nbsp;&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0310</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0300</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0314</td>
+<td><br></td>
+<td>(?) -- Pub</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0315</td>
+<td><br></td>
+<td>(?) -- Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0306</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0541</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0302</td>
+<td><br></td>
+<td>Eisen&nbsp;&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0542</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0304</td>
+<td><br></td>
+<td>Eisen&nbsp;--</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0311</td>
+<td><br></td>
+<td>(?) Guild -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0312</td>
+<td><br></td>
+<td>(?) Guild -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0543</td>
+<td><br></td>
+<td>(?) Guild -- Dungeons</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0275</td>
+<td><br></td>
+<td>Barqahasa -- Town Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0276</td>
+<td><br></td>
+<td>Barqahasa -- Inside Houses +++ Pub/Inn (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0279</td>
+<td><br></td>
+<td>Barqahasa -- Casino --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0292</td>
+<td><br></td>
+<td>Barqahasa -- Casino --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0322</td>
+<td><br></td>
+<td>Barqahasa -- Casino -- Cells</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0323</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0321</td>
+<td><br></td>
+<td>Barqahasa -- (?) -- L1&nbsp;+++ (?) Guild</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0324</td>
+<td><br></td>
+<td>Barqahasa -- (?) -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0325</td>
+<td><br></td>
+<td>Barqahasa -- Barracks</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0559</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0560</td>
+<td><br></td>
+<td>(?) -- Battle</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0336</td>
+<td><br></td>
+<td>Dead Village -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0337</td>
+<td><br></td>
+<td>Dead Village -- Mansion</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0338</td>
+<td><br></td>
+<td>Dead Village -- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0339</td>
+<td><br></td>
+<td>Dead Village -- Garden Encounter</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0345</td>
+<td><br></td>
+<td>Dead Village -- Underground Cavern</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0346</td>
+<td><br></td>
+<td>Dead Village -- Secret Lair -- Entrance 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0347</td>
+<td><br></td>
+<td>Dead Village -- Secret Lair -- Cells</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0343</td>
+<td><br></td>
+<td>Dead Village -- Secret Lair -- Bedchamber</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0348</td>
+<td><br></td>
+<td>Dead Village -- Secret Lair -- Melisande VS Michiru</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0344</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0432</td>
+<td><br></td>
+<td>Animal...something</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0376</td>
+<td><br></td>
+<td>Orc Kingdom -- City -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0377</td>
+<td><br></td>
+<td>Orc Kingdom -- City -- Inside 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0378</td>
+<td><br></td>
+<td>Orc Kingdom -- City -- Inside 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0379</td>
+<td><br></td>
+<td>Orc Kingdom -- City -- Inside 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0391</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle Grounds -- South</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0392</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle Grounds -- SW</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0430</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle Grounds -- SE</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0437</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle Grounds -- SE (Event)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0431</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle Dungeon</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0380</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle -- Long Hall</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0381</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle -- King's (?) Bedchamber (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0436</td>
+<td><br></td>
+<td>Orc Kingdom -- Castle -- Halls</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0393</td>
+<td><br></td>
+<td>(?) -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0399</td>
+<td><br></td>
+<td>(?) -- Pool</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0400</td>
+<td><br></td>
+<td>(?) -- Stables/Barn</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0401</td>
+<td><br></td>
+<td>(?) -- Classroom</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0394</td>
+<td><br></td>
+<td>(?) -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0395</td>
+<td><br></td>
+<td>(?) -- Inside Houses 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0397</td>
+<td><br></td>
+<td>(?) -- Inside Houses 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0396</td>
+<td><br></td>
+<td>(?) -- Inside Houses 3 +++&nbsp;Hot Spring&nbsp;(?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0398</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0067</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0140</td>
+<td><br></td>
+<td>Underground City -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0145</td>
+<td><br></td>
+<td>Underground City -- Inside</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0417</td>
+<td><br></td>
+<td>Underground City -- Belle's (?) House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0412</td>
+<td><br></td>
+<td>Underground City -- Inn -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0418</td>
+<td><br></td>
+<td>Underground City -- Inn -- Men's&nbsp;Hot Spring</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0141</td>
+<td><br></td>
+<td>Underground City -- Portal Cave -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0143</td>
+<td><br></td>
+<td>Underground City -- Portal Cave -- Lava Plant Things</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0527</td>
+<td><br></td>
+<td>Underground City -- Portal Cave -- Orc Loss Event</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0068</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0069</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0073</td>
+<td><br></td>
+<td>Wild -- Outside Orc&nbsp;Pub (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0074</td>
+<td><br></td>
+<td>Orc Pub (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0075</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0479</td>
+<td><br></td>
+<td>(?) -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0483</td>
+<td><br></td>
+<td>(?) --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0144</td>
+<td><br></td>
+<td>Orc Castle -- Main (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0375</td>
+<td><br></td>
+<td>Orc Castle -- Throne Room 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0149</td>
+<td><br></td>
+<td>Orc Castle -- Throne Room 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0150</td>
+<td><br></td>
+<td>Orc Castle -- King's (?) Bedchamber (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0096</td>
+<td><br></td>
+<td>Nanako's House -- Main 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0097</td>
+<td><br></td>
+<td>Nanako's House -- Basement 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0098</td>
+<td><br></td>
+<td>Nanako's House -- Main 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0099</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0100</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0528</td>
+<td><br></td>
+<td>Nanako's House -- Main 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0241</td>
+<td><br></td>
+<td>Capital -- Outside Brothel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0242</td>
+<td><br></td>
+<td>Capital -- Brothel -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0244</td>
+<td><br></td>
+<td>Capital -- Brothel -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0239</td>
+<td><br></td>
+<td>Outside Loli Brothel</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0240</td>
+<td><br></td>
+<td>Loli Brothel -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0243</td>
+<td><br></td>
+<td>Loli Brothel -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0123</td>
+<td><br></td>
+<td>Slave Market -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0124</td>
+<td><br></td>
+<td>Slave Market -- Nanako Sale</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0125</td>
+<td><br></td>
+<td>Slave Market -- Nanako Toilet Slave</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0402</td>
+<td><br></td>
+<td>Slave Market -- Quest Path/Horse Train Path 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0403</td>
+<td><br></td>
+<td>Slave Market -- Quest Path/Horse Train Path 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0404</td>
+<td><br></td>
+<td>Slave Market -- Quest Path/Horse Train Path 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0503</td>
+<td><br></td>
+<td>Nemes -- Womb Battle -- Uterus</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0504</td>
+<td><br></td>
+<td>Nemes -- Womb Battle -- Womb</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0505</td>
+<td><br></td>
+<td>Nemes -- Womb Battle --&nbsp;Right Ovary</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0506</td>
+<td><br></td>
+<td>Nemes -- Womb Battle&nbsp;-- Left Ovary</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0102</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0277</td>
+<td><br></td>
+<td>(?) -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0250</td>
+<td><br></td>
+<td>(?) -- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0151</td>
+<td><br></td>
+<td>Celes --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0152</td>
+<td><br></td>
+<td>Celes&nbsp;-- Inside 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0070</td>
+<td><br></td>
+<td>Celes -- West</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0071</td>
+<td><br></td>
+<td>Celes -- Pier</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0072</td>
+<td><br></td>
+<td>Celes -- North</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0515</td>
+<td><br></td>
+<td>Delvanka -- West</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0516</td>
+<td><br></td>
+<td>Delvanka -- Inn -- L1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0517</td>
+<td><br></td>
+<td>Delvanka -- Inn -- L2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0518</td>
+<td><br></td>
+<td>Delvanka -- Inn -- Basement (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0524</td>
+<td><br></td>
+<td>Delvanka -- Inside Businesses 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0525</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td><br></td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0521</td>
+<td><br></td>
+<td>Delvanka -- East</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0522</td>
+<td><br></td>
+<td>Delvanka -- Inside Businesses 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0523</td>
+<td><br></td>
+<td>Delvanka -- Pub</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0519</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0520</td>
+<td><br></td>
+<td><br></td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0532</td>
+<td><br></td>
+<td>Wild -- Outside Delvanka (?) -- Western Path (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0533</td>
+<td><br></td>
+<td>Wild --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0103</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0188</td>
+<td><br></td>
+<td>Event Templates</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0273</td>
+<td><br></td>
+<td>Monster Templates</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0265</td>
+<td><br></td>
+<td>ARPG Test</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0289</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0185</td>
+<td><br></td>
+<td>Debug Map 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0199</td>
+<td><br></td>
+<td>Debug Fight Test 1</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0180</td>
+<td><br></td>
+<td>Debug Fight Test 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0266</td>
+<td><br></td>
+<td>Debug Fight Test 3</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0078</td>
+<td><br></td>
+<td>Damage Test</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0496</td>
+<td><br></td>
+<td>Debug Fight Test 4</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0555</td>
+<td><br></td>
+<td>Debug Map 2</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0530</td>
+<td><br></td>
+<td>Album Mode</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0038</td>
+<td><br></td>
+<td>Debug Fight Test (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0039</td>
+<td><br></td>
+<td>Debug Fight Test (?) -- Loss Event (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0040</td>
+<td><br></td>
+<td>Debug Fight Test (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0041</td>
+<td><br></td>
+<td>Debug Fight Test (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0291</td>
+<td><br></td>
+<td>World Map -- Full</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0079</td>
+<td><br></td>
+<td>World Map -- SW Sector</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0176</td>
+<td><br></td>
+<td>Debug Sex Stage</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0035</td>
+<td><br></td>
+<td>Spirit Shop</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0200</td>
+<td><br></td>
+<td>Boob Rank</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0500</td>
+<td><br></td>
+<td>Good End (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0509</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Main -- Debug Mode</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0510</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Lobby -- Debug Mode</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0511</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Public&nbsp;Hot Spring&nbsp;-- Mixed Day -- Debug Mode</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0512</td>
+<td><br></td>
+<td>Hot Spring Town&nbsp;-- Pub -- Leaving Debug</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0502</td>
+<td><br></td>
+<td>Empty</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0536</td>
+<td><br></td>
+<td>(?) Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0537</td>
+<td><br></td>
+<td>(?) Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0538</td>
+<td><br></td>
+<td>(?) Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0539</td>
+<td><br></td>
+<td>(?) Cave --</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0549</td>
+<td><br></td>
+<td>Old Men's Town (?) -- Forest</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0550</td>
+<td><br></td>
+<td>Old Men's Town (?) -- Main</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0551</td>
+<td><br></td>
+<td>Old Men's Town (?) -- Inside Houses</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0552</td>
+<td><br></td>
+<td>Old Men's Town (?) -- Central House</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0553</td>
+<td><br></td>
+<td>Old Men's Town (?) -- Underground River (?)</td>
+<td>130105</td>
+</tr>
+<tr>
+<td>0554</td>
+<td><br></td>
+<td>Old Men's Town (?) --</td>
+<td>130105</td>
+</tr>
+</tbody></table><p></p>
+</div>
+<div id="comment-list">
+<h2>10 Comments</h2>
+<article class="comment" id="comment_2607313">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/4-ede32dbcc27738b756d2f5c210894499.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/fenris666" data-user-id="aBN8ZSvMOr4RVhacwqEsg8" rel="fancybox_xhr">fenris666</a> on <a href="#comment2607313" class="link">2013-01-08 08:13</a>
+</p>
+<div class="comment-body" id="text_comment_2607313">
+The list uses the old names for the places<br>I think a third column for the Japanese names would be nice too but not necessary.<br>How about adding a further column that includes a version number of the game? In case maps are moved/replaced by other versions.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2608493">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/Claws61821" data-user-id="b2y-3Uwt4r4RJ7acwqEsg8" rel="fancybox_xhr">Claws61821</a> on <a href="#comment2608493" class="link">2013-01-08 15:01</a>
+</p>
+<div class="comment-body" id="text_comment_2608493">
+It uses the names I am familiar with for places I recognize. Those names
+ being outdated is one reason why I asked that someone double-check my 
+work (although I'm not too sure about some of the 'standardized' names 
+listed elsewhere on this wiki). Adding the column for the Japanese 
+labels is a good idea, and I may go back and do that in a little while -
+ it will add a little more time to the addition of each future entry, 
+but not much. I also agree that the revision date should be included for
+ the usually rare reasons you've mentioned, especially since I noticed 
+that some of the maps seem to have been changed already since my 
+original listing; that said, I will probably not do so myself for the 
+earlier entries until after I have completed at least one version of the
+ list. You are welcome to check those existing entries against the 
+current revision and correct and label them yourself before then.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2608643">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/Claws61821" data-user-id="b2y-3Uwt4r4RJ7acwqEsg8" rel="fancybox_xhr">Claws61821</a> on <a href="#comment2608643" class="link">2013-01-08 15:39</a>
+</p>
+<div class="comment-body" id="text_comment_2608643">
+Correction; I will likely not be adding the Japanese labels for some 
+time, either. I just got the game working on my new machine without it 
+thinking a key was stuck, and don't really feel like wrestling with Win8
+ to make it display Japanese text normally in the text entry boxes used 
+by RM2k in each Map Properties dialogue (and elsewhere in that program).
+ I'm not even sure I'd know how, to be honest. Meanwhile, I will resume 
+compiling the MapTree list at this time, for the sake of ease.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2609533">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/Claws61821" data-user-id="b2y-3Uwt4r4RJ7acwqEsg8" rel="fancybox_xhr">Claws61821</a> on <a href="#comment2609533" class="link">2013-01-08 21:09</a>
+</p>
+<div class="comment-body" id="text_comment_2609533">
+I've finished recording what I recognized or could decipher of the 
+MapIDs in revision 130105 according to the placement order in the 
+Editor's Map Tree. I have not included the Japanese names at this time 
+due to technical difficulties. Please check my work for inaccuracies and
+ complete missing information, if capable.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2610263">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/4-ede32dbcc27738b756d2f5c210894499.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/fenris666" data-user-id="aBN8ZSvMOr4RVhacwqEsg8" rel="fancybox_xhr">fenris666</a> on <a href="#comment2610263" class="link">2013-01-09 02:42</a>
+</p>
+<div class="comment-body" id="text_comment_2610263">
+Also have a look at <a rel="nofollow" href="https://www.assembla.com/spaces/VH/documents/as6pcawy0r4Q3IacwqjQWU/download/as6pcawy0r4Q3IacwqjQWU">debug_en.rar</a><br>A short explanation of what this tool does is <a rel="nofollow" href="https://www.assembla.com/spaces/VH/messages/2608573#comment_2610193">here</a><br>That tool helps to search/find variables, switches, maps and many more things.<br>I haven't found out if it can output a list of the maps but maybe with that tool this is not necessary anymore.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2805383">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/tryguy" data-user-id="cid4rUKvar4QLvacwqjQYw" rel="fancybox_xhr">tryguy</a> on <a href="#comment2805383" class="link">2013-03-21 12:07</a>
+</p>
+<div class="comment-body" id="text_comment_2805383">
+Hey, so how could we represent the tree structure of the map files on 
+this wiki? Both forms of map listing are certainly useful as they are, 
+but when attempting to locate an individual map in RPG Maker 2000 
+there's a whole tree structure to navigate to where the actual map is. 
+And if that structure isn't opened, it's pretty hit-and-miss trying to 
+find it.<br><br>Finding particular maps is solved by this wiki listing, but ideally I'd like to have the path to the maps documented as well.<br><br>So, I'd find it a lot easier if the second list was of this nature:<br><br>0019<br>0116<br>0117<br>0281<br>0101<br>0153<br>0191<br>0333<br>etc.<br><br>Now,
+ I could do this just by spaces, and as long as the depth wasn't too 
+bad, the width of the column wouldn't be too big. But I don't think just
+ using spaces is a good idea, since those tend to get lost and such over
+ time. So, anyone have a suggestion of how to represent this?<br><br>Since
+ this would be helpful to me in investigating events, I guess I could 
+fill out the structure by hand. It wouldn't take that long, but does 
+anyone know of an automated way to print out the structure? I had a 
+quick look at debug.exe, but I can't work out how to save the map 
+listing at all.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2805393">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/tryguy" data-user-id="cid4rUKvar4QLvacwqjQYw" rel="fancybox_xhr">tryguy</a> on <a href="#comment2805393" class="link">2013-03-21 12:09</a>
+</p>
+<div class="comment-body" id="text_comment_2805393">
+OK, formatting got messed up.<br><br>0019<br>&gt;&gt;&gt;&gt;0116<br>&gt;&gt;&gt;&gt;0117<br>0281<br>&gt;&gt;&gt;&gt;0101<br>&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;0153<br>&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;0191<br>&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;0333<br>etc.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2805403">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/tryguy" data-user-id="cid4rUKvar4QLvacwqjQYw" rel="fancybox_xhr">tryguy</a> on <a href="#comment2805403" class="link">2013-03-21 12:10</a>
+</p>
+<div class="comment-body" id="text_comment_2805403">
+Well, I messed that up a little as well. But, you get the idea.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2808053">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/Claws61821" data-user-id="b2y-3Uwt4r4RJ7acwqEsg8" rel="fancybox_xhr">Claws61821</a> on <a href="#comment2808053" class="link">2013-03-22 02:28</a>
+</p>
+<div class="comment-body" id="text_comment_2808053">
+@tryguy That's why I included the list holding the entries in their 
+original order. It's not a perfect solution, but it allows you to find 
+which maps are nearby after finding out from the incremental list which 
+map you want.
+</div>
+</div>
+</article>
+<article class="comment" id="comment_2808423">
+<div class="avatar medium" style="background-image:url('/assets/avatars/big/9-cb07eece8cf0af49e5a98304f20c0dd6.png')"></div>
+<div class="details">
+<p class="meta-info">
+By <a href="https://www.assembla.com/user/popup_profile/tryguy" data-user-id="cid4rUKvar4QLvacwqjQYw" rel="fancybox_xhr">tryguy</a> on <a href="#comment2808423" class="link">2013-03-22 06:25</a>
+</p>
+<div class="comment-body" id="text_comment_2808423">
+Hey, so I made this: <a rel="nofollow" href="https://www.assembla.com/spaces/VH/wiki/MapTree">https://www.assembla.com/spaces/VH/wiki/MapTree</a><br><br>I
+ used the unused link in the second table, so I hope you didn't have 
+another idea for that page. Anyway, I think this format will be of use. 
+You just have to search for the map you're interested in, and you can 
+browse the exact structure. I think it's accurate. But I did enter it by
+ hand, so there may be mistakes.
+</div>
+</div>
+</article>
+<div class="add-comment" id="comment0">
+<div class="avatar medium" style="background-image:url('/user/picture/btTXnEEjKr44oEacwqjQYw/1391225093')"></div>
+<div class="form-wrapper">
+<div id="flow-preview"></div>
+<script type="text/x-jquery-tmpl" id="preview-template">
+<div class="preview-box">
+  <h4 class="preview-box-title">{{html title}}</h4>
+  <div class="preview-box-content user-link">{{html content}}</div>
+</div>
+</script>
+<form accept-charset="UTF-8" action="/spaces/VH/wiki/Map_List/add_comment" class="s-form comment-area" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" value="✓" type="hidden"><input name="authenticity_token" value="uW5lO5x4guoHzQD5bpGDsR/JHv2b8dLcQ0mAhvVU0Hs=" type="hidden"></div>
+<div id="flow_body_toolbar" class="small_toolbar"><a tabindex="400" class="strong" title="Bold text: *Example* (Ctrl + B)" id="strong" href="#"></a><a tabindex="400" class="em" title="Italic text: _Example_ (Ctrl + I)" id="em" href="#"></a><a tabindex="400" class="heading" title="Heading: .h1 Example (Ctrl + 1)" id="heading" href="#"></a><a tabindex="400" class="link" title="Link: [[url:http://www.example.com/|ExampleName] (Ctrl + L)" id="link" href="#"></a><a tabindex="400" class="code" title="Code block: &lt;pre&gt;&lt;code&gt; example &lt;/code&gt;&lt;/pre&gt; (Ctrl + K)" id="code" href="#"></a><a tabindex="400" class="ol" title="Numeric List Item: # itemA" id="ol" href="#"></a><a tabindex="400" class="ul" title="Bulleted List Item: * itemA" id="ul" href="#"></a></div><textarea class="simple_wikitext s-full mentionable" cols="40" id="flow_body" name="flow[body]" placeholder="What do you think?" rows="5"></textarea>
+<input id="flow_subject" name="flow[subject]" type="hidden">
+<input class="gray-btn" name="commit" value="Submit" type="submit">
+<a href="https://www.assembla.com/spaces/VH/comments/preview" class="preview-link mr-10" data-fields="flow_body" data-titles="Preview Comment" data-update="flow-preview">Preview</a>
+</form> </div>
+</div>
+</div>
+</div>
+</div>
+</div> 
+<div id="context-menu-wrapper">
+</div>
+<div class="push-app"></div>
+</div> 
+<div class="cut">&nbsp;</div>
+<div id="footer-w">
+<div id="footer">
+<p>
+<a href="https://www.assembla.com/home">Home</a>
+/ <a href="http://api-doc.assembla.com/">Developer API</a>
+/ <a href="http://helpdesk.assembla.com/">Support Portal</a>
+/ <a href="http://status.assembla.com/" target="_blank">System Status</a>
+/ <a href="https://www.assembla.com/spaces/VH/prepare_copy">Copy this project</a>
+</p>
+<p>
+<a href="https://www.assembla.com/account">Get a Project</a>
+</p>
+<p id="copyr-contact">
+Vh translation is powered by Assembla Workspaces. <a href="https://www.assembla.com/features">Learn More</a>
+</p>
+</div> 
+</div> 
+ 
+<script type="text/javascript">
+      (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
+      for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2.2.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+      mixpanel.init("7473a1338c145b3112b19ea2a8cfdd7d");
+    
+  </script>
+ 
+</div>
+<script type="text/javascript">
+//<![CDATA[
+
+
+    initNavigationWikiTree('cSftF8wuur4OUBacwqEsg8');
+
+//]]>
+</script>
+
+
+<ul id="floatingContainer" style="position: absolute; display: none;"></ul><div style="position: absolute; display: none;"><img id="dragDropIndicatorImage" src="Map%20List_fichiers/dragDrop_ind1.gif"></div><div style="display: none;"></div><div id="fancybox-tmp"></div><div id="fancybox-loading"><div></div></div><div id="fancybox-overlay"></div><div id="fancybox-wrap"><div id="fancybox-outer"><div id="fancybox-content"></div><a id="fancybox-close"></a><div id="fancybox-title"></div><a href="javascript:;" id="fancybox-left"><span class="fancy-ico" id="fancybox-left-ico"></span></a><a href="javascript:;" id="fancybox-right"><span class="fancy-ico" id="fancybox-right-ico"></span></a></div></div><script src="Map%20List_fichiers/nr-476.js"></script><script src="Map%20List_fichiers/9dfe439095" type="text/javascript"></script></body></html>
