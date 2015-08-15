@@ -19,10 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
 import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
 import fr.sazaju.vheditor.gui.content.MapComponentFactory;
 import fr.sazaju.vheditor.gui.content.MapComponentFactory.MapComponent;
+import fr.sazaju.vheditor.gui.tool.ToolProvider;
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
@@ -60,9 +60,12 @@ public class MapContentPanel extends JPanel {
 			isMapModified = true;
 		}
 	};
+	private ToolProvider<?> toolProvider;
 
-	public MapContentPanel(MapComponentFactory<?> mapFactory) {
+	public MapContentPanel(ToolProvider<?> toolProvider,
+			MapComponentFactory<?> mapFactory) {
 		this.mapFactory = mapFactory;
+		this.toolProvider = toolProvider;
 
 		setBorder(new EtchedBorder());
 
@@ -109,17 +112,6 @@ public class MapContentPanel extends JPanel {
 		loadingLabel = new JLabel("Loading...");
 		mapLoadingArea.add(loadingLabel, constraints);
 		add(mapLoadingArea);
-	}
-
-	public MapContentPanel(final EntryComponentFactory<?> entryFactory) {
-		this(new MapComponentFactory<SimpleMapComponent>() {
-
-			@Override
-			public SimpleMapComponent createMapComponent(TranslationMap<?> map) {
-				return new SimpleMapComponent(map, entryFactory);
-			}
-
-		});
 	}
 
 	public int getCurrentEntryIndex() {
@@ -266,23 +258,6 @@ public class MapContentPanel extends JPanel {
 
 	public void removeListener(MapSavedListener listener) {
 		saveListeners.remove(listener);
-	}
-
-	private static class SimpleMapComponent extends JPanel implements
-			MapComponent {
-
-		public SimpleMapComponent(TranslationMap<?> map,
-				EntryComponentFactory<?> entryFactory) {
-			setLayout(new GridLayout(map.size(), 1));
-			for (TranslationEntry<?> entry : map) {
-				add(entryFactory.createEntryComponent(entry));
-			}
-		}
-
-		@Override
-		public EntryComponent getEntryComponent(int index) {
-			return (EntryComponent) getComponent(index);
-		}
 	}
 
 	public static interface MapSavedListener {

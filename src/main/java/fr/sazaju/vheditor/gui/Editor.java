@@ -32,8 +32,11 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
+import fr.sazaju.vheditor.gui.content.EntryComponentFactory;
 import fr.sazaju.vheditor.gui.content.FilterButton;
 import fr.sazaju.vheditor.gui.content.MapComponentFactory;
+import fr.sazaju.vheditor.gui.content.SimpleEntryComponent;
+import fr.sazaju.vheditor.gui.content.SimpleMapComponent;
 import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
@@ -63,26 +66,14 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	public static final FileBasedProperties config = new FileBasedProperties(
 			"vh-editor.ini", true);
 	private final WeakHashMap<TranslationMap<?>, Object> idCache = new WeakHashMap<>();
+	private final ToolProvider<MapID> toolProvider;
+	private final MapListPanel<TEntry, TMap, MapID, TProject> listPanel;
+	private final MapContentPanel mapPanel;
+	private final JPanel filters;
 
 	public Editor(ProjectLoader<TProject> projectLoader,
 			MapComponentFactory<?> mapComponentFactory) {
-		setTitle("Translation Editor");
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-
-		final MapListPanel<TEntry, TMap, MapID, TProject> listPanel = new MapListPanel<>(
-				projectLoader);
-		final MapContentPanel mapPanel = new MapContentPanel(
-				mapComponentFactory);
-
-		final JPanel filters = new JPanel();
-		filters.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-		filters.setLayout(new GridLayout(0, 1, 0, 5));
-
-		configureListeners(listPanel, mapPanel, filters);
-		ToolPanel toolPanel = new ToolPanel();
-
-		final ToolProvider<MapID> provider = new ToolProvider<MapID>() {
+		toolProvider = new ToolProvider<MapID>() {
 
 			@Override
 			public TranslationProject<MapID, ?> getProject() {
@@ -91,16 +82,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 			@Override
 			public void loadMap(MapID id) {
-				try {
-					int entryIndex = 0;
-					TranslationMap<?> map = listPanel.getProject().getMap(id);
-					idCache.put(map, id);
-					mapPanel.setMap(map, id.toString(), entryIndex);
-					updateFilters(map, filters, mapPanel);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
-							"Error", JOptionPane.ERROR_MESSAGE);
-				}
+				loadMapEntry(id, 0);
 			}
 
 			@Override
@@ -116,7 +98,85 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				}
 			}
 		};
-		configureTools(toolPanel, provider);
+
+		mapPanel = new MapContentPanel(toolProvider, mapComponentFactory);
+		addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				if (isMapSafe(mapPanel)) {
+					dispose();
+				} else {
+					// map unsafe
+				}
+			}
+
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// nothing to do
+			}
+
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// nothing to do
+			}
+		});
+
+		listPanel = new MapListPanel<>(projectLoader);
+		listPanel.addListener(new MapSelectedListener<MapID>() {
+
+			@Override
+			public void mapSelected(MapID id) {
+				if (isMapSafe(mapPanel)) {
+					toolProvider.loadMap(id);
+				} else {
+					// map unsafe
+				}
+			}
+		});
+
+		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
+
+			@Override
+			public void mapSaved(final TranslationMap<?> map) {
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void run() {
+						listPanel.updateMapSummary((MapID) idCache.get(map),
+								true);
+					}
+				});
+			}
+		});
+		ToolPanel toolPanel = new ToolPanel();
+
+		filters = new JPanel();
+		filters.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		filters.setLayout(new GridLayout(0, 1, 0, 5));
+
+		configureTools(toolPanel, toolProvider);
 
 		JPanel translationPanel = new JPanel();
 		translationPanel.setLayout(new GridBagLayout());
@@ -145,9 +205,37 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		setLayout(new GridLayout(1, 1));
 		add(rootSplit);
 
+		setTitle("Translation Editor");
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
 		pack();
 
 		finalizeConfig(rootSplit);
+	}
+
+	public Editor(ProjectLoader<TProject> projectLoader,
+			final EntryComponentFactory<?> entryFactory) {
+		this(projectLoader, new MapComponentFactory<SimpleMapComponent>() {
+
+			@Override
+			public SimpleMapComponent createMapComponent(TranslationMap<?> map) {
+				return new SimpleMapComponent(map, entryFactory);
+			}
+
+		});
+	}
+
+	public Editor(ProjectLoader<TProject> projectLoader) {
+		this(projectLoader,
+				new EntryComponentFactory<SimpleEntryComponent<?>>() {
+
+					@Override
+					public SimpleEntryComponent<?> createEntryComponent(
+							TranslationEntry<?> entry) {
+						return new SimpleEntryComponent<>(entry);
+					}
+				});
 	}
 
 	protected void updateFilters(TranslationMap<?> map, JPanel filters,
@@ -226,91 +314,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
 				// nothing to do
-			}
-		});
-	}
-
-	private void configureListeners(
-			final MapListPanel<TEntry, TMap, MapID, TProject> listPanel,
-			final MapContentPanel mapPanel, final JPanel filters) {
-		addWindowListener(new WindowListener() {
-
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void windowIconified(WindowEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				if (isMapSafe(mapPanel)) {
-					dispose();
-				} else {
-					// map unsafe
-				}
-			}
-
-			@Override
-			public void windowClosed(WindowEvent arg0) {
-				// nothing to do
-			}
-
-			@Override
-			public void windowActivated(WindowEvent arg0) {
-				// nothing to do
-			}
-		});
-
-		listPanel.addListener(new MapSelectedListener<MapID>() {
-
-			@Override
-			public void mapSelected(MapID id) {
-				if (isMapSafe(mapPanel)) {
-					try {
-						int entryIndex = 0;
-						TranslationMap<?> map = listPanel.getProject().getMap(
-								id);
-						idCache.put(map, id);
-						mapPanel.setMap(map, id.toString(), entryIndex);
-						updateFilters(map, filters, mapPanel);
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(Editor.this,
-								e.getMessage(), "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				} else {
-					// map unsafe
-				}
-			}
-		});
-
-		mapPanel.addListener(new MapContentPanel.MapSavedListener() {
-
-			@Override
-			public void mapSaved(final TranslationMap<?> map) {
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@SuppressWarnings("unchecked")
-					@Override
-					public void run() {
-						listPanel.updateMapSummary((MapID) idCache.get(map),
-								true);
-					}
-				});
 			}
 		});
 	}
