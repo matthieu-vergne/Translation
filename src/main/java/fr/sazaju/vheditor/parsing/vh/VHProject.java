@@ -16,17 +16,17 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import fr.sazaju.vheditor.gui.Editor;
-import fr.sazaju.vheditor.gui.parsing.MapLabelPage;
-import fr.sazaju.vheditor.gui.parsing.MapRow;
-import fr.sazaju.vheditor.gui.parsing.MapTable;
-import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
-import fr.sazaju.vheditor.translation.impl.MapFilesProject;
-import fr.sazaju.vheditor.util.MultiReader;
-import fr.sazaju.vheditor.util.impl.SimpleFeature;
 import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.parsing.layer.exception.ParsingException;
+import fr.vergne.translation.editor.Editor;
+import fr.vergne.translation.editor.parsing.MapLabelPage;
+import fr.vergne.translation.editor.parsing.MapRow;
+import fr.vergne.translation.editor.parsing.MapTable;
+import fr.vergne.translation.editor.tool.FileBasedProperties;
+import fr.vergne.translation.impl.MapFilesProject;
+import fr.vergne.translation.util.MultiReader;
+import fr.vergne.translation.util.impl.SimpleFeature;
 
 public class VHProject extends MapFilesProject<VHMap> {
 

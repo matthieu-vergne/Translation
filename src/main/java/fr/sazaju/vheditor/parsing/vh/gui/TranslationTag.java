@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
-import fr.sazaju.vheditor.translation.TranslationEntry;
+import fr.vergne.translation.TranslationEntry;
 
 @SuppressWarnings("serial")
 public class TranslationTag<Entry extends TranslationEntry<?>> extends JPanel {

@@ -11,9 +11,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
-import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.translation.TranslationMapTest;
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
+import fr.vergne.translation.TranslationMap;
+import fr.vergne.translation.TranslationMapTest;
+import fr.vergne.translation.TranslationMetadata.Field;
 
 public class VHMapTest extends TranslationMapTest<VHEntry> {
 

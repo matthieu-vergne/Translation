@@ -10,11 +10,11 @@ import java.util.NoSuchElementException;
 import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry.MapSaver;
-import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.util.EntryFilter;
 import fr.vergne.parsing.layer.standard.GreedyMode;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
+import fr.vergne.translation.TranslationMap;
+import fr.vergne.translation.util.EntryFilter;
 
 public class VHMap extends Suite implements TranslationMap<VHEntry> {
 

@@ -13,9 +13,9 @@ import org.junit.Test;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.TranslationProject;
-import fr.sazaju.vheditor.translation.TranslationProjectTest;
+import fr.vergne.translation.TranslationProject;
+import fr.vergne.translation.TranslationProjectTest;
+import fr.vergne.translation.TranslationMetadata.Field;
 
 public class VHProjectTest extends TranslationProjectTest<File, VHMap> {
 

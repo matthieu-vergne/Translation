@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 
-import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.impl.OnDemandMetadata;
-import fr.sazaju.vheditor.util.Reader;
-import fr.sazaju.vheditor.util.Writer;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
+import fr.vergne.translation.TranslationEntry;
+import fr.vergne.translation.TranslationMetadata.Field;
+import fr.vergne.translation.impl.OnDemandMetadata;
+import fr.vergne.translation.util.Reader;
+import fr.vergne.translation.util.Writer;
 
 public class VHEntry extends Suite implements
 		TranslationEntry<OnDemandMetadata> {

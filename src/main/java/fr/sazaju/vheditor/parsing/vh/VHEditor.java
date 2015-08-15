@@ -2,14 +2,14 @@ package fr.sazaju.vheditor.parsing.vh;
 
 import java.io.File;
 
-import fr.sazaju.vheditor.gui.Editor;
-import fr.sazaju.vheditor.gui.content.MapComponentFactory;
 import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder;
 import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.MapPanel;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
-import fr.sazaju.vheditor.translation.TranslationMap;
-import fr.sazaju.vheditor.util.ProjectLoader;
+import fr.vergne.translation.TranslationMap;
+import fr.vergne.translation.editor.Editor;
+import fr.vergne.translation.editor.content.MapComponentFactory;
+import fr.vergne.translation.util.ProjectLoader;
 
 @SuppressWarnings("serial")
 public class VHEditor extends Editor<File, VHEntry, VHMap, VHProject> {

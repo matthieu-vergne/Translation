@@ -12,9 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import fr.sazaju.vheditor.gui.content.EntryComponentFactory.EntryComponent;
-import fr.sazaju.vheditor.gui.content.MapComponentFactory.MapComponent;
-import fr.sazaju.vheditor.gui.content.TranslationArea;
 import fr.sazaju.vheditor.parsing.vh.map.AdviceLine;
 import fr.sazaju.vheditor.parsing.vh.map.ContentBlock;
 import fr.sazaju.vheditor.parsing.vh.map.ContextLine;
@@ -27,12 +24,15 @@ import fr.sazaju.vheditor.parsing.vh.map.UntranslatedLine;
 import fr.sazaju.vheditor.parsing.vh.map.UnusedTransLine;
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
 import fr.sazaju.vheditor.parsing.vh.map.VHMap;
-import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.vergne.parsing.layer.Layer;
 import fr.vergne.parsing.layer.standard.Loop;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
 import fr.vergne.parsing.layer.util.Newline;
+import fr.vergne.translation.TranslationEntry;
+import fr.vergne.translation.editor.content.TranslationArea;
+import fr.vergne.translation.editor.content.EntryComponentFactory.EntryComponent;
+import fr.vergne.translation.editor.content.MapComponentFactory.MapComponent;
 
 public class VHGuiBuilder {
 

@@ -10,10 +10,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry.MapSaver;
-import fr.sazaju.vheditor.translation.TranslationEntry;
-import fr.sazaju.vheditor.translation.TranslationEntryTest;
-import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
-import fr.sazaju.vheditor.translation.impl.OnDemandMetadata;
+import fr.vergne.translation.TranslationEntry;
+import fr.vergne.translation.TranslationEntryTest;
+import fr.vergne.translation.TranslationMetadata.Field;
+import fr.vergne.translation.impl.OnDemandMetadata;
 
 public class VHEntryTest extends TranslationEntryTest<OnDemandMetadata> {
 
