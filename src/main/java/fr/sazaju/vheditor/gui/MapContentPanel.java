@@ -28,10 +28,11 @@ import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
+import fr.sazaju.vheditor.translation.impl.EmptyMap;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
-public class MapContentPanel extends JPanel {
+public class MapContentPanel<MapID> extends JPanel {
 
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
 	private final JPanel mapContentArea;
@@ -42,10 +43,11 @@ public class MapContentPanel extends JPanel {
 	private final JLabel loadingLabel;
 	private final MapComponentFactory<?> mapFactory;
 	private MapComponent mapComponent;
-	private TranslationMap<?> map;
+	private TranslationMap<?> currentMap = new EmptyMap<>();
+	private MapID currentMapId;
 	private boolean isMapModified = false;
 	private int lastFocusedEntryIndex;
-	private final Collection<MapSavedListener> saveListeners = new HashSet<MapSavedListener>();
+	private final Collection<MapSavedListener<MapID>> saveListeners = new HashSet<MapSavedListener<MapID>>();
 	private final TranslationListener translationListener = new TranslationListener() {
 
 		@Override
@@ -60,9 +62,9 @@ public class MapContentPanel extends JPanel {
 			isMapModified = true;
 		}
 	};
-	private ToolProvider<?> toolProvider;
+	private ToolProvider<MapID> toolProvider;
 
-	public MapContentPanel(ToolProvider<?> toolProvider,
+	public MapContentPanel(ToolProvider<MapID> toolProvider,
 			MapComponentFactory<?> mapFactory) {
 		this.mapFactory = mapFactory;
 		this.toolProvider = toolProvider;
@@ -91,7 +93,9 @@ public class MapContentPanel extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.anchor = GridBagConstraints.CENTER;
-		mapTitleField = new JLabel(" ");
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		mapTitleField = new JLabel(" ", JLabel.CENTER);
 		contentWrapper.add(mapTitleField, constraints);
 
 		constraints.gridy = 1;
@@ -124,7 +128,7 @@ public class MapContentPanel extends JPanel {
 			@Override
 			public void run() {
 				final int index = Math.min(Math.max(entryIndex, 0),
-						map.size() - 1);
+						currentMap.size() - 1);
 				if (index == 0) {
 					mapContentScroll.getVerticalScrollBar().setValue(0);
 				} else {
@@ -151,38 +155,41 @@ public class MapContentPanel extends JPanel {
 		});
 	}
 
-	public void setMap(final TranslationMap<?> map, final String name,
-			final int entryIndex) {
-		if (this.map != null && this.map.equals(map)) {
+	public void setMap(final MapID mapId, final int entryIndex) {
+		if (this.currentMapId != null && this.currentMapId.equals(mapId)) {
 			goToEntry(entryIndex);
 		} else {
-			loadingLabel.setText("Loading map " + name + "...");
+			loadingLabel.setText("Loading map " + mapId + "...");
 			loading.start();
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					synchronized (map) {
-						for (TranslationEntry<?> entry : map) {
+					synchronized (currentMap) {
+						TranslationMap<?> newMap = toolProvider.getProject()
+								.getMap(mapId);
+						for (TranslationEntry<?> entry : newMap) {
 							entry.addTranslationListener(translationListener);
 							entry.getMetadata().addFieldListener(fieldListener);
 						}
-						if (MapContentPanel.this.map == null) {
+						if (currentMap == null) {
 							// no listener to remove
 						} else {
-							for (TranslationEntry<?> entry : MapContentPanel.this.map) {
+							for (TranslationEntry<?> entry : currentMap) {
 								entry.removeTranslationListener(translationListener);
 								entry.getMetadata().removeFieldListener(
 										fieldListener);
 							}
 						}
-						MapContentPanel.this.map = map;
+						MapContentPanel.this.currentMap = newMap;
 
-						// TODO add map title (English label)
-						mapTitleField.setText(name);
+						String name = toolProvider.getProject().getMapName(
+								mapId);
+						mapTitleField.setText("<html><center>" + mapId + "<br>"
+								+ name + "</center></html>");
 
-						mapComponent = mapFactory.createMapComponent(map);
-						for (int index = 0; index < map.size(); index++) {
+						mapComponent = mapFactory.createMapComponent(newMap);
+						for (int index = 0; index < newMap.size(); index++) {
 							EntryComponent entryComponent = mapComponent
 									.getEntryComponent(index);
 							final int entryIndex = index;
@@ -219,7 +226,7 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public TranslationMap<?> getMap() {
-		return map;
+		return currentMap;
 	}
 
 	public boolean isMapModified() {
@@ -227,16 +234,16 @@ public class MapContentPanel extends JPanel {
 	}
 
 	public void save() {
-		logger.info("Saving map " + map + "...");
-		map.saveAll();
+		logger.info("Saving map " + currentMap + "...");
+		currentMap.saveAll();
 		logger.info("Map saved.");
-		for (MapSavedListener listener : saveListeners) {
-			listener.mapSaved(map);
+		for (MapSavedListener<MapID> listener : saveListeners) {
+			listener.mapSaved(currentMapId);
 		}
 	}
 
 	public void reset() {
-		if (map == null
+		if (currentMap == null
 				|| !isMapModified()
 				|| JOptionPane
 						.showConfirmDialog(
@@ -246,23 +253,23 @@ public class MapContentPanel extends JPanel {
 								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 			return;
 		} else {
-			logger.info("Resetting map " + map + "...");
-			map.resetAll();
+			logger.info("Resetting map " + currentMap + "...");
+			currentMap.resetAll();
 			logger.info("Map reset.");
 		}
 	}
 
-	public void addListener(MapSavedListener listener) {
+	public void addListener(MapSavedListener<MapID> listener) {
 		saveListeners.add(listener);
 	}
 
-	public void removeListener(MapSavedListener listener) {
+	public void removeListener(MapSavedListener<MapID> listener) {
 		saveListeners.remove(listener);
 	}
 
-	public static interface MapSavedListener {
+	public static interface MapSavedListener<MapID> {
 
-		void mapSaved(TranslationMap<?> map);
+		void mapSaved(MapID id);
 
 	}
 

@@ -18,7 +18,7 @@ import fr.sazaju.vheditor.util.EntryFilter;
 public class FilterButton extends JButton {
 
 	public <Entry extends TranslationEntry<?>> FilterButton(
-			final EntryFilter<Entry> filter, final MapContentPanel mapPanel) {
+			final EntryFilter<Entry> filter, final MapContentPanel<?> mapPanel) {
 		super(new AbstractAction(filter.getName()) {
 
 			@Override

@@ -84,7 +84,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				}
 			});
 	private final ProjectLoader<TProject> projectLoader;
-	private TranslationProject<MapID, TMap> project = new EmptyProject<>();
+	private TranslationProject<MapID, TMap> currentProject = new EmptyProject<>();
 	private final Collection<MapListListener> listeners = new HashSet<MapListListener>();
 	private final JPanel featureRow = new JPanel(new FlowLayout());
 
@@ -129,7 +129,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 			@Override
 			public String getNameFor(MapID id) {
-				String label = project.getMapName(id);
+				String label = currentProject.getMapName(id);
 				if (label == null) {
 					return "[" + id + "]";
 				} else {
@@ -137,7 +137,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				}
 			}
 		};
-		namers.put(Order.NAME, labelNamer);
+		namers.put(Order.LABEL, labelNamer);
 		final MapNamer<MapID> idNamer = new MapNamer<MapID>() {
 
 			@Override
@@ -193,7 +193,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayCleared.isSelected();
-				Editor.config.setProperty(CONFIG_CLEARED_DISPLAYED, "" + selected);
+				Editor.config.setProperty(CONFIG_CLEARED_DISPLAYED, ""
+						+ selected);
 				((ListModel<MapID>) tree.getModel())
 						.setClearedDisplayed(selected);
 			}
@@ -209,15 +210,16 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				boolean selected = displayLabels.isSelected();
-				Editor.config.setProperty(CONFIG_LABELS_DISPLAYED, "" + selected);
+				Editor.config.setProperty(CONFIG_LABELS_DISPLAYED, ""
+						+ selected);
 				((MapCellRenderer<MapID>) tree.getCellRenderer())
 						.setMapNamer(selected ? labelNamer : idNamer);
 
 				((ListModel<MapID>) tree.getModel()).requestUpdate();
 			}
 		});
-		displayLabels.setSelected(Boolean.parseBoolean(Editor.config.getProperty(
-				CONFIG_LABELS_DISPLAYED, "false")));
+		displayLabels.setSelected(Boolean.parseBoolean(Editor.config
+				.getProperty(CONFIG_LABELS_DISPLAYED, "false")));
 		displayLabels.setToolTipText("Display maps' English labels.");
 		options.add(displayLabels);
 
@@ -233,8 +235,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			}
 		});
 		try {
-			sortingChoice.setSelectedItem(Order.valueOf(Editor.config.getProperty(
-					CONFIG_LIST_ORDER, Order.ID.toString())));
+			sortingChoice.setSelectedItem(Order.valueOf(Editor.config
+					.getProperty(CONFIG_LIST_ORDER, Order.ID.toString())));
 		} catch (IllegalArgumentException e) {
 			sortingChoice.setSelectedItem(Order.ID);
 		}
@@ -248,10 +250,10 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	@SuppressWarnings("unchecked")
 	private void loadProjectFrom(File directory) {
 		synchronized (mapSummaries) {
-			project = projectLoader.load(directory);
+			currentProject = projectLoader.load(directory);
 
 			featureRow.removeAll();
-			for (final Feature feature : project.getFeatures()) {
+			for (final Feature feature : currentProject.getFeatures()) {
 				JButton featuerButton = new JButton();
 				featuerButton.setAction(new AbstractAction(feature.getName()) {
 
@@ -265,7 +267,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			}
 
 			Collection<MapID> newIDs = new LinkedList<>();
-			for (MapID id : project) {
+			for (MapID id : currentProject) {
 				newIDs.add(id);
 			}
 
@@ -343,8 +345,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 		MapCellRenderer<MapID> cellRenderer = new MapCellRenderer<MapID>(
 				tree.getCellRenderer(), mapInformer);
-		boolean isLabelDisplayed = Boolean.parseBoolean(Editor.config.getProperty(
-				CONFIG_LABELS_DISPLAYED, "false"));
+		boolean isLabelDisplayed = Boolean.parseBoolean(Editor.config
+				.getProperty(CONFIG_LABELS_DISPLAYED, "false"));
 		cellRenderer.setMapNamer(isLabelDisplayed ? labelNamer : idNamer);
 		tree.setCellRenderer(cellRenderer);
 
@@ -621,7 +623,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			} else {
 				logger.finest("Summarizing " + id + "...");
 				MapSummary summary = new MapSummary();
-				TMap map = project.getMap(id);
+				TMap map = currentProject.getMap(id);
 				summary.total = map.size();
 				summary.remaining = 0;
 				Iterator<TEntry> iterator = map.iterator();
@@ -666,7 +668,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	}
 
 	public TranslationProject<MapID, ? extends TranslationMap<?>> getProject() {
-		return project;
+		return currentProject;
 	}
 
 	/**
@@ -681,8 +683,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		 */
 		ID,
 		/**
-		 * Order the maps based on their name.
+		 * Order the maps based on their label.
 		 */
-		NAME
+		LABEL
 	}
 }

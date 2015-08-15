@@ -92,6 +92,7 @@ public class TranslationArea extends JTextArea {
 		for (Field<Integer> field : limitFields) {
 			limits.add(entry.getMetadata().get(field));
 		}
+		limits.remove(null);
 		return limits;
 	}
 

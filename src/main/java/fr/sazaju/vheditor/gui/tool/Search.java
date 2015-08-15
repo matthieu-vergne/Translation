@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
@@ -107,7 +110,19 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 							" ");
 					final TranslationProject<MapID, ?> project = provider
 							.getProject();
-					final Iterator<MapID> projectIterator = project.iterator();
+					List<MapID> ids = new LinkedList<>();
+					for (MapID mapID : project) {
+						ids.add(mapID);
+					}
+					Collections.sort(ids, new Comparator<MapID>() {
+
+						@Override
+						public int compare(MapID id1, MapID id2) {
+							return id1.toString().compareToIgnoreCase(
+									id2.toString());
+						}
+					});
+					final Iterator<MapID> projectIterator = ids.iterator();
 					SwingUtilities.invokeLater(new Runnable() {
 
 						private Iterator<? extends TranslationEntry<?>> mapIterator = Collections
