@@ -2,6 +2,7 @@ package fr.sazaju.vheditor.parsing.vh.map;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -10,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 import fr.sazaju.vheditor.parsing.vh.map.VHEntry.MapSaver;
 import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.util.EntryFilter;
 import fr.vergne.parsing.layer.standard.GreedyMode;
 import fr.vergne.parsing.layer.standard.Option;
 import fr.vergne.parsing.layer.standard.Suite;
@@ -18,17 +20,37 @@ public class VHMap extends Suite implements TranslationMap<VHEntry> {
 
 	private static final String ENCODING = "UTF-8";
 	private File file;
-
-	public VHMap(File file) throws IOException {
-		this();
-		setBaseFile(file);
-	}
+	private final Collection<EntryFilter<VHEntry>> filters;
 
 	public VHMap(Saver saver) {
 		super(new MapHeader(), new EntryLoop(saver), new Option<Suite>(
 				new Suite(new UnusedTransLine(), new EntryLoop(saver)),
 				GreedyMode.POSSESSIVE));
 		this.saver = saver;
+		this.filters = new LinkedList<>();
+		this.filters.add(new EntryFilter<VHEntry>() {
+
+			@Override
+			public String getName() {
+				return VHEntry.MARKED_AS_UNTRANSLATED.getName();
+			}
+
+			@Override
+			public String getDescription() {
+				return "Search for entries marked with #UNTRANSLATED.";
+			}
+
+			@Override
+			public boolean isRelevant(VHEntry entry) {
+				return entry.getMetadata().get(VHEntry.MARKED_AS_UNTRANSLATED);
+			}
+
+		});
+	}
+
+	public VHMap(File file) throws IOException {
+		this();
+		setBaseFile(file);
 	}
 
 	private final Saver saver;
@@ -180,5 +202,10 @@ public class VHMap extends Suite implements TranslationMap<VHEntry> {
 		for (VHEntry entry : this) {
 			entry.resetAll();
 		}
+	}
+
+	@Override
+	public Collection<EntryFilter<VHEntry>> getEntryFilters() {
+		return filters;
 	}
 }

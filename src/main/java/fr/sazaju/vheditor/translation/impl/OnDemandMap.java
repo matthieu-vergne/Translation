@@ -1,6 +1,7 @@
 package fr.sazaju.vheditor.translation.impl;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
+import fr.sazaju.vheditor.util.EntryFilter;
 import fr.sazaju.vheditor.util.MultiReader;
 import fr.sazaju.vheditor.util.Reader;
 import fr.sazaju.vheditor.util.Writer;
@@ -154,6 +156,17 @@ public class OnDemandMap<Entry extends TranslationEntry<?>> implements
 			entry.resetAll();
 		}
 		modifiedEntries.clear();
+	}
+
+	private final Collection<EntryFilter<Entry>> filters = new HashSet<EntryFilter<Entry>>();
+
+	@Override
+	public Collection<EntryFilter<Entry>> getEntryFilters() {
+		return filters;
+	}
+
+	public void addEntryFilter(EntryFilter<Entry> filter) {
+		filters.add(filter);
 	}
 
 	@Override

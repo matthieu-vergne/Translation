@@ -16,7 +16,7 @@ public class VHEntry extends Suite implements
 		TranslationEntry<OnDemandMetadata> {
 
 	public static final Field<Boolean> MARKED_AS_UNTRANSLATED = new Field<Boolean>(
-			"Untranslated mark");
+			"Untranslated tag");
 	public static final Field<Integer> CHAR_LIMIT_FACE = new Field<Integer>(
 			"Char limit (face)");
 	public static final Field<Integer> CHAR_LIMIT_NO_FACE = new Field<Integer>(

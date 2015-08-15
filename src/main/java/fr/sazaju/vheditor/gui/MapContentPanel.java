@@ -10,9 +10,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -31,7 +28,6 @@ import fr.sazaju.vheditor.translation.TranslationEntry.TranslationListener;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationMetadata.Field;
 import fr.sazaju.vheditor.translation.TranslationMetadata.FieldListener;
-import fr.sazaju.vheditor.translation.impl.TranslationUtil;
 import fr.vergne.logging.LoggerConfiguration;
 
 @SuppressWarnings("serial")
@@ -47,7 +43,6 @@ public class MapContentPanel extends JPanel {
 	private final MapComponentFactory<?> mapFactory;
 	private MapComponent mapComponent;
 	private TranslationMap<?> map;
-	private final Field<Boolean> untranslatedField;
 	private boolean isMapModified = false;
 	private int lastFocusedEntryIndex;
 	private final Collection<MapSavedListener> saveListeners = new HashSet<MapSavedListener>();
@@ -66,10 +61,8 @@ public class MapContentPanel extends JPanel {
 		}
 	};
 
-	public MapContentPanel(MapComponentFactory<?> mapFactory,
-			Field<Boolean> untranslatedField) {
+	public MapContentPanel(MapComponentFactory<?> mapFactory) {
 		this.mapFactory = mapFactory;
-		this.untranslatedField = untranslatedField;
 
 		setBorder(new EtchedBorder());
 
@@ -118,17 +111,15 @@ public class MapContentPanel extends JPanel {
 		add(mapLoadingArea);
 	}
 
-	public MapContentPanel(final EntryComponentFactory<?> entryFactory,
-			final Field<Boolean> untranslatedField) {
+	public MapContentPanel(final EntryComponentFactory<?> entryFactory) {
 		this(new MapComponentFactory<SimpleMapComponent>() {
 
 			@Override
 			public SimpleMapComponent createMapComponent(TranslationMap<?> map) {
-				return new SimpleMapComponent(map, entryFactory,
-						untranslatedField);
+				return new SimpleMapComponent(map, entryFactory);
 			}
 
-		}, untranslatedField);
+		});
 	}
 
 	public int getCurrentEntryIndex() {
@@ -166,50 +157,6 @@ public class MapContentPanel extends JPanel {
 				});
 			}
 		});
-	}
-
-	public void goToNextUntranslatedEntry(boolean relyOnTags) {
-		TreeSet<Integer> untranslatedEntries = new TreeSet<Integer>(
-				getUntranslatedEntryIndexes(relyOnTags));
-		if (untranslatedEntries.isEmpty()) {
-			JOptionPane.showMessageDialog(this,
-					"All the entries are already translated.");
-		} else {
-			int currentEntry = getCurrentEntryIndex();
-			Integer next = untranslatedEntries.ceiling(currentEntry + 1);
-			if (next == null) {
-				JOptionPane
-						.showMessageDialog(this,
-								"End of the entries reached. Search from the beginning.");
-				goToEntry(untranslatedEntries.first());
-			} else {
-				goToEntry(next);
-			}
-		}
-	}
-
-	// TODO separate tag-based and content-based
-	// TODO make tag-based unavailable if field not provided
-	public Collection<Integer> getUntranslatedEntryIndexes(boolean relyOnTags) {
-		Collection<Integer> untranslatedEntries = new LinkedList<Integer>();
-		Iterator<? extends TranslationEntry<?>> iterator = map.iterator();
-		int count = 0;
-		while (iterator.hasNext()) {
-			TranslationEntry<?> entry = iterator.next();
-			if (relyOnTags && entry.getMetadata().get(untranslatedField)
-					|| !relyOnTags
-					&& !TranslationUtil.isActuallyTranslated(entry)) {
-				untranslatedEntries.add(count);
-			} else {
-				// already translated
-			}
-			count++;
-		}
-		return untranslatedEntries;
-	}
-
-	public void setMap(TranslationMap<?> map, String name) {
-		setMap(map, name, 0);
 	}
 
 	public void setMap(final TranslationMap<?> map, final String name,
@@ -325,8 +272,7 @@ public class MapContentPanel extends JPanel {
 			MapComponent {
 
 		public SimpleMapComponent(TranslationMap<?> map,
-				EntryComponentFactory<?> entryFactory,
-				Field<Boolean> untranslatedField) {
+				EntryComponentFactory<?> entryFactory) {
 			setLayout(new GridLayout(map.size(), 1));
 			for (TranslationEntry<?> entry : map) {
 				add(entryFactory.createEntryComponent(entry));

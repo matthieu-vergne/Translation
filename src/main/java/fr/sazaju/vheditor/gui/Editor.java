@@ -14,8 +14,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
+import java.util.WeakHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -33,25 +32,22 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
 import fr.sazaju.vheditor.gui.MapListPanel.MapSelectedListener;
+import fr.sazaju.vheditor.gui.content.FilterButton;
 import fr.sazaju.vheditor.gui.content.MapComponentFactory;
 import fr.sazaju.vheditor.gui.tool.FileBasedProperties;
 import fr.sazaju.vheditor.gui.tool.Search;
 import fr.sazaju.vheditor.gui.tool.ToolProvider;
-import fr.sazaju.vheditor.parsing.vh.VHProject;
-import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder;
-import fr.sazaju.vheditor.parsing.vh.gui.VHGuiBuilder.MapPanel;
-import fr.sazaju.vheditor.parsing.vh.map.VHEntry;
-import fr.sazaju.vheditor.parsing.vh.map.VHMap;
-import fr.sazaju.vheditor.parsing.vh.map.VHMap.EmptyMapException;
+import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
 import fr.sazaju.vheditor.translation.TranslationProject;
+import fr.sazaju.vheditor.translation.impl.TranslationUtil;
+import fr.sazaju.vheditor.util.EntryFilter;
 import fr.sazaju.vheditor.util.ProjectLoader;
 
 @SuppressWarnings("serial")
-public class Editor extends JFrame {
+public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<MapID, TMap>>
+		extends JFrame {
 
-	private static final String ACTION_NEXT_JAP = "nextJap";
-	private static final String ACTION_NEXT_UNTRANSLATED = "nextUntranslated";
 	private static final String ACTION_LAST_ENTRY = "lastEntry";
 	private static final String ACTION_FIRST_ENTRY = "firstEntry";
 	private static final String ACTION_NEXT_ENTRY = "nextEntry";
@@ -63,45 +59,44 @@ public class Editor extends JFrame {
 	private static final String CONFIG_WIDTH = "width";
 	private static final String CONFIG_HEIGHT = "height";
 	private static final String CONFIG_SPLIT = "split";
+	// TODO make config non-static
 	public static final FileBasedProperties config = new FileBasedProperties(
 			"vh-editor.ini", true);
+	private final WeakHashMap<TranslationMap<?>, Object> idCache = new WeakHashMap<>();
 
-	public Editor() {
-		setTitle("VH Translation Tool");
+	public Editor(ProjectLoader<TProject> projectLoader,
+			MapComponentFactory<?> mapComponentFactory) {
+		setTitle("Translation Editor");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
-		final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel = new MapListPanel<>(
-				new ProjectLoader<VHProject>() {
-
-					@Override
-					public VHProject load(File directory) {
-						return new VHProject(directory);
-					}
-				});
+		final MapListPanel<TEntry, TMap, MapID, TProject> listPanel = new MapListPanel<>(
+				projectLoader);
 		final MapContentPanel mapPanel = new MapContentPanel(
-				new MapComponentFactory<MapPanel>() {
+				mapComponentFactory);
 
-					@Override
-					public MapPanel createMapComponent(TranslationMap<?> map) {
-						return (MapPanel) VHGuiBuilder.instantiateMapGui((VHMap) map);
-					}
+		final JPanel filters = new JPanel();
+		filters.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		filters.setLayout(new GridLayout(0, 1, 0, 5));
 
-				}, VHEntry.MARKED_AS_UNTRANSLATED);
-		configureListeners(listPanel, mapPanel);
+		configureListeners(listPanel, mapPanel, filters);
 		ToolPanel toolPanel = new ToolPanel();
 
-		final ToolProvider<File> provider = new ToolProvider<File>() {
+		final ToolProvider<MapID> provider = new ToolProvider<MapID>() {
 
 			@Override
-			public TranslationProject<File, ?> getProject() {
+			public TranslationProject<MapID, ?> getProject() {
 				return listPanel.getProject();
 			}
 
 			@Override
-			public void loadMap(File file) {
+			public void loadMap(MapID id) {
 				try {
-					mapPanel.setMap(getProject().getMap(file), file.toString());
+					int entryIndex = 0;
+					TranslationMap<?> map = listPanel.getProject().getMap(id);
+					idCache.put(map, id);
+					mapPanel.setMap(map, id.toString(), entryIndex);
+					updateFilters(map, filters, mapPanel);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -109,10 +104,12 @@ public class Editor extends JFrame {
 			}
 
 			@Override
-			public void loadMapEntry(File file, int entryIndex) {
+			public void loadMapEntry(MapID id, int entryIndex) {
 				try {
-					mapPanel.setMap(getProject().getMap(file), file.toString(),
-							entryIndex);
+					TranslationMap<?> map = listPanel.getProject().getMap(id);
+					idCache.put(map, id);
+					mapPanel.setMap(map, id.toString(), entryIndex);
+					updateFilters(map, filters, mapPanel);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -126,7 +123,7 @@ public class Editor extends JFrame {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 1;
 		constraints.gridy = 0;
-		translationPanel.add(configureButtons(mapPanel), constraints);
+		translationPanel.add(configureButtons(mapPanel, filters), constraints);
 		constraints.gridy = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0;
@@ -153,9 +150,36 @@ public class Editor extends JFrame {
 		finalizeConfig(rootSplit);
 	}
 
+	protected void updateFilters(TranslationMap<?> map, JPanel filters,
+			MapContentPanel mapPanel) {
+		filters.removeAll();
+
+		filters.add(new FilterButton(new EntryFilter<TranslationEntry<?>>() {
+
+			@Override
+			public String getName() {
+				return "No translation";
+			}
+
+			@Override
+			public String getDescription() {
+				return "Search for entries which have some original content but no translation.";
+			}
+
+			@Override
+			public boolean isRelevant(TranslationEntry<?> entry) {
+				return !TranslationUtil.isActuallyTranslated(entry);
+			}
+		}, mapPanel));
+
+		for (EntryFilter<?> filter : map.getEntryFilters()) {
+			filters.add(new FilterButton(filter, mapPanel));
+		}
+	}
+
 	private void configureTools(final ToolPanel toolPanel,
-			final ToolProvider<File> provider) {
-		Search<File> tool = new Search<>();
+			final ToolProvider<MapID> provider) {
+		Search<MapID> tool = new Search<>();
 		tool.setToolProvider(provider);
 		toolPanel.addTool(tool);
 	}
@@ -207,8 +231,8 @@ public class Editor extends JFrame {
 	}
 
 	private void configureListeners(
-			final MapListPanel<VHEntry, VHMap, File, VHProject> listPanel,
-			final MapContentPanel mapPanel) {
+			final MapListPanel<TEntry, TMap, MapID, TProject> listPanel,
+			final MapContentPanel mapPanel, final JPanel filters) {
 		addWindowListener(new WindowListener() {
 
 			@Override
@@ -251,18 +275,19 @@ public class Editor extends JFrame {
 			}
 		});
 
-		listPanel.addListener(new MapSelectedListener<File>() {
+		listPanel.addListener(new MapSelectedListener<MapID>() {
 
 			@Override
-			public void mapSelected(File file) {
+			public void mapSelected(MapID id) {
 				if (isMapSafe(mapPanel)) {
 					try {
-						mapPanel.setMap(new VHMap(file), file.toString());
-					} catch (EmptyMapException e) {
-						JOptionPane.showMessageDialog(Editor.this, "The map "
-								+ file + " is empty.", "Empty Map",
-								JOptionPane.WARNING_MESSAGE);
-					} catch (IOException e) {
+						int entryIndex = 0;
+						TranslationMap<?> map = listPanel.getProject().getMap(
+								id);
+						idCache.put(map, id);
+						mapPanel.setMap(map, id.toString(), entryIndex);
+						updateFilters(map, filters, mapPanel);
+					} catch (Exception e) {
 						JOptionPane.showMessageDialog(Editor.this,
 								e.getMessage(), "Error",
 								JOptionPane.ERROR_MESSAGE);
@@ -279,9 +304,10 @@ public class Editor extends JFrame {
 			public void mapSaved(final TranslationMap<?> map) {
 				SwingUtilities.invokeLater(new Runnable() {
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public void run() {
-						listPanel.updateMapSummary(((VHMap) map).getBaseFile(),
+						listPanel.updateMapSummary((MapID) idCache.get(map),
 								true);
 					}
 				});
@@ -289,7 +315,8 @@ public class Editor extends JFrame {
 		});
 	}
 
-	private JPanel configureButtons(final MapContentPanel mapPanel) {
+	private JPanel configureButtons(final MapContentPanel mapPanel,
+			JPanel filters) {
 		ActionMap actions = getRootPane().getActionMap();
 		InputMap inputs = getRootPane().getInputMap(
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -342,34 +369,6 @@ public class Editor extends JFrame {
 		JButton last = new JButton(actions.get(ACTION_LAST_ENTRY));
 		last.setToolTipText("Go to last entry (ALT+END).");
 
-		actions.put(ACTION_NEXT_JAP, new AbstractAction("Jap only") {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToNextUntranslatedEntry(false);
-			}
-		});
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_JAP);
-		JButton japOnly = new JButton(actions.get(ACTION_NEXT_JAP));
-		japOnly.setToolTipText("Go to next untranslated entry (ALT+ENTER).");
-
-		actions.put(ACTION_NEXT_UNTRANSLATED, new AbstractAction(
-				"#UNTRANSLATED") {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				mapPanel.goToNextUntranslatedEntry(true);
-			}
-		});
-		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-				InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK),
-				ACTION_NEXT_UNTRANSLATED);
-		JButton untranslated = new JButton(
-				actions.get(ACTION_NEXT_UNTRANSLATED));
-		untranslated
-				.setToolTipText("Go to next #UNTRANSLATED entry (CTRL+ALT+ENTER).");
-
 		actions.put(ACTION_SAVE, new AbstractAction("Save") {
 
 			@Override
@@ -420,11 +419,7 @@ public class Editor extends JFrame {
 
 		constraints.gridx = 0;
 		constraints.gridy++;
-		buttonPanel.add(japOnly, constraints);
-
-		constraints.gridx = 0;
-		constraints.gridy++;
-		buttonPanel.add(untranslated, constraints);
+		buttonPanel.add(filters, constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy++;
@@ -461,13 +456,5 @@ public class Editor extends JFrame {
 			// already safe
 		}
 		return mapSafe;
-	}
-
-	public static void main(String[] args) {
-		new Runnable() {
-			public void run() {
-				new Editor().setVisible(true);
-			}
-		}.run();
 	}
 }

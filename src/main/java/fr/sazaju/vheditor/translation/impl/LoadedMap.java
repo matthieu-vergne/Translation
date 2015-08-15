@@ -1,10 +1,13 @@
 package fr.sazaju.vheditor.translation.impl;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import fr.sazaju.vheditor.translation.TranslationEntry;
 import fr.sazaju.vheditor.translation.TranslationMap;
+import fr.sazaju.vheditor.util.EntryFilter;
 import fr.sazaju.vheditor.util.Writer;
 
 /**
@@ -87,6 +90,17 @@ public class LoadedMap<Entry extends TranslationEntry<?>> implements
 		for (Entry entry : entries) {
 			entry.resetAll();
 		}
+	}
+
+	private final Collection<EntryFilter<Entry>> filters = new HashSet<EntryFilter<Entry>>();
+
+	@Override
+	public Collection<EntryFilter<Entry>> getEntryFilters() {
+		return filters;
+	}
+
+	public void addEntryFilter(EntryFilter<Entry> filter) {
+		filters.add(filter);
 	}
 
 	@Override
