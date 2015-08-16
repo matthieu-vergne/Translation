@@ -52,7 +52,8 @@ public abstract class TranslationMapTest<Entry extends TranslationEntry<? extend
 			try {
 				nextValue = createNewEditableFieldValue(field, currentValue);
 			} catch (Exception e) {
-				fail("Exception thrown while asking a new value for " + field);
+				fail("Exception thrown while asking a new value for " + field
+						+ " with " + currentValue);
 				return;
 			}
 			String errorMessage = "the same value (" + currentValue
