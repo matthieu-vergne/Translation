@@ -16,10 +16,10 @@
 	</modules>
 
 	<scm>
-		<connection>scm:git:git://github.com/matthieu-vergne/Translation.git</connection>
-		<developerConnection>scm:git:git://github.com/matthieu-vergne/Translation.git</developerConnection>
-		<url>scm:git:git://github.com/matthieu-vergne/Translation.git</url>
-	</scm>
+		<connection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Translation.git</connection>
+		<developerConnection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Translation.git</developerConnection>
+		<url>scm:git:https://github.com/matthieu-vergne/Translation.git</url>
+  </scm>
 
 	<issueManagement>
 		<system>GitHub</system>
