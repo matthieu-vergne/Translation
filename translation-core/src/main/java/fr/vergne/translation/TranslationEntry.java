@@ -97,7 +97,7 @@ public interface TranslationEntry<Metadata extends TranslationMetadata> {
 
 	/**
 	 * A {@link TranslationListener} allows to be notified when the translation
-	 * of a {@link TranslationEntry} is updated. To be notified, the
+	 * of a {@link TranslationEntry} evolves. To be notified, the
 	 * {@link TranslationListener} should have been provided to
 	 * {@link TranslationEntry#addTranslationListener(TranslationListener)} .
 	 * 
@@ -105,7 +105,21 @@ public interface TranslationEntry<Metadata extends TranslationMetadata> {
 	 * 
 	 */
 	public static interface TranslationListener {
+		/**
+		 * This method is called when
+		 * {@link TranslationEntry#getCurrentTranslation()} provides a new
+		 * value.
+		 * 
+		 * @param newTranslation
+		 *            the new translation value
+		 */
 		public void translationUpdated(String newTranslation);
+
+		/**
+		 * This method is called when
+		 * {@link TranslationEntry#getStoredTranslation()} provides a new value.
+		 */
+		public void translationStored();
 	}
 
 	/**

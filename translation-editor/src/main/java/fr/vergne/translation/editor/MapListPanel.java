@@ -49,8 +49,8 @@ import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.editor.ListModel.MapsChangedListener;
-import fr.vergne.translation.editor.tool.MapCellRenderer;
-import fr.vergne.translation.editor.tool.MapTreeNode;
+import fr.vergne.translation.editor.content.MapCellRenderer;
+import fr.vergne.translation.editor.content.MapTreeNode;
 import fr.vergne.translation.impl.EmptyProject;
 import fr.vergne.translation.impl.TranslationUtil;
 import fr.vergne.translation.util.Feature;
@@ -110,6 +110,16 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 					throw new NoDataException();
 				} else {
 					return mapSummary.remaining;
+				}
+			}
+
+			@Override
+			public boolean isModified(MapID id) throws NoDataException {
+				MapSummary mapSummary = mapSummaries.get(id);
+				if (mapSummary == null) {
+					throw new NoDataException();
+				} else {
+					return mapSummary.isModified;
 				}
 			}
 
@@ -645,10 +655,12 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	private static class MapSummary {
 		int total;
 		int remaining;
+		boolean isModified;
 
 		@Override
 		public String toString() {
-			return (total - remaining) + "/" + total;
+			String status = isModified ? "modified" : "saved";
+			return (total - remaining) + "/" + total + "(" + status + ")";
 		}
 	}
 
@@ -669,6 +681,13 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 	public TranslationProject<MapID, ? extends TranslationMap<?>> getProject() {
 		return currentProject;
+	}
+
+	public void setModifiedStatus(MapID id, boolean isModified) {
+		mapSummaries.get(id).isModified = isModified;
+		for (MapSummaryListener<MapID> listener : mapSummaryListeners) {
+			listener.mapSummarized(id);
+		}
 	}
 
 	/**

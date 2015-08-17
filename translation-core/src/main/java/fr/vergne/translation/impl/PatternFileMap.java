@@ -1,8 +1,11 @@
 package fr.vergne.translation.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,9 +26,10 @@ import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationMetadata;
 import fr.vergne.translation.TranslationMetadata.Field;
+import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.impl.PatternFileMap.PatternEntry;
-import fr.vergne.translation.util.Switcher;
 import fr.vergne.translation.util.EntryFilter;
+import fr.vergne.translation.util.Switcher;
 import fr.vergne.translation.util.impl.IdentitySwitcher;
 
 public class PatternFileMap implements TranslationMap<PatternEntry> {
@@ -35,10 +39,10 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 	private final Pattern originalPattern;
 	private final Pattern translationPattern;
 	private final Map<Field<?>, Pattern> fieldPatterns = new HashMap<>();
-	private final Map<Field<?>, Switcher<String, ?>> fieldConvertors = new HashMap<>();
+	private final Map<Field<?>, Switcher<String, ?>> fieldSwitchers = new HashMap<>();
 	private final Collection<Field<?>> editableFields = new HashSet<>();
 	@SuppressWarnings("serial")
-	private final List<String> referenceStore = new LinkedList<String>() {
+	private final List<String> referenceStore = new ArrayList<String>() {
 		public boolean add(String content) {
 			throw new UnsupportedOperationException();
 		};
@@ -62,12 +66,15 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		@Override
 		public void run() {
 			logger.info("Saving " + file + "...");
-			StringBuilder builder = new StringBuilder();
-			for (String content : referenceStore) {
-				builder.append(content);
-			}
+			Charset charset = Charset.forName("UTF-8");
 			try {
-				FileUtils.write(file, builder.toString());
+				FileOutputStream out = new FileOutputStream(file);
+				for (String content : referenceStore) {
+					out.write(content.getBytes(charset));
+				}
+				out.close();
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -75,9 +82,8 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		}
 	};
 
-	private final Map<Integer, WeakReference<PatternEntry>> entryCache = new HashMap<>();
 	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
-	private static final Switcher<String, String> STRING_CONVERTOR = new IdentitySwitcher<>();
+	private static final Switcher<String, String> STRING_SWITCHER = new IdentitySwitcher<>();
 
 	public PatternFileMap(File file, String entryRegex, String originalRegex,
 			String translationRegex) {
@@ -87,10 +93,27 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		this.translationPattern = Pattern.compile(translationRegex);
 	}
 
+	private List<PatternEntry> entries = null;
+
+	private List<PatternEntry> getEntries() {
+		if (this.entries != null) {
+			// reuse
+		} else {
+			Iterator<PatternEntry> iterator = startIterator();
+			List<PatternEntry> tempEntries = new LinkedList<>();
+			while (iterator.hasNext()) {
+				PatternEntry entry = iterator.next();
+				tempEntries.add(entry);
+			}
+			this.entries = new ArrayList<>(tempEntries);
+		}
+		return this.entries;
+	}
+
 	public <T> void addFieldRegex(Field<T> field, String regex,
-			Switcher<String, T> convertor, boolean editable) {
+			Switcher<String, T> switcher, boolean editable) {
 		fieldPatterns.put(field, Pattern.compile(regex));
-		fieldConvertors.put(field, convertor);
+		fieldSwitchers.put(field, switcher);
 		if (editable) {
 			editableFields.add(field);
 		} else {
@@ -100,14 +123,18 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 
 	public void addFieldRegex(Field<String> field, String regex,
 			boolean editable) {
-		addFieldRegex(field, regex, STRING_CONVERTOR, editable);
+		addFieldRegex(field, regex, STRING_SWITCHER, editable);
 	}
 
 	@Override
 	public Iterator<PatternEntry> iterator() {
+		return getEntries().iterator();
+	}
+
+	private Iterator<PatternEntry> startIterator() {
+		logger.info("Reading " + file + "...");
 		final String content;
 		try {
-			logger.info("Reading " + file + "...");
 			content = FileUtils.readFileToString(file);
 		} catch (IOException e) {
 			throw new RuntimeException();
@@ -118,13 +145,13 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 			private String nextEntry = null;
 			private int stored = 0;
 			private int storeIndex = -1;
-			private int entryIndex = -1;
 
 			@Override
 			public boolean hasNext() {
 				if (nextEntry != null) {
 					// already found
 				} else if (entryMatcher.find()) {
+					logger.finer("Find new entry, processing...");
 					nextEntry = entryMatcher.group();
 					int nextStored = entryMatcher.start();
 					if (stored < nextStored) {
@@ -132,11 +159,23 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 						stored = nextStored;
 						storeIndex++;
 						referenceStore.set(storeIndex, extract);
+						logger.finer("Text before entry stored (" + stored
+								+ " chars, " + (storeIndex + 1) + " pieces).");
 					} else {
 						// nothing between the two entries
 					}
 				} else {
 					// no more
+					if (stored < content.length()) {
+						String extract = content.substring(stored);
+						stored = content.length();
+						storeIndex++;
+						referenceStore.set(storeIndex, extract);
+						logger.finer("End of map stored (" + stored
+								+ " chars, " + (storeIndex + 1) + " pieces).");
+					} else {
+						// nothing after the entries
+					}
 				}
 				return nextEntry != null;
 			}
@@ -166,25 +205,45 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 						};
 
 						Matcher original = originalPattern.matcher(nextEntry);
-						original.find();
-						substore.put(original, original.group());
-						starts.put(original.start(), original);
-						logger.finest("- O: " + original.group());
+						if (original.find()) {
+							substore.put(original, original.group());
+							starts.put(original.start(), original);
+							logger.finest("- O: " + original.group());
+						} else {
+							throw new ParsingException(
+									"Impossible to find original version in entry: "
+											+ nextEntry);
+						}
 
 						Matcher translation = translationPattern
 								.matcher(nextEntry);
-						translation.find();
-						substore.put(translation, translation.group());
-						starts.put(translation.start(), translation);
-						logger.finest("- T: " + translation.group());
+						if (translation.find()) {
+							substore.put(translation, translation.group());
+							starts.put(translation.start(), translation);
+							logger.finest("- T: " + translation.group());
+						} else {
+							throw new ParsingException(
+									"Impossible to find translated version in entry: "
+											+ nextEntry);
+						}
 
-						for (Field<?> field : fieldConvertors.keySet()) {
+						for (Field<?> field : fieldSwitchers.keySet()) {
 							Pattern pattern = fieldPatterns.get(field);
 							Matcher matcher = pattern.matcher(nextEntry);
-							matcher.find();
-							substore.put(field, matcher.group());
-							starts.put(matcher.start(), field);
-							logger.finest("- " + field + ": " + matcher.group());
+							if (matcher.find()) {
+								String group = matcher.group();
+								substore.put(field, group);
+								starts.put(matcher.start(), field);
+								Switcher<String, ?> switcher = fieldSwitchers
+										.get(field);
+								logger.finest("- " + field + ": \"" + group
+										+ "\" -> "
+										+ switcher.switchForth(group));
+							} else {
+								throw new ParsingException(
+										"Impossible to find field " + field
+												+ " in entry: " + nextEntry);
+							}
 						}
 
 						/*
@@ -196,6 +255,7 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 								starts.keySet());
 						int substored = 0;
 						String previous = null;
+						final int firstIndex = storeIndex + 1;
 						for (Integer start : sortedStarts) {
 							if (substored < start) {
 								storeIndex++;
@@ -228,31 +288,33 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 							// nothing unused after
 						}
 						stored += nextEntry.length();
+						final int lastIndex = storeIndex;
 
 						/*
 						 * INSTANTIATE ENTRY
 						 */
 
 						Map<Field<?>, StoreAccessor<?>> fieldAccessors = new HashMap<>();
-						for (Field<?> field : fieldConvertors.keySet()) {
+						for (Field<?> field : fieldSwitchers.keySet()) {
 							Integer index = storeIndexes.get(field);
-							Switcher<String, ?> convertor = fieldConvertors
+							Switcher<String, ?> switcher = fieldSwitchers
 									.get(field);
 							fieldAccessors.put(field, new StoreAccessor<>(
 									referenceStore, modifiedStore, index,
-									convertor));
+									switcher));
 						}
 						PatternMetadata metadata = new PatternMetadata(
 								fieldAccessors, editableFields, saver);
 						Integer index = storeIndexes.get(translation);
 						StoreAccessor<String> translationAccessor = new StoreAccessor<>(
 								referenceStore, modifiedStore, index,
-								STRING_CONVERTOR);
+								STRING_SWITCHER);
+						StringRebuilder rebuilder = new StringRebuilder(
+								referenceStore, firstIndex, lastIndex);
 						PatternEntry entry = new PatternEntry(original.group(),
-								translationAccessor, metadata, saver);
-
-						entryIndex++;
-						entryCache.put(entryIndex, new WeakReference<>(entry));
+								translationAccessor, metadata, saver, rebuilder);
+						logger.finer("Entry stored (" + stored + " chars, "
+								+ (storeIndex + 1) + " pieces).");
 
 						return entry;
 					} finally {
@@ -272,39 +334,47 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 	}
 
 	@Override
-	public PatternEntry getEntry(final int index) {
-		if (index < 0) {
-			throw new IndexOutOfBoundsException(
-					"You cannot ask for a negative index: " + index);
+	public PatternEntry getEntry(int index) {
+		return getEntries().get(index);
+	}
+
+	public String getBeforeEntry(int index) {
+		return getBetweenEntries(index - 1, index);
+	}
+
+	public String getAfterEntry(int index) {
+		return getBetweenEntries(index, index + 1);
+	}
+
+	public String getBetweenEntries(int indexFrom, int indexTo) {
+		int storeStart;
+		if (indexFrom < 0) {
+			storeStart = 0;
+		} else if (indexFrom < size()) {
+			storeStart = getEntry(indexFrom).getLastIndex() + 1;
 		} else {
-			WeakReference<PatternEntry> reference = entryCache.get(index);
-			if (reference == null || reference.get() == null) {
-				int counter = 0;
-				for (PatternEntry entry : this) {
-					if (counter == index) {
-						return entry;
-					} else {
-						counter++;
-					}
-				}
-				throw new IndexOutOfBoundsException(
-						"You cannot ask for an index higher than the size: "
-								+ index + " > " + counter);
-			} else {
-				return reference.get();
-			}
+			throw new IndexOutOfBoundsException("The first index (" + indexFrom
+					+ ") cannot be higher then the last entry (" + (size() - 1)
+					+ ")");
 		}
+
+		int storeEnd;
+		if (indexTo >= size()) {
+			storeEnd = referenceStore.size() - 1;
+		} else if (indexTo > indexFrom) {
+			storeEnd = getEntry(indexTo).getFirstIndex() - 1;
+		} else {
+			throw new IndexOutOfBoundsException("The first index (" + indexFrom
+					+ ") should be inferior to the second (" + indexTo + ")");
+		}
+
+		return new StringRebuilder(referenceStore, storeStart, storeEnd)
+				.toString();
 	}
 
 	@Override
 	public int size() {
-		int size = 0;
-		Iterator<PatternEntry> iterator = iterator();
-		while (iterator.hasNext()) {
-			iterator.next();
-			size++;
-		}
-		return size;
+		return getEntries().size();
 	}
 
 	@Override
@@ -353,15 +423,23 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		}
 
 		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T getStored(Field<T> field) {
-			return (T) accessors.get(field).getStored();
+		private <T> StoreAccessor<T> getAccessor(Field<T> field) {
+			StoreAccessor<?> accessor = accessors.get(field);
+			if (accessor == null) {
+				throw new IllegalArgumentException("Unknown field: " + field);
+			} else {
+				return (StoreAccessor<T>) accessor;
+			}
 		}
 
-		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T getStored(Field<T> field) {
+			return getAccessor(field).getStored();
+		}
+
 		@Override
 		public <T> T get(Field<T> field) {
-			return (T) accessors.get(field).get();
+			return getAccessor(field).get();
 		}
 
 		@Override
@@ -373,10 +451,10 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		public <T> void set(Field<T> field, T value)
 				throws UneditableFieldException {
 			if (isEditable(field)) {
-				@SuppressWarnings("unchecked")
-				StoreAccessor<T> accessor = (StoreAccessor<T>) accessors
-						.get(field);
-				accessor.set(value);
+				getAccessor(field).set(value);
+				for (FieldListener listener : listeners) {
+					listener.fieldUpdated(field, value);
+				}
 			} else {
 				throw new UneditableFieldException(field);
 			}
@@ -396,17 +474,28 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		public <T> void save(Field<T> field) {
 			accessors.get(field).save();
 			saver.run();
+			for (FieldListener listener : listeners) {
+				listener.fieldStored(field);
+			}
 		}
 
 		@Override
 		public <T> void reset(Field<T> field) {
 			accessors.get(field).reset();
+			for (FieldListener listener : listeners) {
+				listener.fieldUpdated(field, getStored(field));
+			}
 		}
 
 		@Override
 		public void saveAll() {
 			saveAllBackgroundOnly();
 			saver.run();
+			for (FieldListener listener : listeners) {
+				for (Field<?> field : this) {
+					listener.fieldStored(field);
+				}
+			}
 		}
 
 		public void saveAllBackgroundOnly() {
@@ -418,8 +507,17 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		@Override
 		public void resetAll() {
 			for (Field<?> field : this) {
-				accessors.get(field).reset();
+				reset(field);
 			}
+		}
+
+		@Override
+		public String toString() {
+			Map<Field<?>, Object> map = new HashMap<>();
+			for (Field<?> field : this) {
+				map.put(field, get(field));
+			}
+			return map.toString();
 		}
 
 	}
@@ -432,14 +530,25 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		private final PatternMetadata metadata;
 		private final Collection<TranslationListener> listeners = new HashSet<TranslationListener>();
 		private final Runnable saver;
+		private final StringRebuilder rebuilder;
 
 		public PatternEntry(String original,
 				StoreAccessor<String> translationAccessor,
-				PatternMetadata metadata, Runnable saver) {
+				PatternMetadata metadata, Runnable saver,
+				StringRebuilder rebuilder) {
 			this.original = original;
 			this.translationAccessor = translationAccessor;
 			this.metadata = metadata;
 			this.saver = saver;
+			this.rebuilder = rebuilder;
+		}
+
+		private int getFirstIndex() {
+			return rebuilder.firstIndex;
+		}
+
+		private int getLastIndex() {
+			return rebuilder.lastIndex;
 		}
 
 		@Override
@@ -459,7 +568,15 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 
 		@Override
 		public void setCurrentTranslation(String translation) {
-			this.translationAccessor.set(translation);
+			if (translation == null) {
+				throw new IllegalArgumentException("No translation provided: "
+						+ translation);
+			} else {
+				translationAccessor.set(translation);
+				for (TranslationListener listener : listeners) {
+					listener.translationUpdated(translation);
+				}
+			}
 		}
 
 		@Override
@@ -471,12 +588,23 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		@Override
 		public void resetTranslation() {
 			translationAccessor.reset();
+			for (TranslationListener listener : listeners) {
+				listener.translationUpdated(getStoredTranslation());
+			}
 		}
 
 		@Override
 		public void saveAll() {
 			saveAllBackgroundOnly();
 			saver.run();
+			for (TranslationListener listener : listeners) {
+				listener.translationStored();
+			}
+			for (FieldListener listener : metadata.listeners) {
+				for (Field<?> field : metadata) {
+					listener.fieldStored(field);
+				}
+			}
 		}
 
 		public void saveAllBackgroundOnly() {
@@ -486,7 +614,7 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 
 		@Override
 		public void resetAll() {
-			translationAccessor.reset();
+			resetTranslation();
 			metadata.resetAll();
 		}
 
@@ -522,6 +650,10 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 			return translationAccessor.hashCode();
 		}
 
+		public String rebuildString() {
+			return rebuilder.toString();
+		}
+
 		@Override
 		public String toString() {
 			return getOriginalContent() + "=" + getCurrentTranslation();
@@ -532,16 +664,16 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 
 		private final List<String> referenceStore;
 		private final int storeIndex;
-		private final Switcher<String, Value> convertor;
+		private final Switcher<String, Value> switcher;
 		private final Map<Integer, Object> modifiedStore;
 
 		public StoreAccessor(List<String> referenceStore,
 				Map<Integer, Object> modifiedStore, int storeIndex,
-				Switcher<String, Value> convertor) {
+				Switcher<String, Value> switcher) {
 			this.referenceStore = referenceStore;
 			this.modifiedStore = modifiedStore;
 			this.storeIndex = storeIndex;
-			this.convertor = convertor;
+			this.switcher = switcher;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -561,7 +693,7 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		}
 
 		private Value getStored() {
-			return convertor.switchForth(referenceStore.get(storeIndex));
+			return switcher.switchForth(referenceStore.get(storeIndex));
 		}
 
 		public void save() {
@@ -569,7 +701,7 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 			if (value == null) {
 				logger.finest("Store update of " + this + ": <same data>");
 			} else {
-				String newValue = convertor.switchBack(get());
+				String newValue = switcher.switchBack(get());
 				logger.finest("Retrieve string of " + this + ": \"" + get()
 						+ "\" -> \"" + newValue + "\"");
 				logger.finest("Store update of " + this + ": \""
@@ -606,6 +738,38 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		@Override
 		public String toString() {
 			return "SA" + storeIndex;
+		}
+	}
+
+	public static class StringRebuilder {
+		private final List<String> store;
+		private final int firstIndex;
+		private final int lastIndex;
+
+		public StringRebuilder(List<String> store, int firstIndex, int lastIndex) {
+			this.store = store;
+			this.firstIndex = firstIndex;
+			this.lastIndex = lastIndex;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			for (String content : store.subList(firstIndex, lastIndex + 1)) {
+				builder.append(content);
+			}
+			return builder.toString();
+		}
+	}
+
+	@SuppressWarnings("serial")
+	public static class ParsingException extends RuntimeException {
+		public ParsingException(String message) {
+			super(message);
+		}
+
+		public ParsingException(String message, Throwable cause) {
+			super(message, cause);
 		}
 	}
 }

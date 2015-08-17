@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,9 +15,13 @@ import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
@@ -26,6 +32,7 @@ import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
 import fr.vergne.translation.TranslationEntry;
+import fr.vergne.translation.TranslationEntry.TranslationListener;
 import fr.vergne.translation.TranslationMetadata.Field;
 
 @SuppressWarnings("serial")
@@ -35,10 +42,11 @@ public class TranslationArea extends JTextArea {
 	private static final String ACTION_REDO = "redo";
 	private final TranslationEntry<?> entry;
 	private final TreeSet<Integer> limits;
-	private static final Color colorMin = Color.LIGHT_GRAY;
-	private static final Color colorMax = Color.RED;
+	private boolean isModifyingTranslation = true;
+	private Color colorMin = Color.LIGHT_GRAY;
+	private Color colorMax = Color.RED;
 
-	public TranslationArea(TranslationEntry<?> entry,
+	public TranslationArea(final TranslationEntry<?> entry,
 			Collection<Integer> characterLimits) {
 		super(entry.getCurrentTranslation());
 		this.entry = entry;
@@ -46,6 +54,93 @@ public class TranslationArea extends JTextArea {
 		setBorder(new EtchedBorder());
 		setFont(new Font("monospaced", Font.PLAIN, getFont().getSize()));
 
+		entry.addTranslationListener(new TranslationListener() {
+
+			@Override
+			public void translationUpdated(String newTranslation) {
+				if (isModifyingTranslation) {
+					// text already updated
+				} else {
+					setText(newTranslation);
+				}
+			}
+
+			@Override
+			public void translationStored() {
+				// ignored
+			}
+		});
+		getDocument().addDocumentListener(new DocumentListener() {
+
+			private void update() {
+				isModifyingTranslation = true;
+				entry.setCurrentTranslation(getText());
+				isModifyingTranslation = false;
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				update();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				update();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// nothing to do
+			}
+		});
+
+		configureUndoRedo();
+		configureContextualMenu(entry);
+	}
+
+	private void configureContextualMenu(final TranslationEntry<?> entry) {
+		final JPopupMenu menu = new JPopupMenu();
+		menu.add(new JMenuItem(new AbstractAction("Save this entry") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				entry.saveAll();
+			}
+		}));
+		menu.add(new JMenuItem(new AbstractAction("Reset this entry") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				entry.resetAll();
+			}
+		}));
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					doPop(e);
+				} else {
+					// ignore it
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					doPop(e);
+				} else {
+					// ignore it
+				}
+			}
+
+			private void doPop(MouseEvent e) {
+				menu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+
+	private void configureUndoRedo() {
 		final UndoManager manager = new UndoManager();
 		getDocument().addUndoableEditListener(new UndoableEditListener() {
 
@@ -54,6 +149,7 @@ public class TranslationArea extends JTextArea {
 				manager.addEdit(new DocumentEdit(event.getEdit()));
 			}
 		});
+
 		getActionMap().put(ACTION_UNDO, new AbstractAction() {
 
 			@Override
@@ -65,10 +161,6 @@ public class TranslationArea extends JTextArea {
 				}
 			}
 		});
-		getInputMap(JComponent.WHEN_FOCUSED).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask()),
-				ACTION_UNDO);
 		getActionMap().put(ACTION_REDO, new AbstractAction() {
 
 			@Override
@@ -80,6 +172,11 @@ public class TranslationArea extends JTextArea {
 				}
 			}
 		});
+
+		getInputMap(JComponent.WHEN_FOCUSED).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+						.getDefaultToolkit().getMenuShortcutKeyMask()),
+				ACTION_UNDO);
 		getInputMap(JComponent.WHEN_FOCUSED).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit
 						.getDefaultToolkit().getMenuShortcutKeyMask()),
@@ -217,5 +314,21 @@ public class TranslationArea extends JTextArea {
 
 	public TranslationEntry<?> getEntry() {
 		return entry;
+	}
+
+	public Color getColorMin() {
+		return colorMin;
+	}
+
+	public void setColorMin(Color colorMin) {
+		this.colorMin = colorMin;
+	}
+
+	public Color getColorMax() {
+		return colorMax;
+	}
+
+	public void setColorMax(Color colorMax) {
+		this.colorMax = colorMax;
 	}
 }

@@ -2,6 +2,7 @@ package fr.vergne.translation;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -269,6 +270,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
 			}
+
+			@Override
+			public void translationStored() {
+				// ignore
+			}
 		});
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
@@ -285,12 +291,109 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
 			}
+
+			@Override
+			public void translationStored() {
+				// ignore
+			}
 		};
 		entry.addTranslationListener(listener);
 		entry.removeTranslationListener(listener);
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
 		assertNull(notified[0]);
+	}
+
+	public void testListenerNotifiedAfterSaveTranslationWhenRegistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		final Boolean[] notified = { false };
+		entry.addTranslationListener(new TranslationListener() {
+
+			@Override
+			public void translationUpdated(String newTranslation) {
+				// ignore
+			}
+
+			@Override
+			public void translationStored() {
+				notified[0] = true;
+			}
+		});
+
+		notified[0] = false;
+		entry.setCurrentTranslation(getInitialStoredTranslation()+"?");
+		entry.saveTranslation();
+		assertEquals(true, notified[0]);
+	}
+
+	public void testListenerNotNotifiedAfterSaveTranslationWhenUnregistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		final Boolean[] notified = { false };
+		TranslationListener listener = new TranslationListener() {
+
+			@Override
+			public void translationUpdated(String newTranslation) {
+				// ignore
+			}
+
+			@Override
+			public void translationStored() {
+				notified[0] = true;
+			}
+		};
+		entry.addTranslationListener(listener);
+		entry.removeTranslationListener(listener);
+
+		notified[0] = false;
+		entry.setCurrentTranslation(getInitialStoredTranslation()+"?");
+		entry.saveTranslation();
+		assertEquals(false, notified[0]);
+	}
+
+	public void testListenerNotifiedAfterSaveAllWhenRegistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		final Boolean[] notified = { false };
+		entry.addTranslationListener(new TranslationListener() {
+
+			@Override
+			public void translationUpdated(String newTranslation) {
+				// ignore
+			}
+
+			@Override
+			public void translationStored() {
+				notified[0] = true;
+			}
+		});
+
+		notified[0] = false;
+		entry.setCurrentTranslation(getInitialStoredTranslation()+"?");
+		entry.saveAll();
+		assertEquals(true, notified[0]);
+	}
+
+	public void testListenerNotNotifiedAfterSaveAllWhenUnregistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		final Boolean[] notified = { false };
+		TranslationListener listener = new TranslationListener() {
+
+			@Override
+			public void translationUpdated(String newTranslation) {
+				// ignore
+			}
+
+			@Override
+			public void translationStored() {
+				notified[0] = true;
+			}
+		};
+		entry.addTranslationListener(listener);
+		entry.removeTranslationListener(listener);
+
+		notified[0] = false;
+		entry.setCurrentTranslation(getInitialStoredTranslation()+"?");
+		entry.saveAll();
+		assertEquals(false, notified[0]);
 	}
 
 	@Test
@@ -302,6 +405,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			@Override
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
+			}
+
+			@Override
+			public void translationStored() {
+				// ignored
 			}
 		});
 		String translation = createNewTranslation(entry.getCurrentTranslation());
@@ -319,6 +427,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			@Override
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
+			}
+
+			@Override
+			public void translationStored() {
+				// ignored
 			}
 		};
 		entry.addTranslationListener(listener);
@@ -339,6 +452,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
 			}
+
+			@Override
+			public void translationStored() {
+				// ignore
+			}
 		});
 		String translation = createNewTranslation(entry.getCurrentTranslation());
 		entry.setCurrentTranslation(translation);
@@ -356,6 +474,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public void translationUpdated(String newTranslation) {
 				notified[0] = newTranslation;
 			}
+
+			@Override
+			public void translationStored() {
+				// ignore
+			}
 		};
 		entry.addTranslationListener(listener);
 		entry.removeTranslationListener(listener);
@@ -363,6 +486,76 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 		entry.setCurrentTranslation(translation);
 		entry.resetAll();
 		assertNull(notified[0]);
+	}
+
+	@Test
+	public void testFieldListenerNotifiedAfterSaveAllWhenRegistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		metadata.addFieldListener(new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignore
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		});
+		Collection<Field<?>> expected = new HashSet<Field<?>>();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				change(metadata, field);
+				expected.add(field);
+			} else {
+				// ignore
+			}
+		}
+		entry.saveAll();
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				assertTrue("No notification received for " + field,
+						notified.contains(field));
+			} else {
+				// not important if not notifed
+			}
+		}
+	}
+
+	@Test
+	public void testFieldListenerNotNotifiedAfterSaveAllWhenUnregistered() {
+		TranslationEntry<Metadata> entry = createTranslationEntry();
+		Metadata metadata = entry.getMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		FieldListener listener = new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignore
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		};
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
+		for (Field<?> field : metadata) {
+			if (metadata.isEditable(field)) {
+				change(metadata, field);
+			} else {
+				// ignore
+			}
+		}
+		entry.saveAll();
+		for (Field<?> field : metadata) {
+			assertFalse("Notification still received for " + field,
+					notified.contains(field));
+		}
 	}
 
 	@Test
@@ -376,6 +569,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
 			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignore
+			}
 		});
 		Map<Field<?>, Object> resetValues = new HashMap<>();
 		for (Field<?> field : metadata) {
@@ -387,7 +585,7 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 				// ignore
 			}
 		}
-		metadata.resetAll();
+		entry.resetAll();
 		for (Field<?> field : resetValues.keySet()) {
 			assertEquals(resetValues.get(field), notified.get(field));
 		}
@@ -404,6 +602,11 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
 			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignore
+			}
 		};
 		metadata.addFieldListener(listener);
 		metadata.removeFieldListener(listener);
@@ -417,7 +620,7 @@ public abstract class TranslationEntryTest<Metadata extends TranslationMetadata>
 				// ignore
 			}
 		}
-		metadata.resetAll();
+		entry.resetAll();
 		for (Field<?> field : nonResetValues.keySet()) {
 			assertEquals(nonResetValues.get(field), notified.get(field));
 		}

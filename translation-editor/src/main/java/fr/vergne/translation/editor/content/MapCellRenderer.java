@@ -1,4 +1,4 @@
-package fr.vergne.translation.editor.tool;
+package fr.vergne.translation.editor.content;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -61,6 +61,16 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 				renderer.setFont(renderer.getFont().deriveFont(Font.PLAIN));
 			} catch (NoDataException e) {
 				renderer.setFont(renderer.getFont().deriveFont(Font.ITALIC));
+			}
+
+			try {
+				if (informer.isModified(id)) {
+					renderer.setFont(renderer.getFont().deriveFont(Font.BOLD));
+				} else {
+					// keep it as is
+				}
+			} catch (NoDataException e) {
+				// keep it as is
 			}
 
 			return renderer;

@@ -121,11 +121,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				if (isMapSafe(mapPanel)) {
-					dispose();
-				} else {
-					// map unsafe
-				}
+				mapPanel.alignStoredAndCurrentValues();
+				dispose();
 			}
 
 			@Override
@@ -144,25 +141,27 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 			@Override
 			public void mapSelected(MapID id) {
-				if (isMapSafe(mapPanel)) {
-					toolProvider.loadMap(id);
-				} else {
-					// map unsafe
-				}
+				toolProvider.loadMap(id);
 			}
 		});
 
-		mapPanel.addListener(new MapContentPanel.MapSavedListener<MapID>() {
+		mapPanel.addUpdateListener(new MapContentPanel.MapUpdateListener<MapID>() {
 
 			@Override
-			public void mapSaved(final MapID mapId) {
-				SwingUtilities.invokeLater(new Runnable() {
+			public void mapModified(final MapID id,
+					final boolean isDifferentFromStore) {
+				listPanel.setModifiedStatus(id, isDifferentFromStore);
+				if (isDifferentFromStore) {
+					// do not care about new progress
+				} else {
+					SwingUtilities.invokeLater(new Runnable() {
 
-					@Override
-					public void run() {
-						listPanel.updateMapSummary(mapId, true);
-					}
-				});
+						@Override
+						public void run() {
+							listPanel.updateMapSummary(id, true);
+						}
+					});
+				}
 			}
 		});
 		ToolPanel toolPanel = new ToolPanel();
@@ -430,29 +429,5 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		buttonPanel.add(reset, constraints);
 
 		return buttonPanel;
-	}
-
-	private boolean isMapSafe(final MapContentPanel<MapID> mapContentPanel) {
-		boolean mapSafe = !mapContentPanel.isMapModified();
-		if (!mapSafe) {
-			int answer = JOptionPane.showOptionDialog(Editor.this,
-					"The map has been modified. Would you like to save it?",
-					"Save the Current Map?", JOptionPane.YES_NO_OPTION,
-					JOptionPane.WARNING_MESSAGE, null, new String[] { "Yes",
-							"No", "Cancel" }, "Cancel");
-			if (answer == JOptionPane.YES_OPTION) {
-				mapContentPanel.save();
-				mapSafe = true;
-			} else if (answer == JOptionPane.NO_OPTION) {
-				mapSafe = true;
-			} else if (answer == JOptionPane.CANCEL_OPTION) {
-				// cancel the request
-			} else {
-				throw new IllegalStateException("Unmanaged answer: " + answer);
-			}
-		} else {
-			// already safe
-		}
-		return mapSafe;
 	}
 }

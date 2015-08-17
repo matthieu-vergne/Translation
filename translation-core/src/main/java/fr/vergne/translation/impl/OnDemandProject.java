@@ -107,12 +107,22 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 				public void translationUpdated(String newTranslation) {
 					modifiedMaps.add(map);
 				}
+				
+				@Override
+				public void translationStored() {
+					// ignored
+				}
 			};
 			FieldListener metadataListener = new FieldListener() {
 
 				@Override
 				public <T> void fieldUpdated(Field<T> field, T newValue) {
 					modifiedMaps.add(map);
+				}
+				
+				@Override
+				public <T> void fieldStored(Field<T> field) {
+					// ignored
 				}
 			};
 			for (TranslationEntry<? extends TranslationMetadata> entry : map) {

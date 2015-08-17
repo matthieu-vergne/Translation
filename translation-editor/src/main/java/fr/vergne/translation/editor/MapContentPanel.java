@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.CancellationException;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -19,10 +20,13 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
+import fr.vergne.collection.MultiMap;
+import fr.vergne.collection.impl.HashMultiMap;
 import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationEntry.TranslationListener;
 import fr.vergne.translation.TranslationMap;
+import fr.vergne.translation.TranslationMetadata;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.editor.content.EntryComponentFactory.EntryComponent;
@@ -45,23 +49,20 @@ public class MapContentPanel<MapID> extends JPanel {
 	private MapComponent mapComponent;
 	private TranslationMap<?> currentMap = new EmptyMap<>();
 	private MapID currentMapId;
-	private boolean isMapModified = false;
+	private Collection<TranslationEntry<?>> modifiedEntries = new HashSet<>();
+	private MultiMap<TranslationEntry<?>, Field<?>> modifiedFields = new HashMultiMap<TranslationEntry<?>, Field<?>>() {
+		public boolean remove(TranslationEntry<?> key, Field<?> value) {
+			boolean changed = super.remove(key, value);
+			if (get(key).isEmpty()) {
+				remove(key);
+			} else {
+				// remaining stuff to remember
+			}
+			return changed;
+		};
+	};
 	private int lastFocusedEntryIndex;
-	private final Collection<MapSavedListener<MapID>> saveListeners = new HashSet<MapSavedListener<MapID>>();
-	private final TranslationListener translationListener = new TranslationListener() {
-
-		@Override
-		public void translationUpdated(String newTranslation) {
-			isMapModified = true;
-		}
-	};
-	private final FieldListener fieldListener = new FieldListener() {
-
-		@Override
-		public <T> void fieldUpdated(Field<T> field, T newValue) {
-			isMapModified = true;
-		}
-	};
+	private final Collection<MapUpdateListener<MapID>> updateListeners = new HashSet<MapUpdateListener<MapID>>();
 	private ToolProvider<MapID> toolProvider;
 
 	public MapContentPanel(ToolProvider<MapID> toolProvider,
@@ -159,6 +160,8 @@ public class MapContentPanel<MapID> extends JPanel {
 		if (this.currentMapId != null && this.currentMapId.equals(mapId)) {
 			goToEntry(entryIndex);
 		} else {
+			alignStoredAndCurrentValues();
+
 			loadingLabel.setText("Loading map " + mapId + "...");
 			loading.start();
 			SwingUtilities.invokeLater(new Runnable() {
@@ -168,20 +171,51 @@ public class MapContentPanel<MapID> extends JPanel {
 					synchronized (currentMap) {
 						TranslationMap<?> newMap = toolProvider.getProject()
 								.getMap(mapId);
-						for (TranslationEntry<?> entry : newMap) {
-							entry.addTranslationListener(translationListener);
-							entry.getMetadata().addFieldListener(fieldListener);
-						}
-						if (currentMap == null) {
-							// no listener to remove
-						} else {
-							for (TranslationEntry<?> entry : currentMap) {
-								entry.removeTranslationListener(translationListener);
-								entry.getMetadata().removeFieldListener(
-										fieldListener);
-							}
+						for (final TranslationEntry<?> entry : newMap) {
+							entry.addTranslationListener(new TranslationListener() {
+
+								@Override
+								public void translationUpdated(
+										String newTranslation) {
+									if (entry.getStoredTranslation().equals(
+											newTranslation)) {
+										modifiedEntries.remove(entry);
+									} else {
+										modifiedEntries.add(entry);
+									}
+									notifyUpdateListeners();
+								}
+								
+								@Override
+								public void translationStored() {
+									modifiedEntries.remove(entry);
+									notifyUpdateListeners();
+								}
+							});
+							final TranslationMetadata metadata = entry
+									.getMetadata();
+							metadata.addFieldListener(new FieldListener() {
+
+								@Override
+								public <T> void fieldUpdated(Field<T> field,
+										T newValue) {
+									if (metadata.getStored(field).equals(newValue)) {
+										modifiedFields.remove(entry, field);
+									} else {
+										modifiedFields.add(entry, field);
+									}
+									notifyUpdateListeners();
+								}
+								
+								@Override
+								public <T> void fieldStored(Field<T> field) {
+									modifiedFields.remove(entry, field);
+									notifyUpdateListeners();
+								}
+							});
 						}
 						MapContentPanel.this.currentMap = newMap;
+						MapContentPanel.this.currentMapId = mapId;
 
 						String name = toolProvider.getProject().getMapName(
 								mapId);
@@ -225,51 +259,89 @@ public class MapContentPanel<MapID> extends JPanel {
 		}
 	}
 
+	public void alignStoredAndCurrentValues() throws CancellationException {
+		if (isMapModified()) {
+			int answer = JOptionPane.showOptionDialog(MapContentPanel.this,
+					"The map has been modified. Would you like to save it?",
+					"Save the Current Map?", JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE, null, new String[] { "Yes",
+							"No", "Cancel" }, "Cancel");
+			if (answer == JOptionPane.YES_OPTION) {
+				save();
+			} else if (answer == JOptionPane.NO_OPTION) {
+				reset(true);
+			} else if (answer == JOptionPane.CANCEL_OPTION) {
+				throw new CancellationException("Alignment cancelled");
+			} else {
+				throw new IllegalStateException("Unmanaged answer: " + answer);
+			}
+		} else {
+			// nothing modified, go ahead
+		}
+	}
+
 	public TranslationMap<?> getMap() {
 		return currentMap;
 	}
 
 	public boolean isMapModified() {
-		return isMapModified;
+		return !(modifiedEntries.isEmpty() && modifiedFields.isEmpty());
 	}
 
 	public void save() {
 		logger.info("Saving map " + currentMap + "...");
 		currentMap.saveAll();
+		deleteSavingInfo();
 		logger.info("Map saved.");
-		for (MapSavedListener<MapID> listener : saveListeners) {
-			listener.mapSaved(currentMapId);
+	}
+
+	private void deleteSavingInfo() {
+		modifiedEntries.clear();
+		modifiedFields.clear();
+		notifyUpdateListeners();
+	}
+
+	private void notifyUpdateListeners() {
+		boolean isModified = isMapModified();
+		for (MapUpdateListener<MapID> listener : updateListeners) {
+			listener.mapModified(currentMapId, isModified);
 		}
 	}
 
 	public void reset() {
+		reset(null);
+	}
+
+	public void reset(Boolean autoAnswer) {
 		if (currentMap == null
 				|| !isMapModified()
-				|| JOptionPane
+				|| (autoAnswer != null && autoAnswer == false)
+				|| (autoAnswer == null && JOptionPane
 						.showConfirmDialog(
 								this,
 								"Are you sure you want to cancel *ALL* the modifications that you have not saved?",
 								"Cancel Modifications",
-								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+								JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)) {
 			return;
 		} else {
 			logger.info("Resetting map " + currentMap + "...");
 			currentMap.resetAll();
+			deleteSavingInfo();
 			logger.info("Map reset.");
 		}
 	}
 
-	public void addListener(MapSavedListener<MapID> listener) {
-		saveListeners.add(listener);
+	public void addUpdateListener(MapUpdateListener<MapID> listener) {
+		updateListeners.add(listener);
 	}
 
-	public void removeListener(MapSavedListener<MapID> listener) {
-		saveListeners.remove(listener);
+	public void removeUpdateListener(MapUpdateListener<MapID> listener) {
+		updateListeners.remove(listener);
 	}
 
-	public static interface MapSavedListener<MapID> {
+	public static interface MapUpdateListener<MapID> {
 
-		void mapSaved(MapID id);
+		void mapModified(MapID id, boolean isDifferentFromStore);
 
 	}
 

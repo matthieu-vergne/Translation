@@ -50,8 +50,9 @@ public abstract class TranslationMetadataTest {
 			try {
 				getInitialStoredValue(field);
 			} catch (Exception e) {
-				fail("Exception thrown while asking the stored value of "
-						+ field);
+				throw new RuntimeException(
+						"Exception thrown while asking the stored value of "
+								+ field, e);
 			}
 		}
 
@@ -322,6 +323,11 @@ public abstract class TranslationMetadataTest {
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
 			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignored
+			}
 		});
 		for (Field<?> field : getEditableFields()) {
 			Object value = change(metadata, field);
@@ -339,12 +345,67 @@ public abstract class TranslationMetadataTest {
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
 			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignored
+			}
 		};
 		metadata.addFieldListener(listener);
 		metadata.removeFieldListener(listener);
 		for (Field<?> field : getEditableFields()) {
 			change(metadata, field);
 			assertTrue(notified.isEmpty());
+		}
+	}
+
+	@Test
+	public void testListenerNotifiedAfterSaveWhenRegistered() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		metadata.addFieldListener(new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignored
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		});
+		for (Field<?> field : getEditableFields()) {
+			change(metadata, field);
+			metadata.save(field);
+			assertTrue("No notification received for " + field,
+					notified.contains(field));
+		}
+	}
+
+	@Test
+	public void testListenerNotNotifiedAfterSaveWhenUnregistered() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		FieldListener listener = new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignored
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		};
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
+		for (Field<?> field : getEditableFields()) {
+			change(metadata, field);
+			metadata.save(field);
+			assertFalse("Notification still received for " + field,
+					notified.contains(field));
 		}
 	}
 
@@ -357,6 +418,11 @@ public abstract class TranslationMetadataTest {
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignored
 			}
 		});
 		for (Field<?> field : getEditableFields()) {
@@ -376,6 +442,11 @@ public abstract class TranslationMetadataTest {
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
 			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignored
+			}
 		};
 		metadata.addFieldListener(listener);
 		metadata.removeFieldListener(listener);
@@ -383,6 +454,60 @@ public abstract class TranslationMetadataTest {
 			change(metadata, field);
 			metadata.reset(field);
 			assertTrue(notified.isEmpty());
+		}
+	}
+
+	@Test
+	public void testListenerNotifiedAfterSaveAllWhenRegistered() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		metadata.addFieldListener(new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignore
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		});
+		for (Field<?> field : getEditableFields()) {
+			change(metadata, field);
+		}
+		metadata.saveAll();
+		for (Field<?> field : getEditableFields()) {
+			assertTrue("No notification received for " + field,
+					notified.contains(field));
+		}
+	}
+
+	@Test
+	public void testListenerNotNotifiedAfterSaveAllWhenUnregistered() {
+		TranslationMetadata metadata = createTranslationMetadata();
+		final Collection<Field<?>> notified = new HashSet<Field<?>>();
+		FieldListener listener = new FieldListener() {
+
+			@Override
+			public <T> void fieldUpdated(Field<T> field, T newValue) {
+				// ignore
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				notified.add(field);
+			}
+		};
+		metadata.addFieldListener(listener);
+		metadata.removeFieldListener(listener);
+		for (Field<?> field : getEditableFields()) {
+			change(metadata, field);
+		}
+		metadata.saveAll();
+		for (Field<?> field : metadata) {
+			assertFalse("Notification still received for " + field,
+					notified.contains(field));
 		}
 	}
 
@@ -395,6 +520,11 @@ public abstract class TranslationMetadataTest {
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignore
 			}
 		});
 		for (Field<?> field : getEditableFields()) {
@@ -415,6 +545,11 @@ public abstract class TranslationMetadataTest {
 			@Override
 			public <T> void fieldUpdated(Field<T> field, T newValue) {
 				notified.put(field, newValue);
+			}
+
+			@Override
+			public <T> void fieldStored(Field<T> field) {
+				// ignore
 			}
 		};
 		metadata.addFieldListener(listener);

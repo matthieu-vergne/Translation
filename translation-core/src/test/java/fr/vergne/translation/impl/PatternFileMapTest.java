@@ -17,6 +17,10 @@ import fr.vergne.translation.util.impl.SmartStringSwitcher;
 
 public class PatternFileMapTest extends TranslationMapTest<PatternEntry> {
 
+	private static final Field<Integer> FIELD_1 = new Field<Integer>("F1");
+	private static final Field<Boolean> FIELD_2 = new Field<Boolean>("F2");
+	private static final Field<String> FIELD_3 = new Field<String>("F3");
+
 	@Override
 	protected TranslationMap<PatternEntry> createTranslationMap() {
 		String mapContent = "";
@@ -31,21 +35,18 @@ public class PatternFileMapTest extends TranslationMapTest<PatternEntry> {
 		PatternFileMap map = new PatternFileMap(file, entryRegex,
 				originalRegex, translationRegex);
 
-		Field<Integer> field1 = new Field<Integer>("F1");
 		String regex1 = "(?<=\\|F1=)[^|]*(?=\\||$)";
 		Switcher<String, Integer> convertor1 = new SmartStringSwitcher<>(
 				Integer.class);
-		map.addFieldRegex(field1, regex1, convertor1, true);
+		map.addFieldRegex(FIELD_1, regex1, convertor1, true);
 
-		Field<Boolean> field2 = new Field<Boolean>("F2");
 		String regex2 = "(?<=\\|F2=)[^|]*(?=\\||$)";
 		Switcher<String, Boolean> convertor2 = new SmartStringSwitcher<>(
 				Boolean.class);
-		map.addFieldRegex(field2, regex2, convertor2, false);
+		map.addFieldRegex(FIELD_2, regex2, convertor2, false);
 
-		Field<String> field3 = new Field<String>("F3");
 		String regex3 = "(?<=\\|F3=)[^|]*(?=\\||$)";
-		map.addFieldRegex(field3, regex3, true);
+		map.addFieldRegex(FIELD_3, regex3, true);
 
 		return map;
 	}
@@ -166,6 +167,180 @@ public class PatternFileMapTest extends TranslationMapTest<PatternEntry> {
 		assertEquals((String) "", map.getEntry(2).getMetadata().get(field3));
 	}
 
+	@Test
+	public void testMapEntriesRobustToExtraTextAtBeginningOfMap() {
+		String mapContent = "";
+		mapContent += "Map description:\n";
+		mapContent += "J=エントリー１|E=Entry 1\n";
+		mapContent += "J=エントリー２|E=Entry 2\n";
+		mapContent += "J=エントリー３|E=Entry 3\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)J=[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+$";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals(3, map.size());
+		assertEquals("エントリー１", map.getEntry(0).getOriginalContent());
+		assertEquals("Entry 3", map.getEntry(2).getCurrentTranslation());
+	}
+
+	@Test
+	public void testMapEntriesRobustToExtraTextAtEndOfMap() {
+		String mapContent = "";
+		mapContent += "J=エントリー１|E=Entry 1\n";
+		mapContent += "J=エントリー２|E=Entry 2\n";
+		mapContent += "J=エントリー３|E=Entry 3\n";
+		mapContent += "END OF MAP\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)J=[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+$";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals(3, map.size());
+		assertEquals("エントリー１", map.getEntry(0).getOriginalContent());
+		assertEquals("Entry 3", map.getEntry(2).getCurrentTranslation());
+	}
+
+	@Test
+	public void testMapEntriesRobustToExtraTextBetweenEntries() {
+		String mapContent = "";
+		mapContent += "J=エントリー１|E=Entry 1\n";
+		mapContent += "ENTRY BREAK\n";
+		mapContent += "J=エントリー２|E=Entry 2\n";
+		mapContent += "ENTRY BREAK\n";
+		mapContent += "J=エントリー３|E=Entry 3\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)J=[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+$";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals(3, map.size());
+		assertEquals("エントリー１", map.getEntry(0).getOriginalContent());
+		assertEquals("Entry 3", map.getEntry(2).getCurrentTranslation());
+	}
+
+	@Test
+	public void testFileSavingPreservesInitialContent() throws IOException {
+		String mapContent = "";
+		mapContent += "J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1\n";
+		mapContent += "J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2\n";
+		mapContent += "J=エントリー３|E=Entry 3|F1=3|F2=false|F3=\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+(?=\\|)";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+		map.saveAll();
+
+		String saved = FileUtils.readFileToString(file);
+		assertEquals(mapContent, saved);
+	}
+
+	@Test
+	public void testFileSavingPreservesModifiedContent() throws IOException {
+		String mapContent = "";
+		mapContent += "J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1\n";
+		mapContent += "J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2\n";
+		mapContent += "J=エントリー３|E=Entry 3|F1=3|F2=false|F3=\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+(?=\\|)";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		map.getEntry(0).setCurrentTranslation("Test");
+		mapContent = mapContent.replace("Entry 1", "Test");
+		map.getEntry(1).setCurrentTranslation("12345");
+		mapContent = mapContent.replace("Entry 2", "12345");
+		map.getEntry(2).setCurrentTranslation("エントリー");
+		mapContent = mapContent.replace("Entry 3", "エントリー");
+		map.saveAll();
+
+		String saved = FileUtils.readFileToString(file);
+		assertEquals(mapContent, saved);
+	}
+
+	@Test
+	public void testRebuildStringProvidesCorrectContent() throws IOException {
+		String mapContent = "";
+		mapContent += "J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1\n";
+		mapContent += "J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2\n";
+		mapContent += "J=エントリー３|E=Entry 3|F1=3|F2=false|F3=\n";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+(?=\\|)";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals("J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1", map.getEntry(0)
+				.rebuildString());
+		assertEquals("J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2", map.getEntry(1)
+				.rebuildString());
+		assertEquals("J=エントリー３|E=Entry 3|F1=3|F2=false|F3=", map.getEntry(2)
+				.rebuildString());
+	}
+
+	@Test
+	public void testTextBeforeEntryIsProperlyRetrieved() throws IOException {
+		String mapContent = "";
+		mapContent += "break1\n";
+		mapContent += "J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1";
+		mapContent += "\nbreak2\n";
+		mapContent += "J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2";
+		mapContent += "\nbreak3\n";
+		mapContent += "J=エントリー３|E=Entry 3|F1=3|F2=false|F3=";
+		mapContent += "\nbreak4";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)J=[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+(?=\\|)";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals("break1\n", map.getBeforeEntry(0));
+		assertEquals("\nbreak2\n", map.getBeforeEntry(1));
+		assertEquals("\nbreak3\n", map.getBeforeEntry(2));
+	}
+
+	@Test
+	public void testTextAfterEntryIsProperlyRetrieved() throws IOException {
+		String mapContent = "";
+		mapContent += "break1\n";
+		mapContent += "J=エントリー１|E=Entry 1|F1=1|F2=true|F3=V1";
+		mapContent += "\nbreak2\n";
+		mapContent += "J=エントリー２|E=Entry 2|F1=2|F2=|F3=V2";
+		mapContent += "\nbreak3\n";
+		mapContent += "J=エントリー３|E=Entry 3|F1=3|F2=false|F3=";
+		mapContent += "\nbreak4";
+		File file = createTempMap(mapContent);
+
+		String entryRegex = "(?<=\\n|^)J=[^\\n]+(?=\\n|$)";
+		String originalRegex = "(?<=^J=)[^|]+(?=\\|)";
+		String translationRegex = "(?<=\\|E=)[^|]+(?=\\|)";
+		PatternFileMap map = new PatternFileMap(file, entryRegex,
+				originalRegex, translationRegex);
+
+		assertEquals("\nbreak2\n", map.getAfterEntry(0));
+		assertEquals("\nbreak3\n", map.getAfterEntry(1));
+		assertEquals("\nbreak4", map.getAfterEntry(2));
+	}
+
 	private File createTempMap(String mapContent) {
 		try {
 			File file = File.createTempFile("test", ".map");
@@ -175,5 +350,4 @@ public class PatternFileMapTest extends TranslationMapTest<PatternEntry> {
 			throw new RuntimeException(e);
 		}
 	}
-
 }

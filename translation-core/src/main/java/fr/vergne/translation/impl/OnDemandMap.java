@@ -124,12 +124,22 @@ public class OnDemandMap<Entry extends TranslationEntry<?>> implements
 				public void translationUpdated(String newTranslation) {
 					modifiedEntries.add(entry);
 				}
+
+				@Override
+				public void translationStored() {
+					// ignored
+				}
 			});
 			entry.getMetadata().addFieldListener(new FieldListener() {
 
 				@Override
 				public <T> void fieldUpdated(Field<T> field, T newValue) {
 					modifiedEntries.add(entry);
+				}
+
+				@Override
+				public <T> void fieldStored(Field<T> field) {
+					// ignored
 				}
 			});
 			cache.put(index, new WeakReference<>(entry));

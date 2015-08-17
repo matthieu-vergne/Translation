@@ -14,7 +14,7 @@ import javax.swing.tree.DefaultTreeModel;
 import fr.vergne.collection.filter.Filter;
 import fr.vergne.collection.util.NaturalComparator;
 import fr.vergne.collection.util.NaturalComparator.Translator;
-import fr.vergne.translation.editor.tool.MapTreeNode;
+import fr.vergne.translation.editor.content.MapTreeNode;
 import fr.vergne.translation.util.CollectionManager;
 import fr.vergne.translation.util.MapInformer;
 import fr.vergne.translation.util.MapInformer.MapSummaryListener;

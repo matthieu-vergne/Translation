@@ -85,7 +85,7 @@ public interface TranslationMetadata extends Iterable<Field<?>> {
 
 	/**
 	 * A {@link FieldListener} allows to be notified when a {@link Field} of a
-	 * {@link TranslationMetadata} is updated. To be notified, the
+	 * {@link TranslationMetadata} evolves. To be notified, the
 	 * {@link FieldListener} should have been provided to
 	 * {@link TranslationMetadata#addFieldListener(FieldListener)} .
 	 * 
@@ -93,7 +93,25 @@ public interface TranslationMetadata extends Iterable<Field<?>> {
 	 * 
 	 */
 	public static interface FieldListener {
+		/**
+		 * This method is called when {@link TranslationMetadata#get(Field)}
+		 * provides a new value.
+		 * 
+		 * @param field
+		 *            the updated {@link Field}
+		 * @param newValue
+		 *            the new value of the {@link Field}
+		 */
 		public <T> void fieldUpdated(Field<T> field, T newValue);
+
+		/**
+		 * This method is called when
+		 * {@link TranslationMetadata#getStored(Field)} provides a new value.
+		 * 
+		 * @param field
+		 *            the {@link Field} for which the value has been stored
+		 */
+		public <T> void fieldStored(Field<T> field);
 	}
 
 	/**

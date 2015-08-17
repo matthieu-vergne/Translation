@@ -6,6 +6,8 @@ public interface MapInformer<MapID> {
 
 	public int getEntriesRemaining(MapID mapId) throws NoDataException;
 
+	public boolean isModified(MapID mapId) throws NoDataException;
+
 	public void addMapSummaryListener(MapSummaryListener<MapID> listener);
 
 	public void removeMapSummaryListener(MapSummaryListener<MapID> listener);

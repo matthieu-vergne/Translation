@@ -74,14 +74,6 @@ public abstract class TranslationMapTest<Entry extends TranslationEntry<? extend
 	}
 
 	@Test
-	public void testIteratorProvidesAtLeastOneEntry() {
-		TranslationMap<Entry> map = createTranslationMap();
-		Iterator<Entry> iterator = map.iterator();
-		assertTrue(iterator.hasNext());
-		assertNotNull(iterator.next());
-	}
-
-	@Test
 	public void testIteratorProvidesNoNullEntry() {
 		TranslationMap<Entry> map = createTranslationMap();
 		Iterator<Entry> iterator = map.iterator();

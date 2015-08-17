@@ -1,4 +1,4 @@
-package fr.vergne.translation.editor.tool;
+package fr.vergne.translation.editor.content;
 
 import java.util.Enumeration;
 

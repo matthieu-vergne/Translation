@@ -151,6 +151,9 @@ public class OnDemandMetadata implements TranslationMetadata {
 		if (changedValues.containsKey(field)) {
 			Writer<T> writer = (Writer<T>) fieldSavers.get(field);
 			writer.write((T) changedValues.get(field));
+			for (FieldListener listener : listeners) {
+				listener.fieldStored(field);
+			}
 		} else {
 			// nothing to save
 		}
