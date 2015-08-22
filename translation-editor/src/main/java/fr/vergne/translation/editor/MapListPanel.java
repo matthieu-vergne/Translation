@@ -264,16 +264,16 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 			featureRow.removeAll();
 			for (final Feature feature : currentProject.getFeatures()) {
-				JButton featuerButton = new JButton();
-				featuerButton.setAction(new AbstractAction(feature.getName()) {
+				JButton featureButton = new JButton();
+				featureButton.setAction(new AbstractAction(feature.getName()) {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						feature.run();
 					}
 				});
-				featuerButton.setToolTipText(feature.getDescription());
-				featureRow.add(featuerButton);
+				featureButton.setToolTipText(feature.getDescription());
+				featureRow.add(featureButton);
 			}
 
 			Collection<MapID> newIDs = new LinkedList<>();
