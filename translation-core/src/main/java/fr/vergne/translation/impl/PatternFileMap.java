@@ -135,7 +135,7 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		logger.info("Reading " + file + "...");
 		final String content;
 		try {
-			content = FileUtils.readFileToString(file);
+			content = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}
