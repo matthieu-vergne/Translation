@@ -19,11 +19,6 @@
 			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.matthieu-vergne</groupId>
-			<artifactId>logging</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.3.2</version>

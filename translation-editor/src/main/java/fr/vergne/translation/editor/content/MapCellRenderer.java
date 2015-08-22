@@ -8,14 +8,14 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
-import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.translation.util.MapInformer;
 import fr.vergne.translation.util.MapInformer.NoDataException;
 import fr.vergne.translation.util.MapNamer;
 
 public class MapCellRenderer<MapID> implements TreeCellRenderer {
 
-	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
+	public static final Logger logger = Logger.getLogger(MapCellRenderer.class
+			.getName());
 	private final TreeCellRenderer basicRenderer;
 	private final MapInformer<MapID> informer;
 

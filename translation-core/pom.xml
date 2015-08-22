@@ -32,11 +32,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.matthieu-vergne</groupId>
-			<artifactId>logging</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.matthieu-vergne</groupId>
 			<artifactId>collection-core</artifactId>
 			<version>1.11</version>
 		</dependency>

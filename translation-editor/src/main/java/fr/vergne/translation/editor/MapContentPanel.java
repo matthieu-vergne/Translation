@@ -22,7 +22,6 @@ import javax.swing.border.EtchedBorder;
 
 import fr.vergne.collection.MultiMap;
 import fr.vergne.collection.impl.HashMultiMap;
-import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationEntry.TranslationListener;
 import fr.vergne.translation.TranslationMap;
@@ -38,7 +37,8 @@ import fr.vergne.translation.impl.EmptyMap;
 @SuppressWarnings("serial")
 public class MapContentPanel<MapID> extends JPanel {
 
-	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
+	public static final Logger logger = Logger.getLogger(MapContentPanel.class
+			.getName());
 	private final JPanel mapContentArea;
 	private final JPanel mapLoadingArea;
 	private final JScrollPane mapContentScroll;

@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
-import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationMetadata;
@@ -82,7 +81,8 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		}
 	};
 
-	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
+	public static final Logger logger = Logger.getLogger(PatternFileMap.class
+			.getName());
 	private static final Switcher<String, String> STRING_SWITCHER = new IdentitySwitcher<>();
 
 	public PatternFileMap(File file, String entryRegex, String originalRegex,

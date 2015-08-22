@@ -44,7 +44,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import fr.vergne.logging.LoggerConfiguration;
 import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
@@ -68,7 +67,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	private static final String CONFIG_LABELS_DISPLAYED = "labelsDisplayed";
 	private static final String CONFIG_LIST_ORDER = "listOrder";
 	private static final String CONFIG_MAP_DIR = "mapDir";
-	public static final Logger logger = LoggerConfiguration.getSimpleLogger();
+	public static final Logger logger = Logger.getLogger(MapListPanel.class
+			.getName());
 	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
 	private final Map<Order, MapNamer<MapID>> namers = new HashMap<Order, MapNamer<MapID>>();
