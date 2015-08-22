@@ -185,7 +185,7 @@ public class MapContentPanel<MapID> extends JPanel {
 									}
 									notifyUpdateListeners();
 								}
-								
+
 								@Override
 								public void translationStored() {
 									modifiedEntries.remove(entry);
@@ -199,14 +199,15 @@ public class MapContentPanel<MapID> extends JPanel {
 								@Override
 								public <T> void fieldUpdated(Field<T> field,
 										T newValue) {
-									if (metadata.getStored(field).equals(newValue)) {
+									if (metadata.getStored(field).equals(
+											newValue)) {
 										modifiedFields.remove(entry, field);
 									} else {
 										modifiedFields.add(entry, field);
 									}
 									notifyUpdateListeners();
 								}
-								
+
 								@Override
 								public <T> void fieldStored(Field<T> field) {
 									modifiedFields.remove(entry, field);
