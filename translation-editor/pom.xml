@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>fr.matthieu-vergne</groupId>
 		<artifactId>translation</artifactId>
-		<version>1.2</version>
+		<version>1.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>translation-editor</artifactId>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>fr.matthieu-vergne</groupId>
 			<artifactId>translation-core</artifactId>
-			<version>1.2</version>
+			<version>1.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
