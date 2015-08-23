@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
@@ -14,11 +15,16 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -35,7 +41,7 @@ import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.editor.MapListPanel.MapSelectedListener;
 import fr.vergne.translation.editor.content.EntryComponentFactory;
-import fr.vergne.translation.editor.content.FilterButton;
+import fr.vergne.translation.editor.content.FilterAction;
 import fr.vergne.translation.editor.content.MapComponentFactory;
 import fr.vergne.translation.editor.content.SimpleEntryComponent;
 import fr.vergne.translation.editor.content.SimpleMapComponent;
@@ -50,6 +56,8 @@ import fr.vergne.translation.util.ProjectLoader;
 public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<MapID, TMap>>
 		extends JFrame {
 
+	private static final Logger logger = Logger.getLogger(Editor.class
+			.getName());
 	private static final String ACTION_LAST_ENTRY = "lastEntry";
 	private static final String ACTION_FIRST_ENTRY = "firstEntry";
 	private static final String ACTION_NEXT_ENTRY = "nextEntry";
@@ -58,6 +66,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private static final String ACTION_RESET = "reset";
 	private static final String CONFIG_Y = "y";
 	private static final String CONFIG_X = "x";
+	private static final String CONFIG_FILTER = "filter";
 	private static final String CONFIG_WIDTH = "width";
 	private static final String CONFIG_HEIGHT = "height";
 	private static final String CONFIG_SPLIT = "split";
@@ -167,8 +176,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		ToolPanel toolPanel = new ToolPanel();
 
 		filters = new JPanel();
-		filters.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-		filters.setLayout(new GridLayout(0, 1, 0, 5));
 
 		configureTools(toolPanel, toolProvider);
 
@@ -232,11 +239,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				});
 	}
 
-	protected void updateFilters(TranslationMap<?> map, JPanel filters,
-			MapContentPanel<MapID> mapPanel) {
-		filters.removeAll();
+	protected void updateFilters(TranslationMap<?> map, JPanel filterComponent,
+			final MapContentPanel<MapID> mapPanel) {
+		filterComponent.removeAll();
+		filterComponent.setLayout(new GridBagLayout());
 
-		filters.add(new FilterButton(new EntryFilter<TranslationEntry<?>>() {
+		EntryFilter<TranslationEntry<?>> noTranslationEntry = new EntryFilter<TranslationEntry<?>>() {
 
 			@Override
 			public String getName() {
@@ -252,11 +260,66 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			public boolean isRelevant(TranslationEntry<?> entry) {
 				return !TranslationUtil.isActuallyTranslated(entry);
 			}
-		}, mapPanel));
+		};
 
-		for (EntryFilter<?> filter : map.getEntryFilters()) {
-			filters.add(new FilterButton(filter, mapPanel));
+		final JComboBox<FilterAction<?>> comboBox = new JComboBox<>();
+		List<String> filterNames = new LinkedList<>();
+		Collection<? extends EntryFilter<?>> filters = map.getEntryFilters();
+		for (EntryFilter<?> filter : filters) {
+			comboBox.addItem(new FilterAction<>(filter, mapPanel));
+			filterNames.add(filter.getName());
 		}
+		comboBox.addItem(new FilterAction<>(noTranslationEntry, mapPanel));
+
+		final JButton nextButton = new JButton(new AbstractAction("Next") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FilterAction<?> action = (FilterAction<?>) comboBox
+						.getSelectedItem();
+				action.actionPerformed(e);
+			}
+
+		});
+
+		comboBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FilterAction<?> filterAction = (FilterAction<?>) comboBox
+						.getSelectedItem();
+				EntryFilter<?> filter = filterAction.getFilter();
+				nextButton.setToolTipText(filter.getDescription());
+				logger.info("Select filter: " + filterAction);
+				config.setProperty(CONFIG_FILTER, "" + filterAction);
+			}
+		});
+
+		String preferredFilter = config.getProperty(CONFIG_FILTER, null);
+		if (preferredFilter == null) {
+			comboBox.setSelectedIndex(0);
+		} else {
+			for (int i = 0; i < comboBox.getItemCount(); i++) {
+				FilterAction<?> item = comboBox.getItemAt(i);
+				if (item.toString().equals(preferredFilter)) {
+					comboBox.setSelectedItem(item);
+				} else {
+					// search for another one
+				}
+			}
+		}
+
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 1;
+		constraints.gridx = 0;
+		filterComponent.add(comboBox, constraints);
+
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.weightx = 0;
+		constraints.gridx = 1;
+		constraints.insets = new Insets(0, 10, 0, 0);
+		filterComponent.add(nextButton, constraints);
 	}
 
 	private void configureTools(final ToolPanel toolPanel,
