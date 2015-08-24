@@ -17,7 +17,7 @@
 	<scm>
 		<connection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Translation.git</connection>
 		<developerConnection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Translation.git</developerConnection>
-		<url>scm:git:https://github.com/matthieu-vergne/Translation.git</url>
+		<url>scm:git:git://github.com/matthieu-vergne/Translation.git</url>
     <tag>HEAD</tag>
   </scm>
 
