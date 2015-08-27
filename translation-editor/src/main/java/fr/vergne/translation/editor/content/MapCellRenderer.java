@@ -32,21 +32,7 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 		if (cell instanceof MapTreeNode) {
 			@SuppressWarnings("unchecked")
 			MapID id = ((MapTreeNode<MapID>) cell).getMapID();
-
-			String description;
-			try {
-				int remaining = informer.getEntriesRemaining(id);
-				int total = informer.getEntriesCount(id);
-				if (remaining > 0) {
-					int percent = 100 - 100 * remaining / total;
-					description = percent + "%, " + remaining + " remaining";
-				} else {
-					description = "cleared";
-				}
-			} catch (NoDataException e) {
-				description = "loading";
-			}
-
+			String description = buildDescription(id);
 			String label = mapNamer.getNameFor(id) + " (" + description + ")";
 			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) basicRenderer
 					.getTreeCellRendererComponent(tree, label, selected,
@@ -75,9 +61,38 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 
 			return renderer;
 		} else {
-			return basicRenderer.getTreeCellRendererComponent(tree, cell,
-					selected, expanded, leaf, row, hasFocus);
+			String description = buildDescription(null);
+			String label = "Project (" + description + ")";
+			logger.finest("Root node label: " + label);
+			Component renderer = basicRenderer.getTreeCellRendererComponent(
+					tree, label, selected, expanded, leaf, row, hasFocus);
+			renderer.setFont(renderer.getFont().deriveFont(Font.PLAIN));
+			return renderer;
 		}
+	}
+
+	private String buildDescription(MapID id) {
+		String description;
+		try {
+			int remaining;
+			int total;
+			if (id == null) {
+				remaining = informer.getAllEntriesRemaining();
+				total = informer.getAllEntriesCount();
+			} else {
+				remaining = informer.getEntriesRemaining(id);
+				total = informer.getEntriesCount(id);
+			}
+			if (remaining > 0) {
+				int percent = 100 - 100 * remaining / total;
+				description = percent + "%, " + remaining + " remaining";
+			} else {
+				description = "cleared";
+			}
+		} catch (NoDataException e) {
+			description = "loading";
+		}
+		return description;
 	}
 
 	private MapNamer<MapID> mapNamer = new MapNamer<MapID>() {

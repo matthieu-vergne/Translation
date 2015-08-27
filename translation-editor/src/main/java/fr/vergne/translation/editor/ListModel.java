@@ -145,6 +145,9 @@ public class ListModel<MapID> extends DefaultTreeModel {
 				} else {
 					throw new RuntimeException("This case should not happen.");
 				}
+
+				// update root
+				fireTreeNodesChanged(root, rootPath, new int[0], new Object[0]);
 			}
 		});
 	}

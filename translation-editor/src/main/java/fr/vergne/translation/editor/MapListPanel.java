@@ -124,6 +124,34 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			}
 
 			@Override
+			public int getAllEntriesCount() throws NoDataException {
+				int total = 0;
+				for (MapID id : currentIDs) {
+					MapSummary summary = mapSummaries.get(id);
+					if (summary == null) {
+						throw new NoDataException();
+					} else {
+						total += summary.total;
+					}
+				}
+				return total;
+			}
+
+			@Override
+			public int getAllEntriesRemaining() throws NoDataException {
+				int remaining = 0;
+				for (MapID id : currentIDs) {
+					MapSummary summary = mapSummaries.get(id);
+					if (summary == null) {
+						throw new NoDataException();
+					} else {
+						remaining += summary.remaining;
+					}
+				}
+				return remaining;
+			}
+
+			@Override
 			public void addMapSummaryListener(MapSummaryListener<MapID> listener) {
 				mapSummaryListeners.add(listener);
 			}
@@ -360,7 +388,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		cellRenderer.setMapNamer(isLabelDisplayed ? labelNamer : idNamer);
 		tree.setCellRenderer(cellRenderer);
 
-		tree.setRootVisible(false);
+		tree.setRootVisible(true);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		final TreePath[] selection = new TreePath[1];
@@ -456,15 +484,19 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				synchronized (mapSummaries) {
 					if (event.getButton() == MouseEvent.BUTTON1
 							&& event.getClickCount() == 2) {
-						MapID file = getSelectedID(tree);
-						updateMapSummary(file, false);
-						for (MapListListener listener : listeners) {
-							if (listener instanceof MapSelectedListener) {
-								((MapSelectedListener<MapID>) listener)
-										.mapSelected(file);
-							} else {
-								// not the right listener
+						MapID id = getSelectedID(tree);
+						if (id != null) {
+							updateMapSummary(id, false);
+							for (MapListListener listener : listeners) {
+								if (listener instanceof MapSelectedListener) {
+									((MapSelectedListener<MapID>) listener)
+											.mapSelected(id);
+								} else {
+									// not the right listener
+								}
 							}
+						} else {
+							// nothing to do
 						}
 					} else {
 						// nothing to do for single click
@@ -484,7 +516,12 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			public void keyReleased(KeyEvent arg0) {
 				int keyCode = arg0.getKeyCode();
 				if (keyCode == KeyEvent.VK_F5) {
-					updateMapSummary(getSelectedID(tree), true);
+					MapID id = getSelectedID(tree);
+					if (id != null) {
+						updateMapSummary(id, true);
+					} else {
+						// nothing to do
+					}
 				} else {
 					// no action for other keys
 				}
@@ -499,11 +536,15 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	}
 
 	private MapID getSelectedID(final JTree tree) {
-		@SuppressWarnings("unchecked")
-		MapTreeNode<MapID> node = (MapTreeNode<MapID>) tree.getSelectionPath()
-				.getLastPathComponent();
-		MapID id = node.getMapID();
-		return id;
+		Object source = tree.getSelectionPath().getLastPathComponent();
+		if (source instanceof MapTreeNode) {
+			@SuppressWarnings("unchecked")
+			MapTreeNode<MapID> node = (MapTreeNode<MapID>) source;
+			MapID id = node.getMapID();
+			return id;
+		} else {
+			return null;
+		}
 	}
 
 	private void configureBackgroundSummarizing() {
