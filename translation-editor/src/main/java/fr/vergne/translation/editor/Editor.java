@@ -215,6 +215,54 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		setLayout(new GridLayout(1, 1));
 		add(rootSplit);
 
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu themeMenu = new JMenu("Theme");
+		menuBar.add(themeMenu);
+		ButtonGroup group = new ButtonGroup();
+		String currentTheme = config.getProperty(CONFIG_THEME,
+				UIManager.getSystemLookAndFeelClassName());
+		for (final LookAndFeelInfo theme : UIManager.getInstalledLookAndFeels()) {
+			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(
+					new AbstractAction(theme.getName()) {
+
+						@Override
+						public void actionPerformed(ActionEvent event) {
+							try {
+								UIManager.setLookAndFeel(theme.getClassName());
+								SwingUtilities
+										.updateComponentTreeUI(Editor.this);
+								Editor.this.setSize(Editor.this.getSize());
+
+								String name = theme.getClassName();
+								config.setProperty(CONFIG_THEME, name);
+								logger.info("Apply theme: " + name);
+							} catch (ClassNotFoundException
+									| InstantiationException
+									| IllegalAccessException
+									| UnsupportedLookAndFeelException ex) {
+								logger.log(Level.SEVERE, null, ex);
+							}
+						}
+					});
+
+			if (theme.getClassName().equals(currentTheme)) {
+				item.setSelected(true);
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						item.getAction().actionPerformed(null);
+					}
+				});
+			} else {
+				// keep it unselected
+			}
+			group.add(item);
+			themeMenu.add(item);
+		}
+
 		setTitle("Translation Editor");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -499,54 +547,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		constraints.gridy++;
 		constraints.insets = closeInsets;
 		buttonPanel.add(reset, constraints);
-
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-
-		JMenu themeMenu = new JMenu("Theme");
-		menuBar.add(themeMenu);
-		ButtonGroup group = new ButtonGroup();
-		String currentTheme = config.getProperty(CONFIG_THEME,
-				UIManager.getSystemLookAndFeelClassName());
-		for (final LookAndFeelInfo theme : UIManager.getInstalledLookAndFeels()) {
-			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(
-					new AbstractAction(theme.getName()) {
-
-						@Override
-						public void actionPerformed(ActionEvent event) {
-							try {
-								UIManager.setLookAndFeel(theme.getClassName());
-								SwingUtilities
-										.updateComponentTreeUI(Editor.this);
-								Editor.this.setSize(Editor.this.getSize());
-
-								String name = theme.getClassName();
-								config.setProperty(CONFIG_THEME, name);
-								logger.info("Apply theme: " + name);
-							} catch (ClassNotFoundException
-									| InstantiationException
-									| IllegalAccessException
-									| UnsupportedLookAndFeelException ex) {
-								logger.log(Level.SEVERE, null, ex);
-							}
-						}
-					});
-
-			if (theme.getClassName().equals(currentTheme)) {
-				item.setSelected(true);
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						item.getAction().actionPerformed(null);
-					}
-				});
-			} else {
-				// keep it unselected
-			}
-			group.add(item);
-			themeMenu.add(item);
-		}
 
 		return buttonPanel;
 	}
