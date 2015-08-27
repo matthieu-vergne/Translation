@@ -418,16 +418,21 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 					public void run() {
 						if (selection[0] != null) {
 							TreePath path = selection[0];
-							@SuppressWarnings("unchecked")
-							MapID id = ((MapTreeNode<MapID>) path
-									.getLastPathComponent()).getMapID();
-							Collection<MapID> ids = listModel
-									.getCurrentMapIDs();
-							if (ids.contains(id)) {
-								tree.clearSelection();
-								tree.setSelectionPath(selection[0]);
+							Object selectedNode = path.getLastPathComponent();
+							if (selectedNode instanceof MapTreeNode) {
+								@SuppressWarnings("unchecked")
+								MapID id = ((MapTreeNode<MapID>) selectedNode)
+										.getMapID();
+								Collection<MapID> ids = listModel
+										.getCurrentMapIDs();
+								if (ids.contains(id)) {
+									tree.clearSelection();
+									tree.setSelectionPath(selection[0]);
+								} else {
+									// still present
+								}
 							} else {
-								// still present
+								// not a map, ignore its selection
 							}
 						} else {
 							// no selection to recover
