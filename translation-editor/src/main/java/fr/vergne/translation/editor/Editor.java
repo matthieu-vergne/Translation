@@ -222,17 +222,21 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 							@Override
 							public void actionPerformed(ActionEvent arg0) {
-								boolean selected = displayCleared.isSelected();
-								Editor.config
-										.setProperty(CONFIG_CLEARED_DISPLAYED,
-												"" + selected);
-								listPanel.setClearedDisplayed(selected);
+								boolean isClearedDisplay = displayCleared
+										.isSelected();
+								Editor.config.setProperty(
+										CONFIG_CLEARED_DISPLAYED, ""
+												+ isClearedDisplay);
+								listPanel.setClearedDisplayed(isClearedDisplay);
 							}
 						});
-						displayCleared.setSelected(Boolean
+						boolean isClearedDisplayed = Boolean
 								.parseBoolean(Editor.config.getProperty(
-										CONFIG_CLEARED_DISPLAYED, "true")));
+										CONFIG_CLEARED_DISPLAYED, "true"));
+						displayCleared.setSelected(isClearedDisplayed);
 						displayCleared.setToolTipText("Display cleared maps.");
+						listPanel.setClearedDisplayed(isClearedDisplayed);
+						logger.fine("Clear display status: "+isClearedDisplayed);
 						listMenu.add(displayCleared);
 
 						listMenu.addSeparator();
