@@ -103,6 +103,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 	public Editor(ProjectLoader<TProject> projectLoader,
 			MapComponentFactory<?> mapComponentFactory) {
+		// TODO rename as ConfigurationProvider
+		// TODO use it instead of the static config
 		toolProvider = new ToolProvider<MapID>() {
 
 			@Override
