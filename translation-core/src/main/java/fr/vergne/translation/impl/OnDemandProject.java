@@ -108,7 +108,7 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 				public void translationUpdated(String newTranslation) {
 					modifiedMaps.add(map);
 				}
-				
+
 				@Override
 				public void translationStored() {
 					// ignored
@@ -120,7 +120,7 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 				public <T> void fieldUpdated(Field<T> field, T newValue) {
 					modifiedMaps.add(map);
 				}
-				
+
 				@Override
 				public <T> void fieldStored(Field<T> field) {
 					// ignored

@@ -112,7 +112,7 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 				public void translationUpdated(String newTranslation) {
 					modifiedMaps.add(map);
 				}
-				
+
 				@Override
 				public void translationStored() {
 					// ignored
@@ -124,7 +124,7 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 				public <T> void fieldUpdated(Field<T> field, T newValue) {
 					modifiedMaps.add(map);
 				}
-				
+
 				@Override
 				public <T> void fieldStored(Field<T> field) {
 					// ignored
