@@ -7,6 +7,7 @@ import java.util.Iterator;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.util.Feature;
+import fr.vergne.translation.util.MapNamer;
 
 public class EmptyProject<MapID, Map extends TranslationMap<?>> implements
 		TranslationProject<MapID, Map> {
@@ -23,9 +24,8 @@ public class EmptyProject<MapID, Map extends TranslationMap<?>> implements
 	}
 
 	@Override
-	public String getMapName(MapID id) {
-		throw new RuntimeException("This project is empty, there is no map "
-				+ id);
+	public Collection<MapNamer<MapID>> getMapNamers() {
+		return Collections.emptyList();
 	}
 
 	@Override

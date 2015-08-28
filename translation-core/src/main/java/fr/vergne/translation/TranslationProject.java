@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import fr.vergne.translation.util.Feature;
+import fr.vergne.translation.util.MapNamer;
 
 public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 		extends Iterable<MapID> {
@@ -26,19 +27,15 @@ public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 	public Map getMap(MapID id);
 
 	/**
-	 * This method allows to know the purpose of a given {@link Map}. A
-	 * {@link Map} corresponding to a set of {@link TranslationEntry}s which
-	 * share the same purpose, this purpose should be known in some way. Because
-	 * this purpose is decided before to create the {@link Map} (the {@link Map}
-	 * is made in a given way <i>because</i> we want it to have a given
-	 * purpose), thus it is an information which relates to the full
-	 * {@link TranslationProject}, which represents the context in which this
-	 * purpose makes sense. For practicality, the purpose is represented as a
-	 * name for the {@link Map}, so it can be used easily for display.
+	 * This method aims at providing the different naming strategies relevant to
+	 * this {@link TranslationProject}. Several naming strategies may be used
+	 * for instance because they provide different facilities: use file names to
+	 * retrieve the data on the file system, use titles to identify the purpose
+	 * of the {@link TranslationMap}, etc.
 	 * 
-	 * @return the name of a given {@link Map}
+	 * @return the {@link MapNamer}s relevant for this project.
 	 */
-	public String getMapName(MapID id);
+	public Collection<MapNamer<MapID>> getMapNamers();
 
 	/**
 	 * @return the number of {@link Map}s in this {@link TranslationProject}

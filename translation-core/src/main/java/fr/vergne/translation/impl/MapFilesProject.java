@@ -19,6 +19,7 @@ import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.util.Feature;
+import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.MultiReader;
 import fr.vergne.translation.util.Writer;
 
@@ -159,15 +160,15 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 		modifiedMaps.clear();
 	}
 
-	private final Map<File, String> mapNames = new HashMap<>();
+	private final Collection<MapNamer<File>> mapNamers = new LinkedHashSet<>();
 
 	@Override
-	public String getMapName(File id) {
-		return mapNames.get(id);
+	public Collection<MapNamer<File>> getMapNamers() {
+		return mapNamers;
 	}
 
-	public void setMapName(File id, String name) {
-		mapNames.put(id, name);
+	public void addMapNamer(MapNamer<File> namer) {
+		mapNamers.add(namer);
 	}
 
 	private final Collection<Feature> features = new LinkedHashSet<>();

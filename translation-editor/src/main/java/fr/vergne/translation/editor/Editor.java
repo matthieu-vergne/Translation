@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,11 +27,13 @@ import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
@@ -48,6 +51,7 @@ import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.editor.MapListPanel.MapSelectedListener;
+import fr.vergne.translation.editor.ProjectLoaderPanel.ProjectLoadedListener;
 import fr.vergne.translation.editor.content.EntryComponentFactory;
 import fr.vergne.translation.editor.content.FilterAction;
 import fr.vergne.translation.editor.content.MapComponentFactory;
@@ -56,9 +60,13 @@ import fr.vergne.translation.editor.content.SimpleMapComponent;
 import fr.vergne.translation.editor.tool.FileBasedProperties;
 import fr.vergne.translation.editor.tool.Search;
 import fr.vergne.translation.editor.tool.ToolProvider;
+import fr.vergne.translation.impl.EmptyProject;
 import fr.vergne.translation.impl.TranslationUtil;
 import fr.vergne.translation.util.EntryFilter;
+import fr.vergne.translation.util.Feature;
+import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.ProjectLoader;
+import fr.vergne.translation.util.impl.DefaultMapNamer;
 
 @SuppressWarnings("serial")
 public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<MapID, TMap>>
@@ -79,13 +87,19 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private static final String CONFIG_HEIGHT = "height";
 	private static final String CONFIG_SPLIT = "split";
 	private static final String CONFIG_THEME = "theme";
+	private static final String CONFIG_MAP_NAMER = "mapNamer";
+	private static final String CONFIG_MAP_DIR = "mapDir";
+	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
 	// TODO make config non-static
 	public static final FileBasedProperties config = new FileBasedProperties(
 			"vh-editor.ini", true);
 	private final ToolProvider<MapID> toolProvider;
+	private final ProjectLoaderPanel<TProject> projectPanel;
 	private final MapListPanel<TEntry, TMap, MapID, TProject> listPanel;
 	private final MapContentPanel<MapID> mapPanel;
 	private final JPanel filters;
+	private TranslationProject<MapID, TMap> currentProject = new EmptyProject<>();
+	private final DefaultMapNamer<MapID> defaultMapNamer = new DefaultMapNamer<>();
 
 	public Editor(ProjectLoader<TProject> projectLoader,
 			MapComponentFactory<?> mapComponentFactory) {
@@ -94,6 +108,11 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			@Override
 			public TranslationProject<MapID, ?> getProject() {
 				return listPanel.getProject();
+			}
+
+			@Override
+			public MapNamer<MapID> getMapNamer() {
+				return retrieveCurrentMapNamer();
 			}
 
 			@Override
@@ -154,14 +173,99 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 
-		listPanel = new MapListPanel<>(projectLoader);
-		listPanel.addListener(new MapSelectedListener<MapID>() {
+		listPanel = new MapListPanel<>(toolProvider);
+		listPanel.addMapSelectedListener(new MapSelectedListener<MapID>() {
 
 			@Override
 			public void mapSelected(MapID id) {
 				toolProvider.loadMap(id);
 			}
 		});
+
+		projectPanel = new ProjectLoaderPanel<>(projectLoader);
+		final JMenu projectMenu = new JMenu("Project");
+		final JMenu listMenu = new JMenu("List");
+		projectPanel
+				.addProjectLoadedListener(new ProjectLoadedListener<TProject>() {
+
+					@Override
+					public void projectLoaded(File directory, TProject project) {
+						Editor.config.setProperty(CONFIG_MAP_DIR,
+								directory.toString());
+						currentProject = project;
+						logger.info("Project loaded: " + project);
+
+						projectMenu.removeAll();
+						listMenu.removeAll();
+
+						for (final Feature feature : project.getFeatures()) {
+							logger.fine("Adding project feature: "
+									+ feature.getName());
+							JMenuItem item = new JMenuItem(new AbstractAction(
+									feature.getName()) {
+
+								@Override
+								public void actionPerformed(ActionEvent arg0) {
+									feature.run();
+								}
+							});
+							item.setToolTipText(formatTooltip(feature
+									.getDescription()));
+							projectMenu.add(item);
+						}
+
+						logger.fine("Adding list clear display");
+						final JCheckBoxMenuItem displayCleared = new JCheckBoxMenuItem();
+						displayCleared.setAction(new AbstractAction("Cleared") {
+
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								boolean selected = displayCleared.isSelected();
+								Editor.config
+										.setProperty(CONFIG_CLEARED_DISPLAYED,
+												"" + selected);
+								listPanel.setClearedDisplayed(selected);
+							}
+						});
+						displayCleared.setSelected(Boolean
+								.parseBoolean(Editor.config.getProperty(
+										CONFIG_CLEARED_DISPLAYED, "true")));
+						displayCleared.setToolTipText("Display cleared maps.");
+						listMenu.add(displayCleared);
+
+						listMenu.addSeparator();
+						MapNamer<MapID> currentNamer = retrieveCurrentMapNamer();
+						ButtonGroup group = new ButtonGroup();
+						for (final MapNamer<MapID> namer : project
+								.getMapNamers()) {
+							logger.fine("Adding list namer: " + namer.getName());
+							final JRadioButtonMenuItem nameItem = new JRadioButtonMenuItem(
+									new AbstractAction(namer.getName()) {
+
+										@Override
+										public void actionPerformed(
+												ActionEvent e) {
+											Editor.config.setProperty(
+													CONFIG_MAP_NAMER,
+													namer.getName());
+											listPanel.requestUpdate();
+										}
+									});
+							if (namer.equals(currentNamer)) {
+								nameItem.setSelected(true);
+								logger.fine("Set as current namer.");
+							} else {
+								// let it unselected
+							}
+							nameItem.setToolTipText(formatTooltip(namer
+									.getDescription()));
+							group.add(nameItem);
+							listMenu.add(nameItem);
+						}
+
+						listPanel.setProject(project);
+					}
+				});
 
 		mapPanel.addUpdateListener(new MapContentPanel.MapUpdateListener<MapID>() {
 
@@ -207,19 +311,27 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		constraints.weighty = 1;
 		translationPanel.add(mapPanel, constraints);
 
+		JPanel leftPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints2 = new GridBagConstraints();
+		constraints2.gridx = 0;
+		constraints2.gridy = 0;
+		constraints2.fill = GridBagConstraints.HORIZONTAL;
+		constraints2.weightx = 1;
+		leftPanel.add(projectPanel, constraints2);
+		constraints2.gridy++;
+		constraints2.fill = GridBagConstraints.BOTH;
+		constraints2.weighty = 1;
+		leftPanel.add(listPanel, constraints2);
+
 		final JSplitPane rootSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		rootSplit.setLeftComponent(listPanel);
+		rootSplit.setLeftComponent(leftPanel);
 		rootSplit.setRightComponent(translationPanel);
 		rootSplit.setResizeWeight(1.0 / 3);
 
 		setLayout(new GridLayout(1, 1));
 		add(rootSplit);
 
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-
 		JMenu themeMenu = new JMenu("Theme");
-		menuBar.add(themeMenu);
 		ButtonGroup group = new ButtonGroup();
 		String currentTheme = config.getProperty(CONFIG_THEME,
 				UIManager.getSystemLookAndFeelClassName());
@@ -263,13 +375,30 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			themeMenu.add(item);
 		}
 
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(projectMenu);
+		menuBar.add(listMenu);
+		menuBar.add(themeMenu);
+		setJMenuBar(menuBar);
+
 		setTitle("Translation Editor");
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
+		String projectPath = Editor.config.getProperty(CONFIG_MAP_DIR, null);
+		if (projectPath == null) {
+			// nothing to load
+		} else {
+			projectPanel.setProjectPath(new File(projectPath));
+		}
+
 		pack();
 
 		finalizeConfig(rootSplit);
+	}
+
+	private String formatTooltip(String description) {
+		return "<html><p width=\"300px\">" + description + "</p></html>";
 	}
 
 	public Editor(ProjectLoader<TProject> projectLoader,
@@ -346,7 +475,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				FilterAction<?> filterAction = (FilterAction<?>) comboBox
 						.getSelectedItem();
 				EntryFilter<?> filter = filterAction.getFilter();
-				nextButton.setToolTipText(filter.getDescription());
+				nextButton.setToolTipText(formatTooltip(filter.getDescription()));
 				logger.info("Select filter: " + filterAction);
 				config.setProperty(CONFIG_FILTER, "" + filterAction);
 			}
@@ -550,4 +679,24 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 		return buttonPanel;
 	}
+
+	private MapNamer<MapID> retrieveCurrentMapNamer() {
+		Collection<MapNamer<MapID>> namers = currentProject.getMapNamers();
+		if (namers.isEmpty()) {
+			return defaultMapNamer;
+		} else {
+			MapNamer<MapID> defaultNamer = namers.iterator().next();
+			String id = Editor.config.getProperty(CONFIG_MAP_NAMER,
+					defaultNamer.getName());
+			for (MapNamer<MapID> namer : namers) {
+				if (namer.getName().equals(id)) {
+					return namer;
+				} else {
+					// not found yet
+				}
+			}
+			return defaultNamer;
+		}
+	}
+
 }

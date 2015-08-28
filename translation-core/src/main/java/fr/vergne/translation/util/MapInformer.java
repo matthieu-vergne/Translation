@@ -1,6 +1,8 @@
 package fr.vergne.translation.util;
 
 public interface MapInformer<MapID> {
+	
+	public String getName(MapID mapId) throws NoDataException;
 
 	public int getEntriesCount(MapID mapId) throws NoDataException;
 

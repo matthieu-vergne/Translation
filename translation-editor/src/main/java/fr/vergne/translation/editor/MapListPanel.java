@@ -1,18 +1,12 @@
 package fr.vergne.translation.editor;
 
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,19 +18,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -50,28 +36,20 @@ import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.editor.ListModel.MapsChangedListener;
 import fr.vergne.translation.editor.content.MapCellRenderer;
 import fr.vergne.translation.editor.content.MapTreeNode;
+import fr.vergne.translation.editor.tool.ToolProvider;
 import fr.vergne.translation.impl.EmptyProject;
 import fr.vergne.translation.impl.TranslationUtil;
-import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapInformer;
 import fr.vergne.translation.util.MapInformer.MapSummaryListener;
 import fr.vergne.translation.util.MapInformer.NoDataException;
-import fr.vergne.translation.util.MapNamer;
-import fr.vergne.translation.util.ProjectLoader;
 
 @SuppressWarnings("serial")
 public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, MapID, TProject extends TranslationProject<MapID, TMap>>
 		extends JPanel {
 
-	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
-	private static final String CONFIG_LABELS_DISPLAYED = "labelsDisplayed";
-	private static final String CONFIG_LIST_ORDER = "listOrder";
-	private static final String CONFIG_MAP_DIR = "mapDir";
 	public static final Logger logger = Logger.getLogger(MapListPanel.class
 			.getName());
-	private final JTextField folderPathField = new JTextField();
 	private final JTree tree;
-	private final Map<Order, MapNamer<MapID>> namers = new HashMap<Order, MapNamer<MapID>>();
 	private final Map<MapID, MapSummary> mapSummaries = Collections
 			.synchronizedMap(new HashMap<MapID, MapSummary>());
 	private final Collection<MapSummaryListener<MapID>> mapSummaryListeners = new HashSet<MapSummaryListener<MapID>>();
@@ -83,15 +61,16 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 					return id1.toString().compareToIgnoreCase(id2.toString());
 				}
 			});
-	private final ProjectLoader<TProject> projectLoader;
 	private TranslationProject<MapID, TMap> currentProject = new EmptyProject<>();
-	private final Collection<MapListListener> listeners = new HashSet<MapListListener>();
-	private final JPanel featureRow = new JPanel(new FlowLayout());
+	private final Collection<MapSelectedListener<MapID>> listeners = new HashSet<>();
 
-	public MapListPanel(ProjectLoader<TProject> projectLoader) {
-		this.projectLoader = projectLoader;
-
+	public MapListPanel(final ToolProvider<MapID> toolProvider) {
 		final MapInformer<MapID> mapInformer = new MapInformer<MapID>() {
+
+			@Override
+			public String getName(MapID mapId) throws NoDataException {
+				return toolProvider.getMapNamer().getNameFor(mapId);
+			}
 
 			@Override
 			public int getEntriesCount(MapID id) throws NoDataException {
@@ -163,229 +142,19 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 			}
 		};
 
-		final MapNamer<MapID> labelNamer = new MapNamer<MapID>() {
-
-			@Override
-			public String getNameFor(MapID id) {
-				String label = currentProject.getMapName(id);
-				if (label == null) {
-					return "[" + id + "]";
-				} else {
-					return label;
-				}
-			}
-		};
-		namers.put(Order.LABEL, labelNamer);
-		final MapNamer<MapID> idNamer = new MapNamer<MapID>() {
-
-			@Override
-			public String getNameFor(MapID id) {
-				return id.toString();
-			}
-		};
-		namers.put(Order.ID, idNamer);
-
-		setBorder(new EtchedBorder());
-
-		setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.weightx = 1;
-		add(buildFileChooserPanel(), constraints);
-
-		constraints.gridy++;
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.weighty = 1;
-		tree = buildTreeComponent(mapInformer, idNamer, labelNamer);
-		add(new JScrollPane(tree), constraints);
-
-		constraints.gridy++;
-		constraints.fill = GridBagConstraints.NONE;
-		constraints.weighty = 0;
-		JPanel options = buildQuickOptions(labelNamer, idNamer);
-		add(options, constraints);
+		setLayout(new GridLayout(1, 1));
+		tree = buildTreeComponent(mapInformer);
+		add(new JScrollPane(tree));
 
 		configureBackgroundSummarizing();
-		String projectPath = Editor.config.getProperty(CONFIG_MAP_DIR, null);
-		if (projectPath == null) {
-			// nothing to load
-		} else {
-			loadProjectFrom(new File(projectPath));
-		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private JPanel buildQuickOptions(final MapNamer<MapID> labelNamer,
-			final MapNamer<MapID> idNamer) {
-		JPanel buttons = new JPanel(new GridLayout(0, 1));
-		JPanel options = new JPanel(new FlowLayout());
-		buttons.add(options);
-		buttons.add(featureRow);
-
-		final JCheckBox displayCleared = new JCheckBox();
-		displayCleared.setAction(new AbstractAction("Cleared") {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				boolean selected = displayCleared.isSelected();
-				Editor.config.setProperty(CONFIG_CLEARED_DISPLAYED, ""
-						+ selected);
-				((ListModel<MapID>) tree.getModel())
-						.setClearedDisplayed(selected);
-			}
-		});
-		displayCleared.setSelected(((ListModel<MapID>) tree.getModel())
-				.isClearedDisplayed());
-		displayCleared.setToolTipText("Display cleared maps.");
-		options.add(displayCleared);
-
-		final JCheckBox displayLabels = new JCheckBox();
-		displayLabels.setAction(new AbstractAction("Labels") {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				boolean selected = displayLabels.isSelected();
-				Editor.config.setProperty(CONFIG_LABELS_DISPLAYED, ""
-						+ selected);
-				((MapCellRenderer<MapID>) tree.getCellRenderer())
-						.setMapNamer(selected ? labelNamer : idNamer);
-
-				((ListModel<MapID>) tree.getModel()).requestUpdate();
-			}
-		});
-		displayLabels.setSelected(Boolean.parseBoolean(Editor.config
-				.getProperty(CONFIG_LABELS_DISPLAYED, "false")));
-		displayLabels.setToolTipText("Display maps' English labels.");
-		options.add(displayLabels);
-
-		final JComboBox<Order> sortingChoice = new JComboBox<>(Order.values());
-		sortingChoice.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Order order = (Order) sortingChoice.getSelectedItem();
-				Editor.config.setProperty(CONFIG_LIST_ORDER, "" + order);
-				((ListModel<MapID>) tree.getModel()).setOrderNamer(namers
-						.get(order));
-			}
-		});
-		try {
-			sortingChoice.setSelectedItem(Order.valueOf(Editor.config
-					.getProperty(CONFIG_LIST_ORDER, Order.ID.toString())));
-		} catch (IllegalArgumentException e) {
-			sortingChoice.setSelectedItem(Order.ID);
-		}
-		sortingChoice.setToolTipText("Choose map sorting order.");
-		options.add(new JLabel("Sort: "));
-		options.add(sortingChoice);
-
-		return buttons;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void loadProjectFrom(File directory) {
-		synchronized (mapSummaries) {
-			currentProject = projectLoader.load(directory);
-
-			featureRow.removeAll();
-			for (final Feature feature : currentProject.getFeatures()) {
-				JButton featureButton = new JButton();
-				featureButton.setAction(new AbstractAction(feature.getName()) {
-
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						feature.run();
-					}
-				});
-				featureButton.setToolTipText(feature.getDescription());
-				featureRow.add(featureButton);
-			}
-
-			Collection<MapID> newIDs = new LinkedList<>();
-			for (MapID id : currentProject) {
-				newIDs.add(id);
-			}
-
-			if (currentIDs.containsAll(newIDs)
-					&& newIDs.containsAll(currentIDs)) {
-				// same IDs, don't change
-			} else {
-				Collection<MapID> removed = new LinkedList<MapID>(currentIDs);
-				removed.removeAll(newIDs);
-				for (MapID id : removed) {
-					mapSummaries.remove(id);
-				}
-				currentIDs.clear();
-				currentIDs.addAll(newIDs);
-
-				Editor.config.setProperty(CONFIG_MAP_DIR, directory.toString());
-				folderPathField.setText(directory.toString());
-				((ListModel<MapID>) tree.getModel()).setMaps(currentIDs);
-			}
-		}
-	}
-
-	private JPanel buildFileChooserPanel() {
-		folderPathField.setEditable(false);
-		folderPathField.setText("Map folder...");
-
-		JButton openButton = new JButton(new AbstractAction("Browse") {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String path = folderPathField.getText();
-				JFileChooser fileChooser = new JFileChooser(new File(path
-						.isEmpty() ? "." : path));
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fileChooser.setFileHidingEnabled(true);
-				fileChooser.setMultiSelectionEnabled(false);
-				int answer = fileChooser.showDialog(MapListPanel.this, "Open");
-				if (answer == JFileChooser.APPROVE_OPTION) {
-					loadProjectFrom(fileChooser.getSelectedFile());
-				} else {
-					// do not consider it
-				}
-			}
-		});
-		openButton
-				.setToolTipText("Select the folder of the translation project.");
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		panel.add(openButton, constraints);
-		constraints.gridx = 0;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.weightx = 1;
-		panel.add(folderPathField, constraints);
-		return panel;
-	}
-
-	private JTree buildTreeComponent(MapInformer<MapID> mapInformer,
-			final MapNamer<MapID> idNamer, final MapNamer<MapID> labelNamer) {
-		final ListModel<MapID> listModel = new ListModel<MapID>(mapInformer,
-				namers.values());
-		listModel.setClearedDisplayed(Boolean.parseBoolean(Editor.config
-				.getProperty(CONFIG_CLEARED_DISPLAYED, "true")));
-		Order order;
-		try {
-			order = Order.valueOf(Editor.config.getProperty(CONFIG_LIST_ORDER,
-					Order.ID.toString()));
-		} catch (IllegalArgumentException e) {
-			order = Order.ID;
-		}
-		listModel.setOrderNamer(namers.get(order));
+	private JTree buildTreeComponent(MapInformer<MapID> mapInformer) {
+		final ListModel<MapID> listModel = new ListModel<MapID>(mapInformer);
 		final JTree tree = new JTree(listModel);
 
 		MapCellRenderer<MapID> cellRenderer = new MapCellRenderer<MapID>(
 				tree.getCellRenderer(), mapInformer);
-		boolean isLabelDisplayed = Boolean.parseBoolean(Editor.config
-				.getProperty(CONFIG_LABELS_DISPLAYED, "false"));
-		cellRenderer.setMapNamer(isLabelDisplayed ? labelNamer : idNamer);
 		tree.setCellRenderer(cellRenderer);
 
 		tree.setRootVisible(true);
@@ -483,7 +252,6 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				// nothing to do
 			}
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void mouseClicked(MouseEvent event) {
 				synchronized (mapSummaries) {
@@ -492,13 +260,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 						MapID id = getSelectedID(tree);
 						if (id != null) {
 							updateMapSummary(id, false);
-							for (MapListListener listener : listeners) {
-								if (listener instanceof MapSelectedListener) {
-									((MapSelectedListener<MapID>) listener)
-											.mapSelected(id);
-								} else {
-									// not the right listener
-								}
+							for (MapSelectedListener<MapID> listener : listeners) {
+								listener.mapSelected(id);
 							}
 						} else {
 							// nothing to do
@@ -672,6 +435,34 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		});
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setProject(TranslationProject<MapID, TMap> currentProject) {
+		this.currentProject = currentProject;
+
+		Collection<MapID> newIDs = new LinkedList<>();
+		for (MapID id : currentProject) {
+			newIDs.add(id);
+		}
+
+		if (currentIDs.containsAll(newIDs) && newIDs.containsAll(currentIDs)) {
+			// same IDs, don't change
+		} else {
+			Collection<MapID> removed = new LinkedList<MapID>(currentIDs);
+			removed.removeAll(newIDs);
+			for (MapID id : removed) {
+				mapSummaries.remove(id);
+			}
+			currentIDs.clear();
+			currentIDs.addAll(newIDs);
+
+			((ListModel<MapID>) tree.getModel()).setMaps(currentIDs);
+		}
+	}
+
+	public TranslationProject<MapID, TMap> getProject() {
+		return currentProject;
+	}
+
 	public void updateMapSummary(final MapID id, boolean force) {
 		synchronized (mapSummaries) {
 			if (!force && mapSummaries.get(id) != null) {
@@ -710,23 +501,16 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		}
 	}
 
-	public void addListener(MapListListener listener) {
+	public void addMapSelectedListener(MapSelectedListener<MapID> listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListener(MapListListener listener) {
+	public void removeMapSelectedListener(MapSelectedListener<MapID> listener) {
 		listeners.remove(listener);
 	}
 
-	public static interface MapListListener {
-	}
-
-	public static interface MapSelectedListener<MapID> extends MapListListener {
+	public static interface MapSelectedListener<MapID> {
 		public void mapSelected(MapID id);
-	}
-
-	public TranslationProject<MapID, ? extends TranslationMap<?>> getProject() {
-		return currentProject;
 	}
 
 	public void setModifiedStatus(MapID id, boolean isModified) {
@@ -736,20 +520,14 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		}
 	}
 
-	/**
-	 * Sorting used to display the list of maps.
-	 * 
-	 * @author Matthieu VERGNE <matthieu.vergne@gmail.com>
-	 * 
-	 */
-	private static enum Order {
-		/**
-		 * Order the maps based on their IDs.
-		 */
-		ID,
-		/**
-		 * Order the maps based on their label.
-		 */
-		LABEL
+	@SuppressWarnings("unchecked")
+	public void requestUpdate() {
+		((ListModel<MapID>) tree.getModel()).requestUpdate();
 	}
+
+	@SuppressWarnings("unchecked")
+	public void setClearedDisplayed(boolean isDisplayed) {
+		((ListModel<MapID>) tree.getModel()).setClearedDisplayed(isDisplayed);
+	}
+
 }

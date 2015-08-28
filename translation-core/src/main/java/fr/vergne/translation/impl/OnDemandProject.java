@@ -18,6 +18,7 @@ import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.util.Feature;
+import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.MultiReader;
 import fr.vergne.translation.util.Writer;
 
@@ -155,15 +156,15 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 		modifiedMaps.clear();
 	}
 
-	private final Map<TMapID, String> mapNames = new HashMap<>();
+	private final Collection<MapNamer<TMapID>> mapNamers = new LinkedHashSet<>();
 
 	@Override
-	public String getMapName(TMapID id) {
-		return mapNames.get(id);
+	public Collection<MapNamer<TMapID>> getMapNamers() {
+		return mapNamers;
 	}
 
-	public void setMapName(TMapID id, String name) {
-		mapNames.put(id, name);
+	public void addMapNamer(MapNamer<TMapID> namer) {
+		mapNamers.add(namer);
 	}
 
 	private final Collection<Feature> features = new LinkedHashSet<>();

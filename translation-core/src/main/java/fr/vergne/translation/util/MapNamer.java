@@ -18,6 +18,18 @@ public interface MapNamer<MapID> {
 
 	/**
 	 * 
+	 * @return the name of this {@link MapNamer}
+	 */
+	public String getName();
+
+	/**
+	 * 
+	 * @return the detailed purpose of this {@link MapNamer}
+	 */
+	public String getDescription();
+
+	/**
+	 * 
 	 * @param id
 	 *            the ID of the {@link TranslationMap}
 	 * @return the name of the {@link TranslationMap}

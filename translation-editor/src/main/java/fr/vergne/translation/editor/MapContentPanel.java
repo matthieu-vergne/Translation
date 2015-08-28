@@ -33,6 +33,7 @@ import fr.vergne.translation.editor.content.MapComponentFactory;
 import fr.vergne.translation.editor.content.MapComponentFactory.MapComponent;
 import fr.vergne.translation.editor.tool.ToolProvider;
 import fr.vergne.translation.impl.EmptyMap;
+import fr.vergne.translation.util.MapNamer;
 
 @SuppressWarnings("serial")
 public class MapContentPanel<MapID> extends JPanel {
@@ -162,7 +163,8 @@ public class MapContentPanel<MapID> extends JPanel {
 		} else {
 			alignStoredAndCurrentValues();
 
-			loadingLabel.setText("Loading map " + mapId + "...");
+			loadingLabel.setText("Loading map "
+					+ toolProvider.getMapNamer().getNameFor(mapId) + "...");
 			loading.start();
 			SwingUtilities.invokeLater(new Runnable() {
 
@@ -218,10 +220,8 @@ public class MapContentPanel<MapID> extends JPanel {
 						MapContentPanel.this.currentMap = newMap;
 						MapContentPanel.this.currentMapId = mapId;
 
-						String name = toolProvider.getProject().getMapName(
-								mapId);
-						mapTitleField.setText("<html><center>" + mapId + "<br>"
-								+ name + "</center></html>");
+						MapNamer<MapID> mapNamer = toolProvider.getMapNamer();
+						mapTitleField.setText(mapNamer.getNameFor(mapId));
 
 						mapComponent = mapFactory.createMapComponent(newMap);
 						for (int index = 0; index < newMap.size(); index++) {

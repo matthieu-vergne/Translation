@@ -10,7 +10,6 @@ import javax.swing.tree.TreeCellRenderer;
 
 import fr.vergne.translation.util.MapInformer;
 import fr.vergne.translation.util.MapInformer.NoDataException;
-import fr.vergne.translation.util.MapNamer;
 
 public class MapCellRenderer<MapID> implements TreeCellRenderer {
 
@@ -33,7 +32,13 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 			@SuppressWarnings("unchecked")
 			MapID id = ((MapTreeNode<MapID>) cell).getMapID();
 			String description = buildDescription(id);
-			String label = mapNamer.getNameFor(id) + " (" + description + ")";
+			String mapName;
+			try {
+				mapName = informer.getName(id);
+			} catch (NoDataException e) {
+				throw new RuntimeException(e);
+			}
+			String label = mapName + " (" + description + ")";
 			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) basicRenderer
 					.getTreeCellRendererComponent(tree, label, selected,
 							expanded, leaf, row, hasFocus);
@@ -93,21 +98,5 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 			description = "loading";
 		}
 		return description;
-	}
-
-	private MapNamer<MapID> mapNamer = new MapNamer<MapID>() {
-
-		@Override
-		public String getNameFor(MapID id) {
-			return id.toString();
-		}
-	};
-
-	public void setMapNamer(MapNamer<MapID> mapNamer) {
-		this.mapNamer = mapNamer;
-	}
-
-	public MapNamer<MapID> getMapNamer() {
-		return mapNamer;
 	}
 }
