@@ -20,4 +20,9 @@ public class NoTranslationFilter<TEntry extends TranslationEntry<?>> implements
 	public boolean isRelevant(TEntry entry) {
 		return !TranslationUtil.isActuallyTranslated(entry);
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
