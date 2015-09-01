@@ -184,7 +184,7 @@ public class MapFilesProject<TEntry extends TranslationEntry<? extends Translati
 		features.add(feature);
 	}
 
-	private final Collection<EntryFilter<TEntry>> filters = new HashSet<EntryFilter<TEntry>>();
+	private final Collection<EntryFilter<TEntry>> filters = new LinkedHashSet<EntryFilter<TEntry>>();
 
 	@Override
 	public Collection<EntryFilter<TEntry>> getEntryFilters() {
