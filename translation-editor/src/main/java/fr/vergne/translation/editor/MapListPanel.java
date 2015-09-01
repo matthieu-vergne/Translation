@@ -44,7 +44,7 @@ import fr.vergne.translation.util.MapInformer.MapSummaryListener;
 import fr.vergne.translation.util.MapInformer.NoDataException;
 
 @SuppressWarnings("serial")
-public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, MapID, TProject extends TranslationProject<MapID, TMap>>
+public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, MapID, TProject extends TranslationProject<TEntry, MapID, TMap>>
 		extends JPanel {
 
 	public static final Logger logger = Logger.getLogger(MapListPanel.class
@@ -61,7 +61,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 					return id1.toString().compareToIgnoreCase(id2.toString());
 				}
 			});
-	private TranslationProject<MapID, TMap> currentProject = new EmptyProject<>();
+	private TranslationProject<TEntry, MapID, TMap> currentProject = new EmptyProject<>();
 	private final Collection<MapSelectedListener<MapID>> listeners = new HashSet<>();
 
 	public MapListPanel(final ToolProvider<MapID> toolProvider) {
@@ -436,7 +436,8 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setProject(TranslationProject<MapID, TMap> currentProject) {
+	public void setProject(
+			TranslationProject<TEntry, MapID, TMap> currentProject) {
 		this.currentProject = currentProject;
 
 		Collection<MapID> newIDs = new LinkedList<>();
@@ -459,7 +460,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		}
 	}
 
-	public TranslationProject<MapID, TMap> getProject() {
+	public TranslationProject<TEntry, MapID, TMap> getProject() {
 		return currentProject;
 	}
 

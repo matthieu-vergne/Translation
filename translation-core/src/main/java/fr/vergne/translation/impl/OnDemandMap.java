@@ -1,7 +1,6 @@
 package fr.vergne.translation.impl;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,7 +12,6 @@ import fr.vergne.translation.TranslationEntry.TranslationListener;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
-import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.MultiReader;
 import fr.vergne.translation.util.Reader;
 import fr.vergne.translation.util.Writer;
@@ -166,17 +164,6 @@ public class OnDemandMap<Entry extends TranslationEntry<?>> implements
 			entry.resetAll();
 		}
 		modifiedEntries.clear();
-	}
-
-	private final Collection<EntryFilter<Entry>> filters = new HashSet<EntryFilter<Entry>>();
-
-	@Override
-	public Collection<EntryFilter<Entry>> getEntryFilters() {
-		return filters;
-	}
-
-	public void addEntryFilter(EntryFilter<Entry> filter) {
-		filters.add(filter);
 	}
 
 	@Override

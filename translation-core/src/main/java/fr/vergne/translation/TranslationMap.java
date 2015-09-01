@@ -1,10 +1,7 @@
 package fr.vergne.translation;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Iterator;
-
-import fr.vergne.translation.util.EntryFilter;
 
 /**
  * A {@link TranslationMap} describes a purpose-dedicated set of
@@ -60,11 +57,4 @@ public interface TranslationMap<Entry extends TranslationEntry<?>> extends
 	 * of calling each one separately.
 	 */
 	public void resetAll();
-
-	/**
-	 * 
-	 * @return the {@link EntryFilter}s which can be used to search for
-	 *         particular {@link TranslationEntry}s.
-	 */
-	public Collection<EntryFilter<Entry>> getEntryFilters();
 }

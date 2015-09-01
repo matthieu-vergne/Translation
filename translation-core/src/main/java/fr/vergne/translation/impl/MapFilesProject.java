@@ -18,6 +18,7 @@ import fr.vergne.translation.TranslationMetadata;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.TranslationProject;
+import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.MultiReader;
@@ -36,13 +37,14 @@ import fr.vergne.translation.util.Writer;
  * @author Matthieu VERGNE <matthieu.vergne@gmail.com>
  * 
  */
-public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEntry<? extends TranslationMetadata>>>
-		implements TranslationProject<File, TMap> {
+public class MapFilesProject<TEntry extends TranslationEntry<? extends TranslationMetadata>, TMap extends TranslationMap<TEntry>>
+		implements TranslationProject<TEntry, File, TMap> {
 
-	private static final Writer<MapFilesProject<? extends TranslationMap<?>>> DEFAULT_SAVER = new Writer<MapFilesProject<? extends TranslationMap<?>>>() {
+	private static final Writer<MapFilesProject<?, ? extends TranslationMap<?>>> DEFAULT_SAVER = new Writer<MapFilesProject<?, ? extends TranslationMap<?>>>() {
 
 		@Override
-		public void write(MapFilesProject<? extends TranslationMap<?>> project) {
+		public void write(
+				MapFilesProject<?, ? extends TranslationMap<?>> project) {
 			for (TranslationMap<?> map : project.modifiedMaps) {
 				map.saveAll();
 			}
@@ -50,7 +52,7 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 	};
 	private final Set<File> files;
 	private final MultiReader<? super File, ? extends TMap> mapReader;
-	private final Writer<? super MapFilesProject<TMap>> projectSaver;
+	private final Writer<? super MapFilesProject<TEntry, TMap>> projectSaver;
 	private final Map<File, WeakReference<TMap>> cache = new HashMap<>();
 	private final Set<TMap> modifiedMaps = new HashSet<>();
 
@@ -68,7 +70,7 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 	 */
 	public MapFilesProject(Collection<File> files,
 			MultiReader<? super File, ? extends TMap> mapReader,
-			Writer<? super MapFilesProject<TMap>> projectSaver) {
+			Writer<? super MapFilesProject<TEntry, TMap>> projectSaver) {
 		if (files == null || files.isEmpty()) {
 			throw new IllegalArgumentException("No files provided: " + files);
 		} else {
@@ -182,4 +184,14 @@ public class MapFilesProject<TMap extends TranslationMap<? extends TranslationEn
 		features.add(feature);
 	}
 
+	private final Collection<EntryFilter<TEntry>> filters = new HashSet<EntryFilter<TEntry>>();
+
+	@Override
+	public Collection<EntryFilter<TEntry>> getEntryFilters() {
+		return filters;
+	}
+
+	public void addEntryFilter(EntryFilter<TEntry> filter) {
+		filters.add(filter);
+	}
 }

@@ -108,7 +108,7 @@ public class Search<MapID> extends JPanel implements Tool<MapID> {
 					final String blanks = "[\\s\u3000]++";
 					final String searched = input.getText().replaceAll(blanks,
 							" ");
-					final TranslationProject<MapID, ?> project = provider
+					final TranslationProject<?, MapID, ?> project = provider
 							.getProject();
 					List<MapID> ids = new LinkedList<>();
 					for (MapID mapID : project) {

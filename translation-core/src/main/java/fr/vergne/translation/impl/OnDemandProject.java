@@ -17,6 +17,7 @@ import fr.vergne.translation.TranslationMetadata;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.TranslationProject;
+import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.MultiReader;
@@ -32,14 +33,14 @@ import fr.vergne.translation.util.Writer;
  * @param <TMapID>
  * @param <TMap>
  */
-public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends TranslationEntry<? extends TranslationMetadata>>>
-		implements TranslationProject<TMapID, TMap> {
+public class OnDemandProject<TEntry extends TranslationEntry<? extends TranslationMetadata>, TMapID, TMap extends TranslationMap<TEntry>>
+		implements TranslationProject<TEntry, TMapID, TMap> {
 
-	private static final Writer<OnDemandProject<?, ? extends TranslationMap<?>>> DEFAULT_SAVER = new Writer<OnDemandProject<?, ? extends TranslationMap<?>>>() {
+	private static final Writer<OnDemandProject<?, ?, ? extends TranslationMap<?>>> DEFAULT_SAVER = new Writer<OnDemandProject<?, ?, ? extends TranslationMap<?>>>() {
 
 		@Override
 		public void write(
-				OnDemandProject<?, ? extends TranslationMap<?>> project) {
+				OnDemandProject<?, ?, ? extends TranslationMap<?>> project) {
 			for (TranslationMap<?> map : project.modifiedMaps) {
 				map.saveAll();
 			}
@@ -47,7 +48,7 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 	};
 	private final Set<TMapID> ids;
 	private final MultiReader<TMapID, TMap> mapReader;
-	private final Writer<? super OnDemandProject<TMapID, TMap>> projectSaver;
+	private final Writer<? super OnDemandProject<TEntry, TMapID, TMap>> projectSaver;
 	private final Map<TMapID, WeakReference<TMap>> cache = new HashMap<TMapID, WeakReference<TMap>>();
 	private final Set<TMap> modifiedMaps = new HashSet<>();
 
@@ -67,7 +68,7 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 	 */
 	public OnDemandProject(Collection<TMapID> ids,
 			MultiReader<TMapID, TMap> mapReader,
-			Writer<? super OnDemandProject<TMapID, TMap>> projectSaver) {
+			Writer<? super OnDemandProject<TEntry, TMapID, TMap>> projectSaver) {
 		this.ids = Collections.unmodifiableSet(new LinkedHashSet<>(ids));
 		this.mapReader = mapReader;
 		this.projectSaver = projectSaver;
@@ -176,5 +177,16 @@ public class OnDemandProject<TMapID, TMap extends TranslationMap<? extends Trans
 
 	public void addFeature(Feature feature) {
 		features.add(feature);
+	}
+
+	private final Collection<EntryFilter<TEntry>> filters = new HashSet<EntryFilter<TEntry>>();
+
+	@Override
+	public Collection<EntryFilter<TEntry>> getEntryFilters() {
+		return filters;
+	}
+
+	public void addEntryFilter(EntryFilter<TEntry> filter) {
+		filters.add(filter);
 	}
 }

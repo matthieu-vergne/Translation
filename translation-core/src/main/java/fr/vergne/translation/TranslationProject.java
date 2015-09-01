@@ -3,10 +3,11 @@ package fr.vergne.translation;
 import java.util.Collection;
 import java.util.Iterator;
 
+import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
 
-public interface TranslationProject<MapID, Map extends TranslationMap<?>>
+public interface TranslationProject<Entry extends TranslationEntry<?>, MapID, Map extends TranslationMap<Entry>>
 		extends Iterable<MapID> {
 
 	/**
@@ -64,4 +65,11 @@ public interface TranslationProject<MapID, Map extends TranslationMap<?>>
 	 *         {@link TranslationProject}
 	 */
 	public Collection<Feature> getFeatures();
+
+	/**
+	 * 
+	 * @return the {@link EntryFilter}s which can be used to search for
+	 *         particular {@link TranslationEntry}s.
+	 */
+	public Collection<EntryFilter<Entry>> getEntryFilters();
 }

@@ -5,7 +5,7 @@ import fr.vergne.translation.util.MapNamer;
 
 public interface ToolProvider<MapID> {
 
-	public TranslationProject<MapID, ?> getProject();
+	public TranslationProject<?, MapID, ?> getProject();
 
 	public MapNamer<MapID> getMapNamer();
 

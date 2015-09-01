@@ -27,7 +27,6 @@ import fr.vergne.translation.TranslationMetadata;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationMetadata.FieldListener;
 import fr.vergne.translation.impl.PatternFileMap.PatternEntry;
-import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Switcher;
 import fr.vergne.translation.util.impl.IdentitySwitcher;
 
@@ -390,17 +389,6 @@ public class PatternFileMap implements TranslationMap<PatternEntry> {
 		for (PatternEntry entry : this) {
 			entry.resetAll();
 		}
-	}
-
-	private final Collection<EntryFilter<PatternEntry>> filters = new HashSet<>();
-
-	@Override
-	public Collection<EntryFilter<PatternEntry>> getEntryFilters() {
-		return filters;
-	}
-
-	public void addEntryFilter(EntryFilter<PatternEntry> filter) {
-		filters.add(filter);
 	}
 
 	public static class PatternMetadata implements TranslationMetadata {

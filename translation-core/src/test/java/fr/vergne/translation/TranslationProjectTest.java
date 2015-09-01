@@ -16,16 +16,16 @@ import org.junit.Test;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.util.Feature;
 
-public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap<? extends TranslationEntry<? extends TranslationMetadata>>> {
+public abstract class TranslationProjectTest<TEntry extends TranslationEntry<? extends TranslationMetadata>, TMapID, TMap extends TranslationMap<TEntry>> {
 
-	protected abstract TranslationProject<TMapID, TMap> createTranslationProject();
+	protected abstract TranslationProject<TEntry, TMapID, TMap> createTranslationProject();
 
 	protected abstract <T> T createNewEditableFieldValue(Field<T> field,
 			T currentValue);
 
 	@Test
 	public void testAbstractMethodsProvideProperValues() {
-		Set<TranslationProject<TMapID, TMap>> projects = new HashSet<TranslationProject<TMapID, TMap>>();
+		Set<TranslationProject<TEntry, TMapID, TMap>> projects = new HashSet<TranslationProject<TEntry, TMapID, TMap>>();
 		for (int i = 0; i < 10; i++) {
 			projects.add(createTranslationProject());
 		}
@@ -35,7 +35,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 				"the same projects are reused instead of creating new ones",
 				10, projects.size());
 
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
 			for (TranslationEntry<?> entry : map) {
@@ -75,14 +75,14 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testIteratorNotNull() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Iterator<TMapID> iterator = project.iterator();
 		assertNotNull(iterator);
 	}
 
 	@Test
 	public void testIteratorProvidesAtLeastOneEntry() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Iterator<TMapID> iterator = project.iterator();
 		assertTrue(iterator.hasNext());
 		assertNotNull(iterator.next());
@@ -90,7 +90,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testIteratorProvidesNoNullEntry() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Iterator<TMapID> iterator = project.iterator();
 		while (iterator.hasNext()) {
 			assertNotNull(iterator.next());
@@ -99,7 +99,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testSizeFitsIteratorEntries() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Iterator<TMapID> iterator = project.iterator();
 		int count = 0;
 		while (iterator.hasNext()) {
@@ -111,7 +111,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testGetMapProvidesProperMap() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Iterator<TMapID> iterator = project.iterator();
 		while (iterator.hasNext()) {
 			TMapID id = iterator.next();
@@ -122,7 +122,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testTranslationModificationsProperlyMaintainedAfterSaveAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<String>> savedTranslations = new HashMap<TMapID, List<String>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -153,7 +153,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testTranslationModificationsProperlySavedAfterSaveAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<String>> savedTranslations = new HashMap<TMapID, List<String>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -184,7 +184,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testTranslationModificationsProperlyDiscardedAfterResetAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<String>> initialTranslations = new HashMap<TMapID, List<String>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -215,7 +215,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testMetadataModificationsProperlyMaintainedAfterSaveAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<Map<Field<?>, Object>>> savedMetadata = new HashMap<TMapID, List<Map<Field<?>, Object>>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -257,7 +257,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testMetadataModificationsProperlySavedAfterSaveAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<Map<Field<?>, Object>>> savedMetadata = new HashMap<TMapID, List<Map<Field<?>, Object>>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -300,7 +300,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testMetadataModificationsProperlyDiscardedAfterResetAll() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		Map<TMapID, List<Map<Field<?>, Object>>> initialMetadata = new HashMap<TMapID, List<Map<Field<?>, Object>>>();
 		for (TMapID id : project) {
 			TMap map = project.getMap(id);
@@ -342,7 +342,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testProjectFeaturesHaveProperNames() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		for (Feature feature : project.getFeatures()) {
 			assertNotNull(feature.getName());
 		}
@@ -350,7 +350,7 @@ public abstract class TranslationProjectTest<TMapID, TMap extends TranslationMap
 
 	@Test
 	public void testProjectFeaturesDoNotThrowExceptionOnDescription() {
-		TranslationProject<TMapID, TMap> project = createTranslationProject();
+		TranslationProject<TEntry, TMapID, TMap> project = createTranslationProject();
 		for (Feature feature : project.getFeatures()) {
 			feature.getDescription();
 		}

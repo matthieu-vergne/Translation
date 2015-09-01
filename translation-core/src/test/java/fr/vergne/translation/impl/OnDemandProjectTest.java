@@ -17,10 +17,10 @@ import fr.vergne.translation.util.impl.ConstantReader;
 
 public class OnDemandProjectTest
 		extends
-		TranslationProjectTest<String, OnDemandMap<OnDemandEntry<OnDemandMetadata>>> {
+		TranslationProjectTest<OnDemandEntry<OnDemandMetadata>, String, OnDemandMap<OnDemandEntry<OnDemandMetadata>>> {
 
 	@Override
-	protected TranslationProject<String, OnDemandMap<OnDemandEntry<OnDemandMetadata>>> createTranslationProject() {
+	protected TranslationProject<OnDemandEntry<OnDemandMetadata>, String, OnDemandMap<OnDemandEntry<OnDemandMetadata>>> createTranslationProject() {
 		Collection<String> ids = Arrays.asList("Map1", "Map2", "Map3");
 		final Map<String, List<String>> allTranslationStorage = new HashMap<>();
 		final Map<String, List<Integer>> allMetadataStorage = new HashMap<>();

@@ -10,17 +10,18 @@ import org.apache.commons.io.FileUtils;
 import fr.vergne.translation.TranslationMetadata.Field;
 import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.TranslationProjectTest;
+import fr.vergne.translation.impl.PatternFileMap.PatternEntry;
 import fr.vergne.translation.util.MultiReader;
 import fr.vergne.translation.util.Switcher;
 import fr.vergne.translation.util.impl.SmartStringSwitcher;
 
 public class MapFilesProjectTest extends
-		TranslationProjectTest<File, PatternFileMap> {
+		TranslationProjectTest<PatternEntry, File, PatternFileMap> {
 
 	private final File testDirectory = new File("src/test/resources/project");
 
 	@Override
-	protected TranslationProject<File, PatternFileMap> createTranslationProject() {
+	protected TranslationProject<PatternEntry, File, PatternFileMap> createTranslationProject() {
 		Collection<File> files = new LinkedList<>();
 		try {
 			for (String map : new String[] { "Map1.txt", "Map2.txt", "Map3.txt" }) {

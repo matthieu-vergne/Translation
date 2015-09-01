@@ -69,7 +69,7 @@ import fr.vergne.translation.util.ProjectLoader;
 import fr.vergne.translation.util.impl.DefaultMapNamer;
 
 @SuppressWarnings("serial")
-public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<MapID, TMap>>
+public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<TEntry, MapID, TMap>>
 		extends JFrame {
 
 	private static final Logger logger = Logger.getLogger(Editor.class
@@ -97,8 +97,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private final ProjectLoaderPanel<TProject> projectPanel;
 	private final MapListPanel<TEntry, TMap, MapID, TProject> listPanel;
 	private final MapContentPanel<MapID> mapPanel;
-	private final JPanel filters;
-	private TranslationProject<MapID, TMap> currentProject = new EmptyProject<>();
+	private TranslationProject<TEntry, MapID, TMap> currentProject = new EmptyProject<>();
 	private final DefaultMapNamer<MapID> defaultMapNamer = new DefaultMapNamer<>();
 
 	public Editor(ProjectLoader<TProject> projectLoader,
@@ -108,7 +107,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		toolProvider = new ToolProvider<MapID>() {
 
 			@Override
-			public TranslationProject<MapID, ?> getProject() {
+			public TranslationProject<?, MapID, ?> getProject() {
 				return listPanel.getProject();
 			}
 
@@ -125,9 +124,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			@Override
 			public void loadMapEntry(MapID id, int entryIndex) {
 				try {
-					TranslationMap<?> map = listPanel.getProject().getMap(id);
 					mapPanel.setMap(id, entryIndex);
-					updateFilters(map, filters, mapPanel);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(Editor.this, e.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -184,6 +181,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 
+		final JPanel filters = new JPanel();
+
 		projectPanel = new ProjectLoaderPanel<>(projectLoader);
 		final JMenu projectMenu = new JMenu("Project");
 		final JMenu listMenu = new JMenu("List");
@@ -197,6 +196,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 						currentProject = project;
 						logger.info("Project loaded: " + project);
 
+						updateFilters(project, filters, mapPanel);
 						projectMenu.removeAll();
 						listMenu.removeAll();
 
@@ -293,8 +293,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		ToolPanel toolPanel = new ToolPanel();
-
-		filters = new JPanel();
 
 		configureTools(toolPanel, toolProvider);
 
@@ -431,7 +429,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				});
 	}
 
-	protected void updateFilters(TranslationMap<?> map, JPanel filterComponent,
+	protected void updateFilters(TProject project, JPanel filterComponent,
 			final MapContentPanel<MapID> mapPanel) {
 		filterComponent.removeAll();
 		filterComponent.setLayout(new GridBagLayout());
@@ -456,7 +454,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 		final JComboBox<FilterAction<?>> comboBox = new JComboBox<>();
 		List<String> filterNames = new LinkedList<>();
-		Collection<? extends EntryFilter<?>> filters = map.getEntryFilters();
+		Collection<? extends EntryFilter<?>> filters = project
+				.getEntryFilters();
 		for (EntryFilter<?> filter : filters) {
 			comboBox.addItem(new FilterAction<>(filter, mapPanel));
 			filterNames.add(filter.getName());

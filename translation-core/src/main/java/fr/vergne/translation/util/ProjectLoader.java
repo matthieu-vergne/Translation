@@ -4,7 +4,7 @@ import java.io.File;
 
 import fr.vergne.translation.TranslationProject;
 
-public interface ProjectLoader<Project extends TranslationProject<?, ?>> {
+public interface ProjectLoader<Project extends TranslationProject<?, ?, ?>> {
 
 	public Project load(File directory);
 }

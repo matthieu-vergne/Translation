@@ -17,7 +17,7 @@ import fr.vergne.translation.TranslationProject;
 import fr.vergne.translation.util.ProjectLoader;
 
 @SuppressWarnings("serial")
-public class ProjectLoaderPanel<TProject extends TranslationProject<?, ?>>
+public class ProjectLoaderPanel<TProject extends TranslationProject<?, ?, ?>>
 		extends JPanel {
 
 	private final JTextField folderPathField = new JTextField();
@@ -80,7 +80,7 @@ public class ProjectLoaderPanel<TProject extends TranslationProject<?, ?>>
 		listeners.remove(listener);
 	}
 
-	public static interface ProjectLoadedListener<TProject extends TranslationProject<?, ?>> {
+	public static interface ProjectLoadedListener<TProject extends TranslationProject<?, ?, ?>> {
 		public void projectLoaded(File directory, TProject project);
 	}
 }

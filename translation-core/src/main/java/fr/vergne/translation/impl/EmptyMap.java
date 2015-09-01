@@ -1,12 +1,10 @@
 package fr.vergne.translation.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
 import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
-import fr.vergne.translation.util.EntryFilter;
 
 public class EmptyMap<Entry extends TranslationEntry<?>> implements
 		TranslationMap<Entry> {
@@ -35,11 +33,6 @@ public class EmptyMap<Entry extends TranslationEntry<?>> implements
 	@Override
 	public void resetAll() {
 		// nothing to reset
-	}
-
-	@Override
-	public Collection<EntryFilter<Entry>> getEntryFilters() {
-		return Collections.emptyList();
 	}
 
 }

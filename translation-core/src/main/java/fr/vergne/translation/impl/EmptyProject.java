@@ -4,13 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import fr.vergne.translation.TranslationEntry;
 import fr.vergne.translation.TranslationMap;
 import fr.vergne.translation.TranslationProject;
+import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
 
-public class EmptyProject<MapID, Map extends TranslationMap<?>> implements
-		TranslationProject<MapID, Map> {
+public class EmptyProject<Entry extends TranslationEntry<?>, MapID, Map extends TranslationMap<Entry>>
+		implements TranslationProject<Entry, MapID, Map> {
 
 	@Override
 	public Iterator<MapID> iterator() {
@@ -48,4 +50,8 @@ public class EmptyProject<MapID, Map extends TranslationMap<?>> implements
 		return Collections.emptyList();
 	}
 
+	@Override
+	public Collection<EntryFilter<Entry>> getEntryFilters() {
+		return Collections.emptyList();
+	}
 }
