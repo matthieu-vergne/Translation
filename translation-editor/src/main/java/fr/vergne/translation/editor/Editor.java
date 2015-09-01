@@ -61,7 +61,6 @@ import fr.vergne.translation.editor.tool.FileBasedProperties;
 import fr.vergne.translation.editor.tool.Search;
 import fr.vergne.translation.editor.tool.ToolProvider;
 import fr.vergne.translation.impl.EmptyProject;
-import fr.vergne.translation.impl.TranslationUtil;
 import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
@@ -434,24 +433,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		filterComponent.removeAll();
 		filterComponent.setLayout(new GridBagLayout());
 
-		EntryFilter<TranslationEntry<?>> noTranslationEntry = new EntryFilter<TranslationEntry<?>>() {
-
-			@Override
-			public String getName() {
-				return "No translation";
-			}
-
-			@Override
-			public String getDescription() {
-				return "Search for entries which have some original content but no translation.";
-			}
-
-			@Override
-			public boolean isRelevant(TranslationEntry<?> entry) {
-				return !TranslationUtil.isActuallyTranslated(entry);
-			}
-		};
-
 		final JComboBox<FilterAction<?>> comboBox = new JComboBox<>();
 		List<String> filterNames = new LinkedList<>();
 		Collection<? extends EntryFilter<?>> filters = project
@@ -460,7 +441,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			comboBox.addItem(new FilterAction<>(filter, mapPanel));
 			filterNames.add(filter.getName());
 		}
-		comboBox.addItem(new FilterAction<>(noTranslationEntry, mapPanel));
 
 		final JButton nextButton = new JButton(new AbstractAction("Next") {
 
