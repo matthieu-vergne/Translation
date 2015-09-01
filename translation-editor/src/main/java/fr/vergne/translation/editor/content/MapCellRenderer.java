@@ -89,7 +89,8 @@ public class MapCellRenderer<MapID> implements TreeCellRenderer {
 				total = informer.getEntriesCount(id);
 			}
 			if (remaining > 0) {
-				int percent = 100 - 100 * remaining / total;
+				int percent = (int) Math.floor(100.0 - 100.0 * remaining
+						/ total);
 				description = percent + "%, " + remaining + " remaining";
 			} else {
 				description = "cleared";
