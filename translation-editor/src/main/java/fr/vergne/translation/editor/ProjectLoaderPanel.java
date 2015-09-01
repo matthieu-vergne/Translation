@@ -61,7 +61,7 @@ public class ProjectLoaderPanel<TProject extends TranslationProject<?, ?, ?>>
 		constraints.weightx = 1;
 		add(folderPathField, constraints);
 	}
-	
+
 	public void setProjectPath(File directory) {
 		TProject currentProject = projectLoader.load(directory);
 		folderPathField.setText(directory.toString());

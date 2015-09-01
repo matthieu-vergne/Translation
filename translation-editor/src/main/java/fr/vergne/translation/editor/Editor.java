@@ -235,7 +235,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 						displayCleared.setSelected(isClearedDisplayed);
 						displayCleared.setToolTipText("Display cleared maps.");
 						listPanel.setClearedDisplayed(isClearedDisplayed);
-						logger.fine("Clear display status: "+isClearedDisplayed);
+						logger.fine("Clear display status: "
+								+ isClearedDisplayed);
 						listMenu.add(displayCleared);
 
 						listMenu.addSeparator();
