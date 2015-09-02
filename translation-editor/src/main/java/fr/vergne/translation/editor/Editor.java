@@ -90,6 +90,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private final SettingKey<String> remainingFilterSetting;
 	private final SettingKey<String> nextFilterSetting;
 	private final SettingKey<Boolean> clearedDisplayedSetting;
+	// TODO reduce the following members to method variables
 	private final MapContentPanel<MapID> mapPanel;
 	private TranslationProject<TEntry, MapID, TMap> currentProject = new EmptyProject<>();
 	private final DefaultMapNamer<MapID> defaultMapNamer = new DefaultMapNamer<>();
