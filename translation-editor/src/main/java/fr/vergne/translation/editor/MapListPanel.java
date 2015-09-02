@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeSet;
@@ -38,7 +39,8 @@ import fr.vergne.translation.editor.content.MapCellRenderer;
 import fr.vergne.translation.editor.content.MapTreeNode;
 import fr.vergne.translation.editor.tool.ToolProvider;
 import fr.vergne.translation.impl.EmptyProject;
-import fr.vergne.translation.impl.TranslationUtil;
+import fr.vergne.translation.impl.NoTranslationFilter;
+import fr.vergne.translation.util.EntryFilter;
 import fr.vergne.translation.util.MapInformer;
 import fr.vergne.translation.util.MapInformer.MapSummaryListener;
 import fr.vergne.translation.util.MapInformer.NoDataException;
@@ -88,7 +90,13 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				if (mapSummary == null) {
 					throw new NoDataException();
 				} else {
-					return mapSummary.remaining;
+					Integer remaining = mapSummary.remaining
+							.get(remainingFilter);
+					if (remaining == null) {
+						throw new NoDataException();
+					} else {
+						return remaining;
+					}
 				}
 			}
 
@@ -118,16 +126,22 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 			@Override
 			public int getAllEntriesRemaining() throws NoDataException {
-				int remaining = 0;
+				int count = 0;
 				for (MapID id : currentIDs) {
 					MapSummary summary = mapSummaries.get(id);
 					if (summary == null) {
 						throw new NoDataException();
 					} else {
-						remaining += summary.remaining;
+						Integer remaining = summary.remaining
+								.get(remainingFilter);
+						if (remaining == null) {
+							throw new NoDataException();
+						} else {
+							count += remaining;
+						}
 					}
 				}
-				return remaining;
+				return count;
 			}
 
 			@Override
@@ -473,13 +487,28 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 				MapSummary summary = new MapSummary();
 				TMap map = currentProject.getMap(id);
 				summary.total = map.size();
-				summary.remaining = 0;
+				Collection<EntryFilter<TEntry>> filters = new LinkedHashSet<>(
+						currentProject.getEntryFilters());
+				EntryFilter<TEntry> nullFilter = new NoTranslationFilter<>();
+				filters.add(nullFilter);
+				for (EntryFilter<TEntry> filter : filters) {
+					summary.remaining.put(filter, 0);
+				}
+
 				Iterator<TEntry> iterator = map.iterator();
 				while (iterator.hasNext()) {
 					TEntry entry = iterator.next();
-					summary.remaining += TranslationUtil
-							.isActuallyTranslated(entry) ? 0 : 1;
+					for (EntryFilter<TEntry> filter : filters) {
+						if (filter.isRelevant(entry)) {
+							int remaining = summary.remaining.get(filter);
+							remaining++;
+							summary.remaining.put(filter, remaining);
+						} else {
+							// do not count it
+						}
+					}
 				}
+				summary.remaining.put(null, summary.remaining.get(nullFilter));
 				mapSummaries.put(id, summary);
 				logger.finest("Map summarized: " + summary);
 
@@ -492,13 +521,13 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 
 	private static class MapSummary {
 		int total;
-		int remaining;
+		final Map<EntryFilter<?>, Integer> remaining = new HashMap<>();
 		boolean isModified;
 
 		@Override
 		public String toString() {
 			String status = isModified ? "modified" : "saved";
-			return (total - remaining) + "/" + total + "(" + status + ")";
+			return remaining + "/" + total + " (" + status + ")";
 		}
 	}
 
@@ -531,4 +560,14 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		((ListModel<MapID>) tree.getModel()).setClearedDisplayed(isDisplayed);
 	}
 
+	private EntryFilter<TEntry> remainingFilter = null;
+
+	public void setRemainingFilter(EntryFilter<TEntry> remainingFilter) {
+		this.remainingFilter = remainingFilter;
+		requestUpdate();
+	}
+
+	public EntryFilter<TEntry> getRemainingFilter() {
+		return remainingFilter;
+	}
 }

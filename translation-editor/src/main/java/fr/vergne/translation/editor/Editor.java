@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -31,11 +32,13 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
@@ -89,6 +92,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private static final String CONFIG_MAP_NAMER = "mapNamer";
 	private static final String CONFIG_MAP_DIR = "mapDir";
 	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
+	private static final String CONFIG_REMAINING_FILTER = "remainingFilter";
 	// TODO make config non-static
 	public static final FileBasedProperties config = new FileBasedProperties(
 			"vh-editor.ini", true);
@@ -157,9 +161,11 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 						logger.info("Project loaded: " + project);
 
 						updateEntryFilters(project, filters, mapPanel);
-						updateProjectMenu(projectMenu, project);
+						updateProjectMenu(projectMenu, listPanel, project);
 						updateListMenu(listMenu, listPanel, project);
 
+						RemainingFilterConfig<TEntry> config = retrieveRemainingFilterConfig(project);
+						listPanel.setRemainingFilter(config.filter);
 						listPanel.setProject(project);
 					}
 
@@ -612,8 +618,91 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		}
 	}
 
-	private void updateProjectMenu(final JMenu projectMenu, TProject project) {
+	private void updateProjectMenu(final JMenu projectMenu,
+			final MapListPanel<TEntry, TMap, MapID, TProject> listPanel,
+			final TProject project) {
 		projectMenu.removeAll();
+
+		Collection<EntryFilter<TEntry>> filters = project.getEntryFilters();
+		if (filters.isEmpty()) {
+			// no stat filter to consider
+		} else {
+			JMenuItem statItem = new JMenuItem(new AbstractAction(
+					"Remaining Filter") {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					final RemainingFilterConfig<TEntry> initialConfig = retrieveRemainingFilterConfig(project);
+					final RemainingFilterConfig<TEntry> config = new RemainingFilterConfig<>(
+							initialConfig);
+
+					JPanel remainingEntriesPanel = new JPanel();
+					remainingEntriesPanel.setLayout(new GridBagLayout());
+					GridBagConstraints constraints = new GridBagConstraints();
+					constraints.gridy = GridBagConstraints.RELATIVE;
+					ButtonGroup group = new ButtonGroup();
+					for (final EntryFilter<TEntry> filter : project
+							.getEntryFilters()) {
+						final JRadioButton selection = new JRadioButton();
+						final JLabel label = new JLabel(filter.getName());
+
+						selection.setAction(new AbstractAction() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								config.filter = filter;
+							}
+						});
+						selection.setSelected(initialConfig.filter
+								.equals(filter));
+
+						constraints.gridx = 1;
+						constraints.fill = GridBagConstraints.HORIZONTAL;
+						constraints.weightx = 1;
+						remainingEntriesPanel.add(label, constraints);
+						constraints.fill = GridBagConstraints.NONE;
+						constraints.weightx = 0;
+						constraints.gridx = 0;
+						group.add(selection);
+						remainingEntriesPanel.add(selection, constraints);
+					}
+
+					JPanel message = new JPanel();
+					message.setLayout(new BoxLayout(message,
+							BoxLayout.PAGE_AXIS));
+					JLabel comp = new JLabel(
+							"Select the filter to use for the remaining entries:");
+					comp.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+					message.add(comp);
+					remainingEntriesPanel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+					message.add(remainingEntriesPanel);
+
+					int answer = JOptionPane.showConfirmDialog(Editor.this,
+							message, "Remaining Stats",
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null);
+
+					if (answer == JOptionPane.OK_OPTION
+							&& !config.equals(initialConfig)) {
+						Editor.config.setProperty(CONFIG_REMAINING_FILTER, ""
+								+ config.filter.getName());
+						listPanel.setRemainingFilter(config.filter);
+					} else {
+						// keep current config
+					}
+				}
+
+			});
+			statItem.setToolTipText(formatTooltip("Configure the statistics."));
+			projectMenu.add(statItem);
+		}
+
+		if (projectMenu.getMenuComponentCount() > 0) {
+			projectMenu.addSeparator();
+		} else {
+			// nothing to separate
+		}
+
 		for (final Feature feature : project.getFeatures()) {
 			logger.fine("Adding project feature: " + feature.getName());
 			JMenuItem item = new JMenuItem(
@@ -679,5 +768,61 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			group.add(nameItem);
 			listMenu.add(nameItem);
 		}
+	}
+
+	private static class RemainingFilterConfig<TEntry extends TranslationEntry<?>> {
+		private EntryFilter<TEntry> filter;
+
+		public RemainingFilterConfig() {
+		}
+
+		public RemainingFilterConfig(RemainingFilterConfig<TEntry> config) {
+			filter = config.filter;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			} else if (obj instanceof RemainingFilterConfig) {
+				RemainingFilterConfig<?> c = (RemainingFilterConfig<?>) obj;
+				return filter.equals(c.filter);
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			return filter.hashCode();
+		}
+	}
+
+	private RemainingFilterConfig<TEntry> retrieveRemainingFilterConfig(
+			final TProject project) {
+		final RemainingFilterConfig<TEntry> initialConfig = new RemainingFilterConfig<>();
+		String filterName = Editor.config.getProperty(CONFIG_REMAINING_FILTER,
+				null);
+		if (filterName == null) {
+			if (project.getEntryFilters().isEmpty()) {
+				throw new RuntimeException(
+						"This dialog should not be shown if no filters are provided.");
+			} else {
+				filterName = project.getEntryFilters().iterator().next()
+						.getName();
+			}
+		} else {
+			// use the one configured
+		}
+
+		for (EntryFilter<TEntry> filter : project.getEntryFilters()) {
+			if (filter.getName().equals(filterName)) {
+				initialConfig.filter = filter;
+			} else {
+				// continue searching
+			}
+		}
+
+		return initialConfig;
 	}
 }
