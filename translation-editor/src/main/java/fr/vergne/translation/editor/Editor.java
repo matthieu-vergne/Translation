@@ -93,16 +93,18 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private static final String CONFIG_MAP_DIR = "mapDir";
 	private static final String CONFIG_CLEARED_DISPLAYED = "clearedDisplayed";
 	private static final String CONFIG_REMAINING_FILTER = "remainingFilter";
-	// TODO make config non-static
-	public static final FileBasedProperties config = new FileBasedProperties(
-			"vh-editor.ini", true);
+
+	private final FileBasedProperties settings;
 	private final MapContentPanel<MapID> mapPanel;
 	private TranslationProject<TEntry, MapID, TMap> currentProject = new EmptyProject<>();
 	private final DefaultMapNamer<MapID> defaultMapNamer = new DefaultMapNamer<>();
 	private final ToolProvider<MapID> toolProvider;
 
 	public Editor(ProjectLoader<TProject> projectLoader,
-			MapComponentFactory<?> mapComponentFactory) {
+			MapComponentFactory<?> mapComponentFactory,
+			final FileBasedProperties settings) {
+		this.settings = settings;
+
 		// TODO rename as ConfigurationProvider
 		// TODO use it instead of the static config
 		toolProvider = new ToolProvider<MapID>() {
@@ -155,7 +157,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 					@Override
 					public void projectLoaded(File directory, TProject project) {
-						Editor.config.setProperty(CONFIG_MAP_DIR,
+						settings.setProperty(CONFIG_MAP_DIR,
 								directory.toString());
 						currentProject = project;
 						logger.info("Project loaded: " + project);
@@ -198,7 +200,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		});
 
 		ButtonGroup group = new ButtonGroup();
-		String currentTheme = config.getProperty(CONFIG_THEME,
+		String currentTheme = settings.getProperty(CONFIG_THEME,
 				UIManager.getSystemLookAndFeelClassName());
 		for (final LookAndFeelInfo theme : UIManager.getInstalledLookAndFeels()) {
 			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(
@@ -213,7 +215,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 								Editor.this.setSize(Editor.this.getSize());
 
 								String name = theme.getClassName();
-								config.setProperty(CONFIG_THEME, name);
+								settings.setProperty(CONFIG_THEME, name);
 								logger.info("Apply theme: " + name);
 							} catch (ClassNotFoundException
 									| InstantiationException
@@ -322,7 +324,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
-		String projectPath = Editor.config.getProperty(CONFIG_MAP_DIR, null);
+		String projectPath = settings.getProperty(CONFIG_MAP_DIR, null);
 		if (projectPath == null) {
 			// nothing to load
 		} else {
@@ -339,7 +341,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	}
 
 	public Editor(ProjectLoader<TProject> projectLoader,
-			final EntryComponentFactory<?> entryFactory) {
+			final EntryComponentFactory<?> entryFactory,
+			FileBasedProperties settings) {
 		this(projectLoader, new MapComponentFactory<SimpleMapComponent>() {
 
 			@Override
@@ -347,10 +350,11 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				return new SimpleMapComponent(map, entryFactory);
 			}
 
-		});
+		}, settings);
 	}
 
-	public Editor(ProjectLoader<TProject> projectLoader) {
+	public Editor(ProjectLoader<TProject> projectLoader,
+			FileBasedProperties settings) {
 		this(projectLoader,
 				new EntryComponentFactory<SimpleEntryComponent<?>>() {
 
@@ -359,7 +363,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 							TranslationEntry<?> entry) {
 						return new SimpleEntryComponent<>(entry);
 					}
-				});
+				}, settings);
 	}
 
 	protected void updateEntryFilters(TProject project, JPanel filterComponent,
@@ -396,11 +400,11 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 				EntryFilter<?> filter = filterAction.getFilter();
 				nextButton.setToolTipText(formatTooltip(filter.getDescription()));
 				logger.info("Select filter: " + filterAction);
-				config.setProperty(CONFIG_FILTER, "" + filterAction);
+				settings.setProperty(CONFIG_FILTER, "" + filterAction);
 			}
 		});
 
-		String preferredFilter = config.getProperty(CONFIG_FILTER, null);
+		String preferredFilter = settings.getProperty(CONFIG_FILTER, null);
 		if (preferredFilter == null) {
 			comboBox.setSelectedIndex(0);
 		} else {
@@ -435,12 +439,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	}
 
 	private void finalizeConfig(final JSplitPane rootSplit) {
-		setLocation(Integer.parseInt(config.getProperty(CONFIG_X, "0")),
-				Integer.parseInt(config.getProperty(CONFIG_Y, "0")));
-		setSize(new Dimension(Integer.parseInt(config.getProperty(CONFIG_WIDTH,
-				"700")), Integer.parseInt(config.getProperty(CONFIG_HEIGHT,
-				"500"))));
-		rootSplit.setDividerLocation(Integer.parseInt(config.getProperty(
+		setLocation(Integer.parseInt(settings.getProperty(CONFIG_X, "0")),
+				Integer.parseInt(settings.getProperty(CONFIG_Y, "0")));
+		setSize(new Dimension(Integer.parseInt(settings.getProperty(
+				CONFIG_WIDTH, "700")), Integer.parseInt(settings.getProperty(
+				CONFIG_HEIGHT, "500"))));
+		rootSplit.setDividerLocation(Integer.parseInt(settings.getProperty(
 				CONFIG_SPLIT, "" + (getWidth() * 4 / 10))));
 		rootSplit.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -448,7 +452,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getPropertyName().equals(
 						JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-					config.setProperty(CONFIG_SPLIT, "" + event.getNewValue());
+					settings.setProperty(CONFIG_SPLIT, "" + event.getNewValue());
 				} else {
 					// do not care about other properties
 				}
@@ -463,14 +467,14 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				config.setProperty(CONFIG_WIDTH, "" + getWidth());
-				config.setProperty(CONFIG_HEIGHT, "" + getHeight());
+				settings.setProperty(CONFIG_WIDTH, "" + getWidth());
+				settings.setProperty(CONFIG_HEIGHT, "" + getHeight());
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
-				config.setProperty(CONFIG_X, "" + getX());
-				config.setProperty(CONFIG_Y, "" + getY());
+				settings.setProperty(CONFIG_X, "" + getX());
+				settings.setProperty(CONFIG_Y, "" + getY());
 			}
 
 			@Override
@@ -605,7 +609,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			return defaultMapNamer;
 		} else {
 			MapNamer<MapID> defaultNamer = namers.iterator().next();
-			String id = Editor.config.getProperty(CONFIG_MAP_NAMER,
+			String id = settings.getProperty(CONFIG_MAP_NAMER,
 					defaultNamer.getName());
 			for (MapNamer<MapID> namer : namers) {
 				if (namer.getName().equals(id)) {
@@ -650,13 +654,13 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				boolean isClearedDisplay = displayCleared.isSelected();
-				Editor.config.setProperty(CONFIG_CLEARED_DISPLAYED, ""
+				settings.setProperty(CONFIG_CLEARED_DISPLAYED, ""
 						+ isClearedDisplay);
 				listPanel.setClearedDisplayed(isClearedDisplay);
 			}
 		});
-		boolean isClearedDisplayed = Boolean.parseBoolean(Editor.config
-				.getProperty(CONFIG_CLEARED_DISPLAYED, "true"));
+		boolean isClearedDisplayed = Boolean.parseBoolean(settings.getProperty(
+				CONFIG_CLEARED_DISPLAYED, "true"));
 		displayCleared.setSelected(isClearedDisplayed);
 		displayCleared.setToolTipText("Display cleared maps.");
 		listPanel.setClearedDisplayed(isClearedDisplayed);
@@ -718,7 +722,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 				if (answer == JOptionPane.OK_OPTION
 						&& !config.equals(initialConfig)) {
-					Editor.config.setProperty(CONFIG_REMAINING_FILTER, ""
+					settings.setProperty(CONFIG_REMAINING_FILTER, ""
 							+ config.filter.getName());
 					listPanel.setRemainingFilter(config.filter);
 				} else {
@@ -741,7 +745,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							Editor.config.setProperty(CONFIG_MAP_NAMER,
+							settings.setProperty(CONFIG_MAP_NAMER,
 									namer.getName());
 							listPanel.requestUpdate();
 						}
@@ -789,8 +793,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private RemainingFilterConfig<TEntry> retrieveRemainingFilterConfig(
 			final TProject project) {
 		final RemainingFilterConfig<TEntry> initialConfig = new RemainingFilterConfig<>();
-		String filterName = Editor.config.getProperty(CONFIG_REMAINING_FILTER,
-				null);
+		String filterName = settings.getProperty(CONFIG_REMAINING_FILTER, null);
 		if (filterName == null) {
 			if (project.getEntryFilters().isEmpty()) {
 				throw new RuntimeException(
