@@ -70,6 +70,32 @@ public class SmartStringSwitcher<T> implements Switcher<String, T> {
 					return value.toString();
 				}
 			};
+		} else if (Long.class.isAssignableFrom(nonStringClass)) {
+			return (Switcher<String, T>) new Switcher<String, Long>() {
+
+				@Override
+				public Long switchForth(String value) {
+					return Long.parseLong(value);
+				}
+
+				@Override
+				public String switchBack(Long value) {
+					return value.toString();
+				}
+			};
+		} else if (Float.class.isAssignableFrom(nonStringClass)) {
+			return (Switcher<String, T>) new Switcher<String, Float>() {
+
+				@Override
+				public Float switchForth(String value) {
+					return Float.parseFloat(value);
+				}
+
+				@Override
+				public String switchBack(Float value) {
+					return value.toString();
+				}
+			};
 		} else if (Double.class.isAssignableFrom(nonStringClass)) {
 			return (Switcher<String, T>) new Switcher<String, Double>() {
 
@@ -96,6 +122,8 @@ public class SmartStringSwitcher<T> implements Switcher<String, T> {
 					return value.toString();
 				}
 			};
+		} else if (String.class.isAssignableFrom(nonStringClass)) {
+			return (Switcher<String, T>) new IdentitySwitcher<String>();
 		} else {
 			throw new IllegalArgumentException(
 					"Impossible to setup the convertor for " + nonStringClass);
