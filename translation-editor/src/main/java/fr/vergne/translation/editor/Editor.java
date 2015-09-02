@@ -98,16 +98,13 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 	private final MapContentPanel<MapID> mapPanel;
 	private TranslationProject<TEntry, MapID, TMap> currentProject = new EmptyProject<>();
 	private final DefaultMapNamer<MapID> defaultMapNamer = new DefaultMapNamer<>();
-	private final ToolProvider<MapID> toolProvider;
 
 	public Editor(ProjectLoader<TProject> projectLoader,
 			MapComponentFactory<?> mapComponentFactory,
 			final FileBasedProperties settings) {
 		this.settings = settings;
 
-		// TODO rename as ConfigurationProvider
-		// TODO use it instead of the static config
-		toolProvider = new ToolProvider<MapID>() {
+		final ToolProvider<MapID> toolProvider = new ToolProvider<MapID>() {
 
 			@Override
 			public TranslationProject<?, MapID, ?> getProject() {
