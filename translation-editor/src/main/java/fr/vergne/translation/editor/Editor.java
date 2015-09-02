@@ -77,12 +77,6 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 
 	private static final Logger logger = Logger.getLogger(Editor.class
 			.getName());
-	private static final String ACTION_LAST_ENTRY = "lastEntry";
-	private static final String ACTION_FIRST_ENTRY = "firstEntry";
-	private static final String ACTION_NEXT_ENTRY = "nextEntry";
-	private static final String ACTION_PREVIOUS_ENTRY = "previousEntry";
-	private static final String ACTION_SAVE = "save";
-	private static final String ACTION_RESET = "reset";
 
 	private final Setting<?> settings;
 	private final SettingKey<Integer> frameXSetting;
@@ -499,7 +493,8 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 		InputMap inputs = getRootPane().getInputMap(
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-		actions.put(ACTION_PREVIOUS_ENTRY, new AbstractAction("<") {
+		final String previousEntryAction = "previousEntry";
+		actions.put(previousEntryAction, new AbstractAction("<") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -507,11 +502,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
-				InputEvent.ALT_DOWN_MASK), ACTION_PREVIOUS_ENTRY);
-		JButton previous = new JButton(actions.get(ACTION_PREVIOUS_ENTRY));
+				InputEvent.ALT_DOWN_MASK), previousEntryAction);
+		JButton previous = new JButton(actions.get(previousEntryAction));
 		previous.setToolTipText("Go to previous entry (ALT+LEFT).");
 
-		actions.put(ACTION_NEXT_ENTRY, new AbstractAction(">") {
+		final String nextEntryAction = "nextEntry";
+		actions.put(nextEntryAction, new AbstractAction(">") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -519,11 +515,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
-				InputEvent.ALT_DOWN_MASK), ACTION_NEXT_ENTRY);
-		JButton next = new JButton(actions.get(ACTION_NEXT_ENTRY));
+				InputEvent.ALT_DOWN_MASK), nextEntryAction);
+		JButton next = new JButton(actions.get(nextEntryAction));
 		next.setToolTipText("Go to next entry (ALT+RIGHT).");
 
-		actions.put(ACTION_FIRST_ENTRY, new AbstractAction("|<") {
+		final String firstEntryAction = "firstEntry";
+		actions.put(firstEntryAction, new AbstractAction("|<") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -531,11 +528,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME,
-				InputEvent.ALT_DOWN_MASK), ACTION_FIRST_ENTRY);
-		JButton first = new JButton(actions.get(ACTION_FIRST_ENTRY));
+				InputEvent.ALT_DOWN_MASK), firstEntryAction);
+		JButton first = new JButton(actions.get(firstEntryAction));
 		first.setToolTipText("Go to first entry (ALT+HOME).");
 
-		actions.put(ACTION_LAST_ENTRY, new AbstractAction(">|") {
+		final String lastEntryAction = "lastEntry";
+		actions.put(lastEntryAction, new AbstractAction(">|") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -543,11 +541,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_END,
-				InputEvent.ALT_DOWN_MASK), ACTION_LAST_ENTRY);
-		JButton last = new JButton(actions.get(ACTION_LAST_ENTRY));
+				InputEvent.ALT_DOWN_MASK), lastEntryAction);
+		JButton last = new JButton(actions.get(lastEntryAction));
 		last.setToolTipText("Go to last entry (ALT+END).");
 
-		actions.put(ACTION_SAVE, new AbstractAction("Save") {
+		final String saveAction = "save";
+		actions.put(saveAction, new AbstractAction("Save") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -555,11 +554,12 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		inputs.put(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				InputEvent.CTRL_DOWN_MASK), ACTION_SAVE);
-		JButton save = new JButton(actions.get(ACTION_SAVE));
+				InputEvent.CTRL_DOWN_MASK), saveAction);
+		JButton save = new JButton(actions.get(saveAction));
 		save.setToolTipText("Write the modifications to the map file (CTRL+S).");
 
-		actions.put(ACTION_RESET, new AbstractAction("Reset") {
+		final String resetAction = "reset";
+		actions.put(resetAction, new AbstractAction("Reset") {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -567,7 +567,7 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 			}
 		});
 		// no key binding to avoid wrong manipulation
-		JButton reset = new JButton(actions.get(ACTION_RESET));
+		JButton reset = new JButton(actions.get(resetAction));
 		reset.setToolTipText("Cancel all the modifications.");
 
 		JPanel buttonPanel = new JPanel();
