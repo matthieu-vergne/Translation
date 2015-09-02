@@ -677,33 +677,23 @@ public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends Tran
 						initialConfig);
 
 				JPanel remainingEntriesPanel = new JPanel();
-				remainingEntriesPanel.setLayout(new GridBagLayout());
-				GridBagConstraints constraints = new GridBagConstraints();
-				constraints.gridy = GridBagConstraints.RELATIVE;
+				remainingEntriesPanel.setLayout(new GridLayout(0, 1));
 				ButtonGroup group = new ButtonGroup();
 				for (final EntryFilter<TEntry> filter : project
 						.getEntryFilters()) {
-					final JRadioButton selection = new JRadioButton();
-					final JLabel label = new JLabel(filter.getName());
+					final JRadioButton selection = new JRadioButton(
+							new AbstractAction(filter.getName()) {
 
-					selection.setAction(new AbstractAction() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									config.filter = filter;
+								}
+							});
 
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							config.filter = filter;
-						}
-					});
 					selection.setSelected(initialConfig.filter.equals(filter));
 
-					constraints.gridx = 1;
-					constraints.fill = GridBagConstraints.HORIZONTAL;
-					constraints.weightx = 1;
-					remainingEntriesPanel.add(label, constraints);
-					constraints.fill = GridBagConstraints.NONE;
-					constraints.weightx = 0;
-					constraints.gridx = 0;
 					group.add(selection);
-					remainingEntriesPanel.add(selection, constraints);
+					remainingEntriesPanel.add(selection);
 				}
 
 				JPanel message = new JPanel();
