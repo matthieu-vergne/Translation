@@ -60,7 +60,6 @@ import fr.vergne.translation.editor.content.FilterAction;
 import fr.vergne.translation.editor.content.MapComponentFactory;
 import fr.vergne.translation.editor.content.SimpleEntryComponent;
 import fr.vergne.translation.editor.content.SimpleMapComponent;
-import fr.vergne.translation.editor.tool.FileBasedProperties;
 import fr.vergne.translation.editor.tool.Search;
 import fr.vergne.translation.editor.tool.ToolProvider;
 import fr.vergne.translation.impl.EmptyProject;
@@ -69,6 +68,7 @@ import fr.vergne.translation.util.Feature;
 import fr.vergne.translation.util.MapNamer;
 import fr.vergne.translation.util.ProjectLoader;
 import fr.vergne.translation.util.impl.DefaultMapNamer;
+import fr.vergne.translation.util.impl.FileBasedProperties;
 
 @SuppressWarnings("serial")
 public class Editor<MapID, TEntry extends TranslationEntry<?>, TMap extends TranslationMap<TEntry>, TProject extends TranslationProject<TEntry, MapID, TMap>>

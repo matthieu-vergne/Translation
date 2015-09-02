@@ -1,4 +1,4 @@
-package fr.vergne.translation.editor.tool;
+package fr.vergne.translation.util.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
