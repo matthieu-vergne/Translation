@@ -464,9 +464,7 @@ public class MapListPanel<TEntry extends TranslationEntry<?>, TMap extends Trans
 		} else {
 			Collection<MapID> removed = new LinkedList<MapID>(currentIDs);
 			removed.removeAll(newIDs);
-			for (MapID id : removed) {
-				mapSummaries.remove(id);
-			}
+			mapSummaries.keySet().removeAll(removed);
 			currentIDs.clear();
 			currentIDs.addAll(newIDs);
 
